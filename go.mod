@@ -1,4 +1,4 @@
-module go-firestore-mock
+module github.com/akmalsyrf/go-firestore-mock
 
 go 1.23.4
 
