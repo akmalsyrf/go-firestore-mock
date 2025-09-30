@@ -54,10 +54,10 @@ func (mr *MockDocumentRefMockRecorder) Collection(path any) *gomock.Call {
 }
 
 // Collections mocks base method.
-func (m *MockDocumentRef) Collections(ctx context.Context) *firestore.CollectionIterator {
+func (m *MockDocumentRef) Collections(ctx context.Context) CollectionIterator {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Collections", ctx)
-	ret0, _ := ret[0].(*firestore.CollectionIterator)
+	ret0, _ := ret[0].(CollectionIterator)
 	return ret0
 }
 
@@ -103,10 +103,10 @@ func (mr *MockDocumentRefMockRecorder) Delete(ctx any, opts ...any) *gomock.Call
 }
 
 // Get mocks base method.
-func (m *MockDocumentRef) Get(ctx context.Context) (*firestore.DocumentSnapshot, error) {
+func (m *MockDocumentRef) Get(ctx context.Context) (DocumentSnapshot, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Get", ctx)
-	ret0, _ := ret[0].(*firestore.DocumentSnapshot)
+	ret0, _ := ret[0].(DocumentSnapshot)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -194,10 +194,10 @@ func (mr *MockDocumentRefMockRecorder) Set(ctx, data any, opts ...any) *gomock.C
 }
 
 // Snapshots mocks base method.
-func (m *MockDocumentRef) Snapshots(ctx context.Context) *firestore.DocumentSnapshotIterator {
+func (m *MockDocumentRef) Snapshots(ctx context.Context) DocumentSnapshotIterator {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Snapshots", ctx)
-	ret0, _ := ret[0].(*firestore.DocumentSnapshotIterator)
+	ret0, _ := ret[0].(DocumentSnapshotIterator)
 	return ret0
 }
 

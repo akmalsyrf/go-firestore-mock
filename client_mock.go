@@ -40,10 +40,10 @@ func (m *MockFirestoreClient) EXPECT() *MockFirestoreClientMockRecorder {
 }
 
 // Batch mocks base method.
-func (m *MockFirestoreClient) Batch() *firestore.WriteBatch {
+func (m *MockFirestoreClient) Batch() WriteBatch {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Batch")
-	ret0, _ := ret[0].(*firestore.WriteBatch)
+	ret0, _ := ret[0].(WriteBatch)
 	return ret0
 }
 
@@ -95,11 +95,25 @@ func (mr *MockFirestoreClientMockRecorder) Collection(path any) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Collection", reflect.TypeOf((*MockFirestoreClient)(nil).Collection), path)
 }
 
+// CollectionGroup mocks base method.
+func (m *MockFirestoreClient) CollectionGroup(collectionID string) Query {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CollectionGroup", collectionID)
+	ret0, _ := ret[0].(Query)
+	return ret0
+}
+
+// CollectionGroup indicates an expected call of CollectionGroup.
+func (mr *MockFirestoreClientMockRecorder) CollectionGroup(collectionID any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CollectionGroup", reflect.TypeOf((*MockFirestoreClient)(nil).CollectionGroup), collectionID)
+}
+
 // Collections mocks base method.
-func (m *MockFirestoreClient) Collections(ctx context.Context) *firestore.CollectionIterator {
+func (m *MockFirestoreClient) Collections(ctx context.Context) CollectionIterator {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Collections", ctx)
-	ret0, _ := ret[0].(*firestore.CollectionIterator)
+	ret0, _ := ret[0].(CollectionIterator)
 	return ret0
 }
 
@@ -124,10 +138,10 @@ func (mr *MockFirestoreClientMockRecorder) Doc(path any) *gomock.Call {
 }
 
 // GetAll mocks base method.
-func (m *MockFirestoreClient) GetAll(ctx context.Context, docRefs []*firestore.DocumentRef) ([]*firestore.DocumentSnapshot, error) {
+func (m *MockFirestoreClient) GetAll(ctx context.Context, docRefs []*firestore.DocumentRef) ([]DocumentSnapshot, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetAll", ctx, docRefs)
-	ret0, _ := ret[0].([]*firestore.DocumentSnapshot)
+	ret0, _ := ret[0].([]DocumentSnapshot)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -139,7 +153,7 @@ func (mr *MockFirestoreClientMockRecorder) GetAll(ctx, docRefs any) *gomock.Call
 }
 
 // RunTransaction mocks base method.
-func (m *MockFirestoreClient) RunTransaction(ctx context.Context, f func(context.Context, *firestore.Transaction) error, opts ...firestore.TransactionOption) error {
+func (m *MockFirestoreClient) RunTransaction(ctx context.Context, f func(context.Context, Transaction) error, opts ...firestore.TransactionOption) error {
 	m.ctrl.T.Helper()
 	varargs := []any{ctx, f}
 	for _, a := range opts {
@@ -258,6 +272,20 @@ func (mr *MockQueryMockRecorder) LimitToLast(n any) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "LimitToLast", reflect.TypeOf((*MockQuery)(nil).LimitToLast), n)
 }
 
+// NewAggregationQuery mocks base method.
+func (m *MockQuery) NewAggregationQuery() AggregationQuery {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "NewAggregationQuery")
+	ret0, _ := ret[0].(AggregationQuery)
+	return ret0
+}
+
+// NewAggregationQuery indicates an expected call of NewAggregationQuery.
+func (mr *MockQueryMockRecorder) NewAggregationQuery() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "NewAggregationQuery", reflect.TypeOf((*MockQuery)(nil).NewAggregationQuery))
+}
+
 // Offset mocks base method.
 func (m *MockQuery) Offset(n int) Query {
 	m.ctrl.T.Helper()
@@ -305,10 +333,10 @@ func (mr *MockQueryMockRecorder) Select(paths ...any) *gomock.Call {
 }
 
 // Snapshots mocks base method.
-func (m *MockQuery) Snapshots(ctx context.Context) *firestore.QuerySnapshotIterator {
+func (m *MockQuery) Snapshots(ctx context.Context) QuerySnapshotIterator {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Snapshots", ctx)
-	ret0, _ := ret[0].(*firestore.QuerySnapshotIterator)
+	ret0, _ := ret[0].(QuerySnapshotIterator)
 	return ret0
 }
 

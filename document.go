@@ -11,13 +11,13 @@ import (
 //go:generate mockgen -source=document.go -destination=document_mock.go -package=firestore
 type DocumentRef interface {
 	Set(ctx context.Context, data any, opts ...firestore.SetOption) (*firestore.WriteResult, error)
-	Get(ctx context.Context) (*firestore.DocumentSnapshot, error)
+	Get(ctx context.Context) (DocumentSnapshot, error)
 	Delete(ctx context.Context, opts ...firestore.Precondition) (*firestore.WriteResult, error)
 	Update(ctx context.Context, updates []firestore.Update, preconds ...firestore.Precondition) (*firestore.WriteResult, error)
 	Create(ctx context.Context, data any) (*firestore.WriteResult, error)
 	Collection(path string) CollectionRef
-	Collections(ctx context.Context) *firestore.CollectionIterator
-	Snapshots(ctx context.Context) *firestore.DocumentSnapshotIterator
+	Collections(ctx context.Context) CollectionIterator
+	Snapshots(ctx context.Context) DocumentSnapshotIterator
 	Reference() *firestore.DocumentRef
 	ID() string
 	Path() string
@@ -30,8 +30,12 @@ func (w *documentRefWrapper) Set(ctx context.Context, data any, opts ...firestor
 	return w.ref.Set(ctx, data, opts...)
 }
 
-func (w *documentRefWrapper) Get(ctx context.Context) (*firestore.DocumentSnapshot, error) {
-	return w.ref.Get(ctx)
+func (w *documentRefWrapper) Get(ctx context.Context) (DocumentSnapshot, error) {
+	snap, err := w.ref.Get(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return &documentSnapshotWrapper{snap: snap}, nil
 }
 
 func (w *documentRefWrapper) Delete(ctx context.Context, opts ...firestore.Precondition) (*firestore.WriteResult, error) {
@@ -50,12 +54,12 @@ func (w *documentRefWrapper) Collection(path string) CollectionRef {
 	return &collectionRefWrapper{ref: w.ref.Collection(path)}
 }
 
-func (w *documentRefWrapper) Collections(ctx context.Context) *firestore.CollectionIterator {
-	return w.ref.Collections(ctx)
+func (w *documentRefWrapper) Collections(ctx context.Context) CollectionIterator {
+	return &collectionIteratorWrapper{iter: w.ref.Collections(ctx)}
 }
 
-func (w *documentRefWrapper) Snapshots(ctx context.Context) *firestore.DocumentSnapshotIterator {
-	return w.ref.Snapshots(ctx)
+func (w *documentRefWrapper) Snapshots(ctx context.Context) DocumentSnapshotIterator {
+	return &documentSnapshotIteratorWrapper{iter: w.ref.Snapshots(ctx)}
 }
 
 func (w *documentRefWrapper) Reference() *firestore.DocumentRef {

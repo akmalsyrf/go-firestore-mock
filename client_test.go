@@ -2,7 +2,6 @@ package firestore
 
 import (
 	"context"
-	"errors"
 	"testing"
 
 	"cloud.google.com/go/firestore"
@@ -186,16 +185,6 @@ func TestBulkWriterWrapper_Methods(t *testing.T) {
 	})
 }
 
-func TestFirebaseClientWrapper_Batch(t *testing.T) {
-	t.Run("batch returns write batch", func(t *testing.T) {
-		wrapper := &firebaseClientWrapper{
-			client: nil,
-		}
-
-		_ = wrapper
-	})
-}
-
 func TestFirebaseClientWrapper_BulkWriter(t *testing.T) {
 	ctx := context.Background()
 
@@ -217,43 +206,6 @@ func TestFirebaseClientWrapper_Close(t *testing.T) {
 
 		_ = wrapper
 	})
-}
-
-func TestFirebaseClientWrapper_RunTransaction(t *testing.T) {
-	ctx := context.Background()
-
-	tests := []struct {
-		name        string
-		txFunc      func(context.Context, *firestore.Transaction) error
-		expectError bool
-	}{
-		{
-			name: "successful transaction",
-			txFunc: func(ctx context.Context, tx *firestore.Transaction) error {
-				return nil
-			},
-			expectError: false,
-		},
-		{
-			name: "transaction with error",
-			txFunc: func(ctx context.Context, tx *firestore.Transaction) error {
-				return errors.New("transaction error")
-			},
-			expectError: true,
-		},
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			wrapper := &firebaseClientWrapper{
-				client: nil,
-			}
-
-			_ = wrapper
-			_ = ctx
-			_ = tt.txFunc
-		})
-	}
 }
 
 func TestQueryWrapper_ChainedWhere(t *testing.T) {

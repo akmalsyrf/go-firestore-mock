@@ -74,8 +74,12 @@ func (w *collectionRefWrapper) Select(paths ...string) Query {
 	return &queryWrapper{q: w.ref.Select(paths...)}
 }
 
-func (w *collectionRefWrapper) Snapshots(ctx context.Context) *firestore.QuerySnapshotIterator {
-	return w.ref.Snapshots(ctx)
+func (w *collectionRefWrapper) Snapshots(ctx context.Context) QuerySnapshotIterator {
+	return &querySnapshotIteratorWrapper{iter: w.ref.Snapshots(ctx)}
+}
+
+func (w *collectionRefWrapper) NewAggregationQuery() AggregationQuery {
+	return &aggregationQueryWrapper{aq: w.ref.NewAggregationQuery()}
 }
 
 func (w *collectionRefWrapper) NewDoc() DocumentRef {

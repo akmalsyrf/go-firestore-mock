@@ -4,6 +4,18 @@ import (
 	"testing"
 )
 
+func TestFirebaseClientWrapper_CollectionGroup(t *testing.T) {
+	t.Run("CollectionGroup method exists", func(t *testing.T) {
+		wrapper := &firebaseClientWrapper{
+			client: nil,
+		}
+
+		// Test that CollectionGroup method exists
+		// Note: Not calling actual method to avoid nil pointer panic
+		_ = wrapper.CollectionGroup
+	})
+}
+
 func TestFirebaseClientWrapper_Collections(t *testing.T) {
 	t.Run("Collections method exists", func(t *testing.T) {
 		wrapper := &firebaseClientWrapper{
@@ -28,6 +40,28 @@ func TestFirebaseClientWrapper_GetAll(t *testing.T) {
 	})
 }
 
+func TestFirebaseClientWrapper_Batch(t *testing.T) {
+	t.Run("Batch method exists", func(t *testing.T) {
+		wrapper := &firebaseClientWrapper{
+			client: nil,
+		}
+
+		// Test that Batch method exists
+		_ = wrapper.Batch
+	})
+}
+
+func TestFirebaseClientWrapper_RunTransaction(t *testing.T) {
+	t.Run("RunTransaction method exists", func(t *testing.T) {
+		wrapper := &firebaseClientWrapper{
+			client: nil,
+		}
+
+		// Test that RunTransaction method exists
+		_ = wrapper.RunTransaction
+	})
+}
+
 func TestFirebaseClientWrapper_AllMethods_Complete(t *testing.T) {
 	t.Run("verify all FirestoreClient methods exist", func(t *testing.T) {
 		wrapper := &firebaseClientWrapper{
@@ -36,6 +70,7 @@ func TestFirebaseClientWrapper_AllMethods_Complete(t *testing.T) {
 
 		// Verify all method signatures
 		_ = wrapper.Collection
+		_ = wrapper.CollectionGroup
 		_ = wrapper.Doc
 		_ = wrapper.Close
 		_ = wrapper.BulkWriter

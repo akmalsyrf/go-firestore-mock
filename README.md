@@ -93,11 +93,12 @@ func TestUserOperations(t *testing.T) {
 ```go
 type FirestoreClient interface {
     Collection(path string) CollectionRef
+    CollectionGroup(collectionID string) Query
     Doc(path string) DocumentRef
     Close() error
     BulkWriter(ctx context.Context) BulkWriter
-    Batch() *firestore.WriteBatch
-    RunTransaction(ctx context.Context, f func(context.Context, *firestore.Transaction) error, opts ...firestore.TransactionOption) error
+    Batch() WriteBatch
+    RunTransaction(ctx context.Context, f func(context.Context, Transaction) error, opts ...firestore.TransactionOption) error
     Collections(ctx context.Context) *firestore.CollectionIterator
     GetAll(ctx context.Context, docRefs []*firestore.DocumentRef) ([]*firestore.DocumentSnapshot, error)
 }
@@ -148,7 +149,8 @@ type Query interface {
 	EndBefore(docSnapshotOrFieldValues ...any) Query
 	Select(paths ...string) Query
 	Documents(ctx context.Context) DocumentIterator
-	Snapshots(ctx context.Context) *firestore.QuerySnapshotIterator
+	Snapshots(ctx context.Context) QuerySnapshotIterator
+	NewAggregationQuery() AggregationQuery
 }
 ```
 
@@ -164,18 +166,91 @@ type DocumentIterator interface {
 #### BulkWriter
 ```go
 type BulkWriter interface {
-    Create(doc DocumentRef, data interface{}) (WriteResult, error)
-    Set(doc DocumentRef, data interface{}, opts ...SetOption) (WriteResult, error)
-    Update(doc DocumentRef, updates []Update, opts ...Precondition) (WriteResult, error)
-    Delete(doc DocumentRef, opts ...Precondition) (WriteResult, error)
-    Flush() error
-    End() error
+    Create(docRef *firestore.DocumentRef, data interface{}) (*firestore.BulkWriterJob, error)
+    Set(docRef *firestore.DocumentRef, data interface{}, opts ...firestore.SetOption) (*firestore.BulkWriterJob, error)
+    Update(docRef *firestore.DocumentRef, updates []firestore.Update, preconds ...firestore.Precondition) (*firestore.BulkWriterJob, error)
+    Delete(docRef *firestore.DocumentRef, preconds ...firestore.Precondition) (*firestore.BulkWriterJob, error)
+    Flush()
+    End()
+}
+```
+
+#### WriteBatch
+```go
+type WriteBatch interface {
+    Create(docRef *firestore.DocumentRef, data interface{}) WriteBatch
+    Set(docRef *firestore.DocumentRef, data interface{}, opts ...firestore.SetOption) WriteBatch
+    Update(docRef *firestore.DocumentRef, updates []firestore.Update, preconds ...firestore.Precondition) WriteBatch
+    Delete(docRef *firestore.DocumentRef, preconds ...firestore.Precondition) WriteBatch
+    Commit(ctx context.Context) ([]*firestore.WriteResult, error)
+}
+```
+
+#### Transaction
+```go
+type Transaction interface {
+    Get(docRef *firestore.DocumentRef) (DocumentSnapshot, error)
+    GetAll(docRefs []*firestore.DocumentRef) ([]DocumentSnapshot, error)
+    Create(docRef *firestore.DocumentRef, data interface{}) error
+    Set(docRef *firestore.DocumentRef, data interface{}, opts ...firestore.SetOption) error
+    Update(docRef *firestore.DocumentRef, updates []firestore.Update, preconds ...firestore.Precondition) error
+    Delete(docRef *firestore.DocumentRef, preconds ...firestore.Precondition) error
+}
+```
+
+#### AggregationQuery
+```go
+type AggregationQuery interface {
+    WithCount(alias string) AggregationQuery
+    Get(ctx context.Context) (AggregationResult, error)
+}
+
+type AggregationResult interface {
+    Count(alias string) (*int64, error)
+}
+```
+
+#### DocumentSnapshot
+```go
+type DocumentSnapshot interface {
+    Data() map[string]interface{}
+    DataTo(p interface{}) error
+    DataAt(path string) (interface{}, error)
+    Exists() bool
+    CreateTime() time.Time
+    UpdateTime() time.Time
+    ReadTime() time.Time
+    Ref() *firestore.DocumentRef
+}
+```
+
+#### Iterator Wrappers
+```go
+type QuerySnapshotIterator interface {
+    Next() (*firestore.QuerySnapshot, error)
+    Stop()
+}
+
+type CollectionIterator interface {
+    Next() (*firestore.CollectionRef, error)
+    Stop()
+}
+
+type DocumentSnapshotIterator interface {
+    Next() (DocumentSnapshot, error)
+    Stop()
 }
 ```
 
 ### Advanced Query Examples
 
 ```go
+// Collection Group Query (query across all subcollections with same ID)
+allProducts := client.CollectionGroup("products").
+    Where("price", ">", 100).
+    OrderBy("price", firestore.Asc).
+    Limit(50)
+
 // Pagination with OrderBy and Limit
 results := collection.
     Where("status", "==", "active").
@@ -203,6 +278,45 @@ users := collection.
     Where("active", "==", true).
     Select("name", "email").
     Limit(100)
+
+// Count aggregation query
+countQuery := collection.
+    Where("status", "==", "published").
+    NewAggregationQuery().
+    WithCount("total")
+
+result, err := countQuery.Get(ctx)
+if err != nil {
+    log.Fatal(err)
+}
+count, _ := result.Count("total")
+fmt.Printf("Total documents: %d\n", *count)
+```
+
+### Batch Operations
+
+```go
+// WriteBatch for atomic writes
+batch := client.Batch()
+batch.
+    Create(docRef1, data1).
+    Set(docRef2, data2).
+    Update(docRef3, updates).
+    Delete(docRef4)
+
+results, err := batch.Commit(ctx)
+
+// Transaction for atomic read-writes
+err := client.RunTransaction(ctx, func(ctx context.Context, tx Transaction) error {
+    // Read operations
+    doc, err := tx.Get(docRef)
+    if err != nil {
+        return err
+    }
+    
+    // Write operations
+    return tx.Set(docRef, newData)
+})
 ```
 
 ### Document Operations
@@ -236,11 +350,33 @@ _, err := newDoc.Set(ctx, data)
 collectionID := collection.ID()
 collectionPath := collection.Path()
 parentDoc := collection.Parent()
+
+// Working with DocumentSnapshot
+snap, err := doc.Get(ctx)
+if err != nil {
+    log.Fatal(err)
+}
+
+if snap.Exists() {
+    // Get all data
+    data := snap.Data()
+    
+    // Get specific field
+    name, _ := snap.DataAt("name")
+    
+    // Decode to struct
+    var user User
+    snap.DataTo(&user)
+    
+    // Get metadata
+    createdAt := snap.CreateTime()
+    updatedAt := snap.UpdateTime()
+}
 ```
 
 ## Testing
 
-The library includes comprehensive test coverage with 400+ unit tests:
+The library includes comprehensive test coverage with 550+ unit tests:
 
 ```bash
 # Run all tests

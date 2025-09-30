@@ -10,13 +10,14 @@ import (
 
 type FirestoreClient interface {
 	Collection(path string) CollectionRef
+	CollectionGroup(collectionID string) Query
 	Doc(path string) DocumentRef
 	Close() error
 	BulkWriter(ctx context.Context) BulkWriter
-	Batch() *firestore.WriteBatch
-	RunTransaction(ctx context.Context, f func(context.Context, *firestore.Transaction) error, opts ...firestore.TransactionOption) error
-	Collections(ctx context.Context) *firestore.CollectionIterator
-	GetAll(ctx context.Context, docRefs []*firestore.DocumentRef) ([]*firestore.DocumentSnapshot, error)
+	Batch() WriteBatch
+	RunTransaction(ctx context.Context, f func(context.Context, Transaction) error, opts ...firestore.TransactionOption) error
+	Collections(ctx context.Context) CollectionIterator
+	GetAll(ctx context.Context, docRefs []*firestore.DocumentRef) ([]DocumentSnapshot, error)
 }
 
 // firebaseClientWrapper wraps real firestore.Client
@@ -26,6 +27,10 @@ type firebaseClientWrapper struct {
 
 func (w *firebaseClientWrapper) Collection(path string) CollectionRef {
 	return &collectionRefWrapper{ref: w.client.Collection(path)}
+}
+
+func (w *firebaseClientWrapper) CollectionGroup(collectionID string) Query {
+	return &queryWrapper{q: w.client.CollectionGroup(collectionID).Query}
 }
 
 func (w *firebaseClientWrapper) Doc(path string) DocumentRef {
@@ -40,20 +45,31 @@ func (w *firebaseClientWrapper) BulkWriter(ctx context.Context) BulkWriter {
 	return &bulkWriterWrapper{bw: w.client.BulkWriter(ctx)}
 }
 
-func (w *firebaseClientWrapper) Batch() *firestore.WriteBatch {
-	return w.client.Batch()
+func (w *firebaseClientWrapper) Batch() WriteBatch {
+	return &writeBatchWrapper{wb: w.client.Batch()}
 }
 
-func (w *firebaseClientWrapper) RunTransaction(ctx context.Context, f func(context.Context, *firestore.Transaction) error, opts ...firestore.TransactionOption) error {
-	return w.client.RunTransaction(ctx, f, opts...)
+func (w *firebaseClientWrapper) RunTransaction(ctx context.Context, f func(context.Context, Transaction) error, opts ...firestore.TransactionOption) error {
+	return w.client.RunTransaction(ctx, func(ctx context.Context, tx *firestore.Transaction) error {
+		return f(ctx, &transactionWrapper{tx: tx})
+	}, opts...)
 }
 
-func (w *firebaseClientWrapper) Collections(ctx context.Context) *firestore.CollectionIterator {
-	return w.client.Collections(ctx)
+func (w *firebaseClientWrapper) Collections(ctx context.Context) CollectionIterator {
+	return &collectionIteratorWrapper{iter: w.client.Collections(ctx)}
 }
 
-func (w *firebaseClientWrapper) GetAll(ctx context.Context, docRefs []*firestore.DocumentRef) ([]*firestore.DocumentSnapshot, error) {
-	return w.client.GetAll(ctx, docRefs)
+func (w *firebaseClientWrapper) GetAll(ctx context.Context, docRefs []*firestore.DocumentRef) ([]DocumentSnapshot, error) {
+	snaps, err := w.client.GetAll(ctx, docRefs)
+	if err != nil {
+		return nil, err
+	}
+
+	result := make([]DocumentSnapshot, len(snaps))
+	for i, snap := range snaps {
+		result[i] = &documentSnapshotWrapper{snap: snap}
+	}
+	return result, nil
 }
 
 // NewFirestoreClient wraps real client
@@ -74,7 +90,8 @@ type Query interface {
 	EndBefore(docSnapshotOrFieldValues ...any) Query
 	Select(paths ...string) Query
 	Documents(ctx context.Context) DocumentIterator
-	Snapshots(ctx context.Context) *firestore.QuerySnapshotIterator
+	Snapshots(ctx context.Context) QuerySnapshotIterator
+	NewAggregationQuery() AggregationQuery
 }
 
 type queryWrapper struct{ q firestore.Query }
@@ -123,8 +140,12 @@ func (w *queryWrapper) Documents(ctx context.Context) DocumentIterator {
 	return &documentIteratorWrapper{iter: w.q.Documents(ctx)}
 }
 
-func (w *queryWrapper) Snapshots(ctx context.Context) *firestore.QuerySnapshotIterator {
-	return w.q.Snapshots(ctx)
+func (w *queryWrapper) Snapshots(ctx context.Context) QuerySnapshotIterator {
+	return &querySnapshotIteratorWrapper{iter: w.q.Snapshots(ctx)}
+}
+
+func (w *queryWrapper) NewAggregationQuery() AggregationQuery {
+	return &aggregationQueryWrapper{aq: w.q.NewAggregationQuery()}
 }
 
 // documentIteratorWrapper wraps real firestore.DocumentIterator

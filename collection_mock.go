@@ -161,6 +161,20 @@ func (mr *MockCollectionRefMockRecorder) LimitToLast(n any) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "LimitToLast", reflect.TypeOf((*MockCollectionRef)(nil).LimitToLast), n)
 }
 
+// NewAggregationQuery mocks base method.
+func (m *MockCollectionRef) NewAggregationQuery() AggregationQuery {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "NewAggregationQuery")
+	ret0, _ := ret[0].(AggregationQuery)
+	return ret0
+}
+
+// NewAggregationQuery indicates an expected call of NewAggregationQuery.
+func (mr *MockCollectionRefMockRecorder) NewAggregationQuery() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "NewAggregationQuery", reflect.TypeOf((*MockCollectionRef)(nil).NewAggregationQuery))
+}
+
 // NewDoc mocks base method.
 func (m *MockCollectionRef) NewDoc() DocumentRef {
 	m.ctrl.T.Helper()
@@ -250,10 +264,10 @@ func (mr *MockCollectionRefMockRecorder) Select(paths ...any) *gomock.Call {
 }
 
 // Snapshots mocks base method.
-func (m *MockCollectionRef) Snapshots(ctx context.Context) *firestore.QuerySnapshotIterator {
+func (m *MockCollectionRef) Snapshots(ctx context.Context) QuerySnapshotIterator {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Snapshots", ctx)
-	ret0, _ := ret[0].(*firestore.QuerySnapshotIterator)
+	ret0, _ := ret[0].(QuerySnapshotIterator)
 	return ret0
 }
 

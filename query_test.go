@@ -431,6 +431,16 @@ func TestQueryWrapper_SortingAndFiltering(t *testing.T) {
 	})
 }
 
+func TestQueryWrapper_NewAggregationQuery(t *testing.T) {
+	t.Run("NewAggregationQuery method exists", func(t *testing.T) {
+		wrapper := &queryWrapper{
+			q: firestore.Query{},
+		}
+
+		_ = wrapper.NewAggregationQuery
+	})
+}
+
 func TestQueryWrapper_InterfaceCompliance(t *testing.T) {
 	t.Run("verify Query interface compliance", func(t *testing.T) {
 		var _ Query = (*queryWrapper)(nil)
@@ -454,5 +464,6 @@ func TestQueryWrapper_InterfaceCompliance(t *testing.T) {
 		_ = wrapper.Select
 		_ = wrapper.Documents
 		_ = wrapper.Snapshots
+		_ = wrapper.NewAggregationQuery
 	})
 }
