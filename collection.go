@@ -8,6 +8,8 @@ import (
 
 // CollectionRef abstracts Firestore collection behavior used by repos.
 // It also behaves like a Query (Where, Documents).
+//
+//go:generate mockgen -source=collection.go -destination=collection_mock.go -package=firestore
 type CollectionRef interface {
 	Query
 	Doc(id string) DocumentRef

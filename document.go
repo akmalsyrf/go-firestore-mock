@@ -7,6 +7,8 @@ import (
 )
 
 // DocumentRef abstracts Firestore document behavior used by repos.
+//
+//go:generate mockgen -source=document.go -destination=document_mock.go -package=firestore
 type DocumentRef interface {
 	Set(ctx context.Context, data any, opts ...firestore.SetOption) (*firestore.WriteResult, error)
 	Get(ctx context.Context) (*firestore.DocumentSnapshot, error)

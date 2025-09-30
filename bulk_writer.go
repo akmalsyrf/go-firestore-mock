@@ -4,7 +4,7 @@ import (
 	"cloud.google.com/go/firestore"
 )
 
-//go:generate mockgen -source=bulk_writer.go -destination=bulk_writer_mock.go
+//go:generate mockgen -source=bulk_writer.go -destination=bulk_writer_mock.go -package=firestore
 
 // BulkWriter abstracts Firestore bulk writer behavior
 type BulkWriter interface {

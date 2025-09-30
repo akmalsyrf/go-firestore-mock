@@ -4,7 +4,7 @@ import (
 	"cloud.google.com/go/firestore"
 )
 
-//go:generate mockgen -source=document_iterator.go -destination=document_iterator_mock.go
+//go:generate mockgen -source=document_iterator.go -destination=document_iterator_mock.go -package=firestore
 
 // DocumentIterator abstracts Firestore document iterator behavior
 type DocumentIterator interface {

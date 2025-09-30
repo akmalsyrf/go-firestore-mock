@@ -6,6 +6,8 @@ import (
 	"cloud.google.com/go/firestore"
 )
 
+//go:generate mockgen -source=client.go -destination=client_mock.go -package=firestore
+
 type FirestoreClient interface {
 	Collection(path string) CollectionRef
 	Doc(path string) DocumentRef
