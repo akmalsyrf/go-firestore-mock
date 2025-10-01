@@ -1,4 +1,4 @@
-# Go Firestore Mock
+# Go Firestore Mock [![GoDoc](https://godoc.org/github.com/akmalsyrf/go-firestore-mock?status.svg)](https://godoc.org/github.com/akmalsyrf/go-firestore-mock)
 
 A comprehensive Go library that provides mock implementations and wrapper interfaces for Google Cloud Firestore operations. This library is designed to make testing Firestore-dependent applications easier by providing both mock objects and wrapper interfaces that abstract the Firestore client.
 
@@ -6,7 +6,7 @@ A comprehensive Go library that provides mock implementations and wrapper interf
 
 - **Wrapper Interfaces**: Clean abstraction layer over Firestore client operations
 - **Mock Implementations**: Complete mock objects for all Firestore operations
-- **Comprehensive Testing**: 100+ unit tests covering all functionality
+- **Comprehensive Testing**: 550+ unit tests covering all functionality
 - **Type Safety**: Full type safety with Go interfaces
 - **Easy Integration**: Drop-in replacement for Firestore client in tests
 
@@ -27,7 +27,7 @@ import (
     "context"
     "log"
     
-    "github.com/akmalsyrf/go-firestore-mock"
+    gofirestoremock "github.com/akmalsyrf/go-firestore-mock"
 )
 
 func main() {
@@ -66,7 +66,7 @@ import (
     "context"
     "testing"
     
-    "github.com/akmalsyrf/go-firestore-mock"
+    gofirestoremock "github.com/akmalsyrf/go-firestore-mock"
     "github.com/stretchr/testify/assert"
 )
 
@@ -99,8 +99,8 @@ type FirestoreClient interface {
     BulkWriter(ctx context.Context) BulkWriter
     Batch() WriteBatch
     RunTransaction(ctx context.Context, f func(context.Context, Transaction) error, opts ...firestore.TransactionOption) error
-    Collections(ctx context.Context) *firestore.CollectionIterator
-    GetAll(ctx context.Context, docRefs []*firestore.DocumentRef) ([]*firestore.DocumentSnapshot, error)
+	Collections(ctx context.Context) CollectionIterator
+	GetAll(ctx context.Context, docRefs []*firestore.DocumentRef) ([]DocumentSnapshot, error)
 }
 ```
 
@@ -121,13 +121,13 @@ type CollectionRef interface {
 ```go
 type DocumentRef interface {
     Set(ctx context.Context, data any, opts ...firestore.SetOption) (*firestore.WriteResult, error)
-    Get(ctx context.Context) (*firestore.DocumentSnapshot, error)
+	Get(ctx context.Context) (DocumentSnapshot, error)
     Delete(ctx context.Context, opts ...firestore.Precondition) (*firestore.WriteResult, error)
     Update(ctx context.Context, updates []firestore.Update, preconds ...firestore.Precondition) (*firestore.WriteResult, error)
     Create(ctx context.Context, data any) (*firestore.WriteResult, error)
     Collection(path string) CollectionRef
-    Collections(ctx context.Context) *firestore.CollectionIterator
-    Snapshots(ctx context.Context) *firestore.DocumentSnapshotIterator
+	Collections(ctx context.Context) CollectionIterator
+	Snapshots(ctx context.Context) DocumentSnapshotIterator
     Reference() *firestore.DocumentRef
     ID() string
     Path() string
@@ -157,9 +157,9 @@ type Query interface {
 #### DocumentIterator
 ```go
 type DocumentIterator interface {
-    Next() (*DocumentSnapshot, error)
+    Next() (*firestore.DocumentSnapshot, error)
     Stop()
-    GetAll() ([]*DocumentSnapshot, error)
+    GetAll() ([]*firestore.DocumentSnapshot, error)
 }
 ```
 
@@ -396,7 +396,7 @@ make test-race
 
 ### Prerequisites
 
-- Go 1.19 or later
+- Go 1.23 or later
 - Make (optional, for using Makefile)
 
 ### Available Make Commands
@@ -419,16 +419,23 @@ make deps-update       # Update dependencies
 
 ```
 go-firestore-mock/
-├── client.go              # Core wrapper implementations
-├── collection.go          # Collection wrapper
-├── document.go            # Document wrapper
-├── document_iterator.go   # Document iterator interface
-├── bulk_writer.go         # Bulk writer interface
-├── *_mock.go             # Mock implementations
-├── *_test.go             # Unit tests
-├── Makefile              # Build automation
-├── .gitignore            # Git ignore rules
-└── README.md             # This file
+├── client.go                    # Core wrapper implementations
+├── collection.go                # Collection wrapper
+├── document.go                  # Document wrapper
+├── document_snapshot.go         # Document snapshot wrapper
+├── document_iterator.go         # Document iterator interface
+├── snapshot_iterators.go        # Iterator wrappers
+├── aggregation.go               # Aggregation query wrapper
+├── bulk_writer.go               # Bulk writer interface
+├── write_batch.go               # Write batch interface
+├── transaction.go               # Transaction interface
+├── *_mock.go                   # Mock implementations
+├── *_test.go                   # Unit tests
+├── Makefile                    # Build automation
+├── go.mod                      # Go module definition
+├── go.sum                      # Go module checksums
+├── LICENSE                     # MIT License
+└── README.md                   # This file
 ```
 
 ## Contributing
