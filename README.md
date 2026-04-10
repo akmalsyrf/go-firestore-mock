@@ -4,11 +4,14 @@ A comprehensive Go library that provides mock implementations and wrapper interf
 
 ## Features
 
-- **Wrapper Interfaces**: Clean abstraction layer over Firestore client operations
-- **Mock Implementations**: Complete mock objects for all Firestore operations
-- **Comprehensive Testing**: 550+ unit tests covering all functionality
-- **Type Safety**: Full type safety with Go interfaces
-- **Easy Integration**: Drop-in replacement for Firestore client in tests
+- **Wrapper interfaces**: Thin abstraction over the official `cloud.google.com/go/firestore` client for testability and dependency injection
+- **gomock-generated mocks**: Generated mocks for each interface (use with `go.uber.org/mock/gomock`)
+- **Unit tests**: Broad coverage of wrappers and mocks (on the order of ~190 `Test*` entry points in this module)
+- **Type safety**: Call sites depend on interfaces, not concrete `*firestore.Client` types
+
+## Compatibility
+
+This module re-exports types from **`cloud.google.com/go/firestore`** (see `go.mod` for the pinned minor version). In production you **must** construct a real client with `firestore.NewClient` / `firestore.NewClientWithDatabase` (or your app’s factory), then wrap it with `NewFirestoreClient`. The wrapper is a **subset** of the full Firestore API; see the interface definitions in the source for what is supported.
 
 ## Installation
 
@@ -16,72 +19,76 @@ A comprehensive Go library that provides mock implementations and wrapper interf
 go get github.com/akmalsyrf/go-firestore-mock
 ```
 
-## Quick Start
+## Quick Start (production)
 
-### Using Wrapper Interfaces
+Use the official Firestore client, then wrap it. **Never** pass `nil` into `NewFirestoreClient`.
 
 ```go
 package main
 
 import (
-    "context"
-    "log"
-    
-    gofirestoremock "github.com/akmalsyrf/go-firestore-mock"
+	"context"
+	"log"
+
+	"cloud.google.com/go/firestore"
+	gofirestoremock "github.com/akmalsyrf/go-firestore-mock"
 )
 
 func main() {
-    // Create a wrapper client (in production, pass real Firestore client)
-    client := gofirestoremock.NewFirestoreClient(nil)
-    
-    // Use the wrapper as you would use Firestore client
-    collection := client.Collection("users")
-    doc := collection.Doc("user123")
-    
-    // Set data
-    _, err := doc.Set(context.Background(), map[string]interface{}{
-        "name": "John Doe",
-        "email": "john@example.com",
-    })
-    if err != nil {
-        log.Fatal(err)
-    }
-    
-    // Get data
-    docSnap, err := doc.Get(context.Background())
-    if err != nil {
-        log.Fatal(err)
-    }
-    
-    log.Printf("Document data: %v", docSnap.Data())
+	ctx := context.Background()
+	fs, err := firestore.NewClient(ctx, "your-project-id")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer fs.Close()
+
+	client := gofirestoremock.NewFirestoreClient(fs)
+
+	collection := client.Collection("users")
+	doc := collection.Doc("user123")
+
+	_, err = doc.Set(ctx, map[string]interface{}{
+		"name":  "John Doe",
+		"email": "john@example.com",
+	})
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	docSnap, err := doc.Get(ctx)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	log.Printf("Document data: %v", docSnap.Data())
 }
 ```
 
-### Using Mock Objects
+## Testing with gomock
 
 ```go
-package main
+package mypkg_test
 
 import (
-    "context"
-    "testing"
-    
-    gofirestoremock "github.com/akmalsyrf/go-firestore-mock"
-    "github.com/stretchr/testify/assert"
+	"testing"
+
+	gofirestoremock "github.com/akmalsyrf/go-firestore-mock"
+	"go.uber.org/mock/gomock"
 )
 
-func TestUserOperations(t *testing.T) {
-    // Create mock client
-    mockClient := gofirestoremock.NewMockFirestoreClient(t)
-    
-    // Set up expectations
-    mockClient.EXPECT().
-        Collection("users").
-        Return(gofirestoremock.NewMockCollectionRef(t))
-    
-    // Use the mock
-    collection := mockClient.Collection("users")
-    assert.NotNil(t, collection)
+func TestWithMockClient(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	mockClient := gofirestoremock.NewMockFirestoreClient(ctrl)
+	mockColl := gofirestoremock.NewMockCollectionRef(ctrl)
+
+	mockClient.EXPECT().Collection("users").Return(mockColl)
+
+	collection := mockClient.Collection("users")
+	if collection == nil {
+		t.Fatal("expected non-nil collection ref")
+	}
 }
 ```
 
@@ -289,8 +296,13 @@ result, err := countQuery.Get(ctx)
 if err != nil {
     log.Fatal(err)
 }
-count, _ := result.Count("total")
-fmt.Printf("Total documents: %d\n", *count)
+count, err := result.Count("total")
+if err != nil {
+	log.Fatal(err)
+}
+if count != nil {
+	fmt.Printf("Total documents: %d\n", *count)
+}
 ```
 
 ### Batch Operations
@@ -376,7 +388,7 @@ if snap.Exists() {
 
 ## Testing
 
-The library includes comprehensive test coverage with 550+ unit tests:
+Run the test suite:
 
 ```bash
 # Run all tests
