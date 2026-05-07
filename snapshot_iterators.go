@@ -2,7 +2,6 @@ package firestore
 
 import (
 	"cloud.google.com/go/firestore"
-	"google.golang.org/api/iterator"
 )
 
 //go:generate mockgen -source=snapshot_iterators.go -destination=snapshot_iterators_mock.go -package=firestore
@@ -56,9 +55,6 @@ type documentSnapshotIteratorWrapper struct {
 func (w *documentSnapshotIteratorWrapper) Next() (DocumentSnapshot, error) {
 	snap, err := w.iter.Next()
 	if err != nil {
-		if err == iterator.Done {
-			return nil, err
-		}
 		return nil, err
 	}
 	return &documentSnapshotWrapper{snap: snap}, nil

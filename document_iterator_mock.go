@@ -79,3 +79,56 @@ func (mr *MockDocumentIteratorMockRecorder) Stop() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Stop", reflect.TypeOf((*MockDocumentIterator)(nil).Stop))
 }
+
+// MockDocumentRefIterator is a mock of DocumentRefIterator interface.
+type MockDocumentRefIterator struct {
+	ctrl     *gomock.Controller
+	recorder *MockDocumentRefIteratorMockRecorder
+}
+
+// MockDocumentRefIteratorMockRecorder is the mock recorder for MockDocumentRefIterator.
+type MockDocumentRefIteratorMockRecorder struct {
+	mock *MockDocumentRefIterator
+}
+
+// NewMockDocumentRefIterator creates a new mock instance.
+func NewMockDocumentRefIterator(ctrl *gomock.Controller) *MockDocumentRefIterator {
+	mock := &MockDocumentRefIterator{ctrl: ctrl}
+	mock.recorder = &MockDocumentRefIteratorMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockDocumentRefIterator) EXPECT() *MockDocumentRefIteratorMockRecorder {
+	return m.recorder
+}
+
+// GetAll mocks base method.
+func (m *MockDocumentRefIterator) GetAll() ([]*firestore.DocumentRef, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetAll")
+	ret0, _ := ret[0].([]*firestore.DocumentRef)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetAll indicates an expected call of GetAll.
+func (mr *MockDocumentRefIteratorMockRecorder) GetAll() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAll", reflect.TypeOf((*MockDocumentRefIterator)(nil).GetAll))
+}
+
+// Next mocks base method.
+func (m *MockDocumentRefIterator) Next() (*firestore.DocumentRef, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Next")
+	ret0, _ := ret[0].(*firestore.DocumentRef)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// Next indicates an expected call of Next.
+func (mr *MockDocumentRefIteratorMockRecorder) Next() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Next", reflect.TypeOf((*MockDocumentRefIterator)(nil).Next))
+}

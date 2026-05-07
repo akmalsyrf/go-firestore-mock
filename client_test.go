@@ -7,17 +7,6 @@ import (
 	"cloud.google.com/go/firestore"
 )
 
-// mockFirestoreClient is a helper to create mock firestore client
-type mockFirestoreClient struct {
-	*firestore.Client
-	CollectionFunc     func(path string) *firestore.CollectionRef
-	DocFunc            func(path string) *firestore.DocumentRef
-	CloseFunc          func() error
-	BulkWriterFunc     func(ctx context.Context) *firestore.BulkWriter
-	BatchFunc          func() *firestore.WriteBatch
-	RunTransactionFunc func(ctx context.Context, f func(context.Context, *firestore.Transaction) error, opts ...firestore.TransactionOption) error
-}
-
 func TestFirebaseClientWrapper_Collection(t *testing.T) {
 	tests := []struct {
 		name string

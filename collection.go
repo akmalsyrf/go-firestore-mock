@@ -15,7 +15,9 @@ type CollectionRef interface {
 	Doc(id string) DocumentRef
 	Add(ctx context.Context, data any) (*firestore.DocumentRef, *firestore.WriteResult, error)
 	NewDoc() DocumentRef
+	DocumentRefs(ctx context.Context) DocumentRefIterator
 	Parent() DocumentRef
+	Reference() *firestore.CollectionRef
 	ID() string
 	Path() string
 }
@@ -34,12 +36,24 @@ func (w *collectionRefWrapper) Where(path string, op string, value any) Query {
 	return &queryWrapper{q: w.ref.Where(path, op, value)}
 }
 
+func (w *collectionRefWrapper) WherePath(fp firestore.FieldPath, op string, value any) Query {
+	return &queryWrapper{q: w.ref.WherePath(fp, op, value)}
+}
+
+func (w *collectionRefWrapper) WhereEntity(ef firestore.EntityFilter) Query {
+	return &queryWrapper{q: w.ref.WhereEntity(ef)}
+}
+
 func (w *collectionRefWrapper) Documents(ctx context.Context) DocumentIterator {
 	return &documentIteratorWrapper{iter: w.ref.Documents(ctx)}
 }
 
 func (w *collectionRefWrapper) OrderBy(path string, dir firestore.Direction) Query {
 	return &queryWrapper{q: w.ref.OrderBy(path, dir)}
+}
+
+func (w *collectionRefWrapper) OrderByPath(fp firestore.FieldPath, dir firestore.Direction) Query {
+	return &queryWrapper{q: w.ref.OrderByPath(fp, dir)}
 }
 
 func (w *collectionRefWrapper) Limit(n int) Query {
@@ -74,6 +88,10 @@ func (w *collectionRefWrapper) Select(paths ...string) Query {
 	return &queryWrapper{q: w.ref.Select(paths...)}
 }
 
+func (w *collectionRefWrapper) SelectPaths(fieldPaths ...firestore.FieldPath) Query {
+	return &queryWrapper{q: w.ref.SelectPaths(fieldPaths...)}
+}
+
 func (w *collectionRefWrapper) Snapshots(ctx context.Context) QuerySnapshotIterator {
 	return &querySnapshotIteratorWrapper{iter: w.ref.Snapshots(ctx)}
 }
@@ -86,11 +104,19 @@ func (w *collectionRefWrapper) NewDoc() DocumentRef {
 	return &documentRefWrapper{ref: w.ref.NewDoc()}
 }
 
+func (w *collectionRefWrapper) DocumentRefs(ctx context.Context) DocumentRefIterator {
+	return &documentRefIteratorWrapper{iter: w.ref.DocumentRefs(ctx)}
+}
+
 func (w *collectionRefWrapper) Parent() DocumentRef {
 	if w.ref.Parent == nil {
 		return nil
 	}
 	return &documentRefWrapper{ref: w.ref.Parent}
+}
+
+func (w *collectionRefWrapper) Reference() *firestore.CollectionRef {
+	return w.ref
 }
 
 func (w *collectionRefWrapper) ID() string {

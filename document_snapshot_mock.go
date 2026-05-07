@@ -82,6 +82,21 @@ func (mr *MockDocumentSnapshotMockRecorder) DataAt(path any) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DataAt", reflect.TypeOf((*MockDocumentSnapshot)(nil).DataAt), path)
 }
 
+// DataAtPath mocks base method.
+func (m *MockDocumentSnapshot) DataAtPath(fp firestore.FieldPath) (any, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DataAtPath", fp)
+	ret0, _ := ret[0].(any)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// DataAtPath indicates an expected call of DataAtPath.
+func (mr *MockDocumentSnapshotMockRecorder) DataAtPath(fp any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DataAtPath", reflect.TypeOf((*MockDocumentSnapshot)(nil).DataAtPath), fp)
+}
+
 // DataTo mocks base method.
 func (m *MockDocumentSnapshot) DataTo(p any) error {
 	m.ctrl.T.Helper()

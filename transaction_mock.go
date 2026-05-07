@@ -71,6 +71,34 @@ func (mr *MockTransactionMockRecorder) Delete(docRef any, preconds ...any) *gomo
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Delete", reflect.TypeOf((*MockTransaction)(nil).Delete), varargs...)
 }
 
+// DocumentRefs mocks base method.
+func (m *MockTransaction) DocumentRefs(coll CollectionRef) DocumentRefIterator {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DocumentRefs", coll)
+	ret0, _ := ret[0].(DocumentRefIterator)
+	return ret0
+}
+
+// DocumentRefs indicates an expected call of DocumentRefs.
+func (mr *MockTransactionMockRecorder) DocumentRefs(coll any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DocumentRefs", reflect.TypeOf((*MockTransaction)(nil).DocumentRefs), coll)
+}
+
+// Documents mocks base method.
+func (m *MockTransaction) Documents(q Query) DocumentIterator {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Documents", q)
+	ret0, _ := ret[0].(DocumentIterator)
+	return ret0
+}
+
+// Documents indicates an expected call of Documents.
+func (mr *MockTransactionMockRecorder) Documents(q any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Documents", reflect.TypeOf((*MockTransaction)(nil).Documents), q)
+}
+
 // Get mocks base method.
 func (m *MockTransaction) Get(docRef *firestore.DocumentRef) (DocumentSnapshot, error) {
 	m.ctrl.T.Helper()

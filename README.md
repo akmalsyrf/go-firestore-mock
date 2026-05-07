@@ -102,12 +102,13 @@ type FirestoreClient interface {
     Collection(path string) CollectionRef
     CollectionGroup(collectionID string) Query
     Doc(path string) DocumentRef
+    DocFromFullPath(fullPath string) DocumentRef
     Close() error
     BulkWriter(ctx context.Context) BulkWriter
     Batch() WriteBatch
     RunTransaction(ctx context.Context, f func(context.Context, Transaction) error, opts ...firestore.TransactionOption) error
-	Collections(ctx context.Context) CollectionIterator
-	GetAll(ctx context.Context, docRefs []*firestore.DocumentRef) ([]DocumentSnapshot, error)
+    Collections(ctx context.Context) CollectionIterator
+    GetAll(ctx context.Context, docRefs []*firestore.DocumentRef) ([]DocumentSnapshot, error)
 }
 ```
 
@@ -118,7 +119,9 @@ type CollectionRef interface {
     Doc(id string) DocumentRef
     Add(ctx context.Context, data any) (*firestore.DocumentRef, *firestore.WriteResult, error)
     NewDoc() DocumentRef
+    DocumentRefs(ctx context.Context) DocumentRefIterator
     Parent() DocumentRef
+    Reference() *firestore.CollectionRef
     ID() string
     Path() string
 }
@@ -145,28 +148,37 @@ type DocumentRef interface {
 #### Query
 ```go
 type Query interface {
-	Where(path, op string, value any) Query
-	OrderBy(path string, dir firestore.Direction) Query
-	Limit(n int) Query
-	LimitToLast(n int) Query
-	Offset(n int) Query
-	StartAt(docSnapshotOrFieldValues ...any) Query
-	StartAfter(docSnapshotOrFieldValues ...any) Query
-	EndAt(docSnapshotOrFieldValues ...any) Query
-	EndBefore(docSnapshotOrFieldValues ...any) Query
-	Select(paths ...string) Query
-	Documents(ctx context.Context) DocumentIterator
-	Snapshots(ctx context.Context) QuerySnapshotIterator
-	NewAggregationQuery() AggregationQuery
+    Where(path, op string, value any) Query
+    WherePath(fp firestore.FieldPath, op string, value any) Query
+    WhereEntity(ef firestore.EntityFilter) Query
+    OrderBy(path string, dir firestore.Direction) Query
+    OrderByPath(fp firestore.FieldPath, dir firestore.Direction) Query
+    Limit(n int) Query
+    LimitToLast(n int) Query
+    Offset(n int) Query
+    StartAt(docSnapshotOrFieldValues ...any) Query
+    StartAfter(docSnapshotOrFieldValues ...any) Query
+    EndAt(docSnapshotOrFieldValues ...any) Query
+    EndBefore(docSnapshotOrFieldValues ...any) Query
+    Select(paths ...string) Query
+    SelectPaths(fieldPaths ...firestore.FieldPath) Query
+    Documents(ctx context.Context) DocumentIterator
+    Snapshots(ctx context.Context) QuerySnapshotIterator
+    NewAggregationQuery() AggregationQuery
 }
 ```
 
-#### DocumentIterator
+#### DocumentIterator / DocumentRefIterator
 ```go
 type DocumentIterator interface {
     Next() (*firestore.DocumentSnapshot, error)
     Stop()
     GetAll() ([]*firestore.DocumentSnapshot, error)
+}
+
+type DocumentRefIterator interface {
+    Next() (*firestore.DocumentRef, error)
+    GetAll() ([]*firestore.DocumentRef, error)
 }
 ```
 
@@ -198,12 +210,21 @@ type WriteBatch interface {
 type Transaction interface {
     Get(docRef *firestore.DocumentRef) (DocumentSnapshot, error)
     GetAll(docRefs []*firestore.DocumentRef) ([]DocumentSnapshot, error)
+    // Documents accepts a Query or CollectionRef (CollectionRef embeds Query).
+    Documents(q Query) DocumentIterator
+    DocumentRefs(coll CollectionRef) DocumentRefIterator
     Create(docRef *firestore.DocumentRef, data interface{}) error
     Set(docRef *firestore.DocumentRef, data interface{}, opts ...firestore.SetOption) error
     Update(docRef *firestore.DocumentRef, updates []firestore.Update, preconds ...firestore.Precondition) error
     Delete(docRef *firestore.DocumentRef, preconds ...firestore.Precondition) error
 }
 ```
+
+> The wrapper around a real `*firestore.Transaction` extracts the underlying
+> `firestore.Queryer` from `*queryWrapper` / `*collectionRefWrapper` (and from
+> custom types that implement `CollectionRef.Reference()`). Pure mock
+> implementations of `Query` cannot be passed to the production wrapper – mock
+> the `Transaction` interface in tests instead.
 
 #### AggregationQuery
 ```go
@@ -223,6 +244,7 @@ type DocumentSnapshot interface {
     Data() map[string]interface{}
     DataTo(p interface{}) error
     DataAt(path string) (interface{}, error)
+    DataAtPath(fp firestore.FieldPath) (interface{}, error)
     Exists() bool
     CreateTime() time.Time
     UpdateTime() time.Time
@@ -329,6 +351,34 @@ err := client.RunTransaction(ctx, func(ctx context.Context, tx Transaction) erro
     // Write operations
     return tx.Set(docRef, newData)
 })
+
+// Read-then-write inside a transaction (e.g. delete every document in a
+// subcollection). All reads must happen before any writes per Firestore rules.
+err := client.RunTransaction(ctx, func(ctx context.Context, tx Transaction) error {
+    coll := client.Collection("matches").Doc(matchID).Collection("undo_actions")
+
+    iter := tx.Documents(coll)
+    defer iter.Stop()
+
+    var refs []*firestore.DocumentRef
+    for {
+        snap, err := iter.Next()
+        if err == iterator.Done {
+            break
+        }
+        if err != nil {
+            return err
+        }
+        refs = append(refs, snap.Ref)
+    }
+
+    for _, ref := range refs {
+        if err := tx.Delete(ref); err != nil {
+            return err
+        }
+    }
+    return nil
+})
 ```
 
 ### Document Operations
@@ -408,7 +458,7 @@ make test-race
 
 ### Prerequisites
 
-- Go 1.23 or later
+- Go 1.25 or later (required by `cloud.google.com/go/firestore v1.22.0`)
 - Make (optional, for using Makefile)
 
 ### Available Make Commands

@@ -14,16 +14,16 @@ The official package exposes **constructors** (`NewClient`, `NewClientWithDataba
 
 | Area | Status |
 |------|--------|
-| **Module & SDK** | `go.mod` pins `cloud.google.com/go/firestore` (see the repo for the current version). |
-| **Client wrapper** | `Collection`, `CollectionGroup`, `Doc`, `Close`, `BulkWriter`, `Batch`, `RunTransaction`, `Collections`, `GetAll`. |
-| **Query / collection** | `Where`, `OrderBy`, limit/offset, cursors, `Select`, `Documents`, `Snapshots`, `NewAggregationQuery`. |
+| **Module & SDK** | `go.mod` pins `cloud.google.com/go/firestore v1.22.0` (Go 1.25). |
+| **Client wrapper** | `Collection`, `CollectionGroup`, `Doc`, `DocFromFullPath`, `Close`, `BulkWriter`, `Batch`, `RunTransaction`, `Collections`, `GetAll`. |
+| **Query / collection** | `Where`, `WherePath`, `WhereEntity`, `OrderBy`, `OrderByPath`, limit/offset, cursors, `Select`, `SelectPaths`, `Documents`, `Snapshots`, `NewAggregationQuery`. |
 | **Document** | CRUD, subcollection, `Collections`, `Snapshots`, metadata (`ID`, `Path`, `Reference`, `Parent`). |
-| **Batch / bulk / transaction** | Full write batch & bulk writer; transactions: subset (no query/pipeline inside tx). |
-| **Snapshot & iterators** | `DocumentSnapshot` (including timestamps & `Ref`); document/query iterators; `CollectionIterator` partial (see gaps). |
+| **Batch / bulk / transaction** | Full write batch & bulk writer; transactions support reads (`Get`, `GetAll`, `Documents(q)`, `DocumentRefs(coll)`) and writes (`Create`, `Set`, `Update`, `Delete`). |
+| **Snapshot & iterators** | `DocumentSnapshot` (including timestamps, `Ref`, `DataAtPath`); document/query iterators; `DocumentRefIterator`; `CollectionIterator` partial (see gaps). |
 | **Aggregation** | `WithCount` + `Get`; **wrapper `Count` reads values from the SDK `AggregationResult`** (`*firestorepb.Value` / Go numbers). |
-| **Mocks** | `go:generate mockgen` for the main interfaces. |
+| **Mocks** | `go:generate mockgen` for every interface (Client, Query, CollectionRef, DocumentRef, DocumentSnapshot, Transaction, BulkWriter, WriteBatch, AggregationQuery / Result, all iterators). |
 | **Documentation** | README: production pattern `firestore.NewClient` → `NewFirestoreClient`, gomock example, compatibility section. |
-| **Tests** | `go test ./...`; aggregation tests for `Count` with realistic result maps. |
+| **Tests** | `go test ./...` (incl. `toFirestoreQueryer` rejection of foreign Query impls, aggregation tests for `Count` with realistic result maps). |
 
 ---
 
@@ -33,16 +33,16 @@ Check off when done. Suggested order: **Client / read options → Query → Docu
 
 ### `FirestoreClient` (vs `*firestore.Client`)
 
-- [ ] `DocFromFullPath(fullPath string) DocumentRef`
+- [x] `DocFromFullPath(fullPath string) DocumentRef`
 - [ ] `Pipeline() *Pipeline` — requires abstract `Pipeline` + source (`PipelineSource`) for parity; see below.
 - [ ] `WithReadOptions(opts ...firestore.ReadOption) *Client` — the official API returns a new client; decide whether the interface returns `FirestoreClient` or another option surface.
 
 ### `Query`
 
-- [ ] `WherePath(fp firestore.FieldPath, op string, value interface{}) Query`
-- [ ] `WhereEntity(ef firestore.EntityFilter) Query`
-- [ ] `OrderByPath(fp firestore.FieldPath, dir firestore.Direction) Query`
-- [ ] `SelectPaths(fieldPaths []firestore.FieldPath) Query`
+- [x] `WherePath(fp firestore.FieldPath, op string, value interface{}) Query`
+- [x] `WhereEntity(ef firestore.EntityFilter) Query`
+- [x] `OrderByPath(fp firestore.FieldPath, dir firestore.Direction) Query`
+- [x] `SelectPaths(fieldPaths []firestore.FieldPath) Query`
 - [ ] `FindNearest` / `FindNearestPath` (vector)
 - [ ] `Serialize` / `Deserialize`
 - [ ] `Pipeline() *Pipeline`
@@ -51,7 +51,7 @@ Check off when done. Suggested order: **Client / read options → Query → Docu
 
 ### `CollectionRef`
 
-- [ ] `DocumentRefs(ctx context.Context) *DocumentRefIterator` (or an equivalent iterator interface)
+- [x] `DocumentRefs(ctx context.Context) DocumentRefIterator`
 - [ ] `WithReadOptions(opts ...firestore.ReadOption) CollectionRef`
 
 ### `DocumentRef`
@@ -60,7 +60,7 @@ Check off when done. Suggested order: **Client / read options → Query → Docu
 
 ### `DocumentSnapshot`
 
-- [ ] `DataAtPath(fp firestore.FieldPath) (interface{}, error)` (in addition to `DataAt(string)`)
+- [x] `DataAtPath(fp firestore.FieldPath) (interface{}, error)` (in addition to `DataAt(string)`)
 
 ### `DocumentIterator`
 
@@ -76,8 +76,8 @@ Align with the SDK: official iterator has `Next`, `GetAll`, `PageInfo`; it does 
 
 ### `Transaction`
 
-- [ ] `Documents(q firestore.Query) *DocumentIterator` (delegate to `*firestore.Transaction`)
-- [ ] `DocumentRefs(cr *firestore.CollectionRef) *DocumentRefIterator`
+- [x] `Documents(q Query) DocumentIterator` (delegates to `*firestore.Transaction.Documents`; accepts a `Query` or `CollectionRef` since `CollectionRef` embeds `Query`)
+- [x] `DocumentRefs(coll CollectionRef) DocumentRefIterator`
 - [ ] `Execute(p *firestore.Pipeline) (*firestore.PipelineResultIterator, error)` (if Pipeline is supported)
 - [ ] `WithReadOptions(opts ...firestore.ReadOption)`
 

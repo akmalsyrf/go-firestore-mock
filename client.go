@@ -12,6 +12,7 @@ type FirestoreClient interface {
 	Collection(path string) CollectionRef
 	CollectionGroup(collectionID string) Query
 	Doc(path string) DocumentRef
+	DocFromFullPath(fullPath string) DocumentRef
 	Close() error
 	BulkWriter(ctx context.Context) BulkWriter
 	Batch() WriteBatch
@@ -35,6 +36,14 @@ func (w *firebaseClientWrapper) CollectionGroup(collectionID string) Query {
 
 func (w *firebaseClientWrapper) Doc(path string) DocumentRef {
 	return &documentRefWrapper{ref: w.client.Doc(path)}
+}
+
+func (w *firebaseClientWrapper) DocFromFullPath(fullPath string) DocumentRef {
+	ref := w.client.DocFromFullPath(fullPath)
+	if ref == nil {
+		return nil
+	}
+	return &documentRefWrapper{ref: ref}
 }
 
 func (w *firebaseClientWrapper) Close() error {
@@ -77,10 +86,16 @@ func NewFirestoreClient(client *firestore.Client) FirestoreClient {
 	return &firebaseClientWrapper{client: client}
 }
 
-// Query abstracts Firestore query behavior used by repos (Where, Documents).
+// Query abstracts Firestore query behavior used by repos (Where, Documents, ...).
+//
+// The interface mirrors the read-side of *firestore.Query and *firestore.CollectionRef;
+// CollectionRef embeds Query so any CollectionRef value satisfies Query.
 type Query interface {
 	Where(path string, op string, value any) Query
+	WherePath(fp firestore.FieldPath, op string, value any) Query
+	WhereEntity(ef firestore.EntityFilter) Query
 	OrderBy(path string, dir firestore.Direction) Query
+	OrderByPath(fp firestore.FieldPath, dir firestore.Direction) Query
 	Limit(n int) Query
 	LimitToLast(n int) Query
 	Offset(n int) Query
@@ -89,6 +104,7 @@ type Query interface {
 	EndAt(docSnapshotOrFieldValues ...any) Query
 	EndBefore(docSnapshotOrFieldValues ...any) Query
 	Select(paths ...string) Query
+	SelectPaths(fieldPaths ...firestore.FieldPath) Query
 	Documents(ctx context.Context) DocumentIterator
 	Snapshots(ctx context.Context) QuerySnapshotIterator
 	NewAggregationQuery() AggregationQuery
@@ -100,8 +116,20 @@ func (w *queryWrapper) Where(path string, op string, value any) Query {
 	return &queryWrapper{q: w.q.Where(path, op, value)}
 }
 
+func (w *queryWrapper) WherePath(fp firestore.FieldPath, op string, value any) Query {
+	return &queryWrapper{q: w.q.WherePath(fp, op, value)}
+}
+
+func (w *queryWrapper) WhereEntity(ef firestore.EntityFilter) Query {
+	return &queryWrapper{q: w.q.WhereEntity(ef)}
+}
+
 func (w *queryWrapper) OrderBy(path string, dir firestore.Direction) Query {
 	return &queryWrapper{q: w.q.OrderBy(path, dir)}
+}
+
+func (w *queryWrapper) OrderByPath(fp firestore.FieldPath, dir firestore.Direction) Query {
+	return &queryWrapper{q: w.q.OrderByPath(fp, dir)}
 }
 
 func (w *queryWrapper) Limit(n int) Query {
@@ -134,6 +162,10 @@ func (w *queryWrapper) EndBefore(docSnapshotOrFieldValues ...any) Query {
 
 func (w *queryWrapper) Select(paths ...string) Query {
 	return &queryWrapper{q: w.q.Select(paths...)}
+}
+
+func (w *queryWrapper) SelectPaths(fieldPaths ...firestore.FieldPath) Query {
+	return &queryWrapper{q: w.q.SelectPaths(fieldPaths...)}
 }
 
 func (w *queryWrapper) Documents(ctx context.Context) DocumentIterator {

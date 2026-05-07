@@ -69,6 +69,20 @@ func (mr *MockCollectionRefMockRecorder) Doc(id any) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Doc", reflect.TypeOf((*MockCollectionRef)(nil).Doc), id)
 }
 
+// DocumentRefs mocks base method.
+func (m *MockCollectionRef) DocumentRefs(ctx context.Context) DocumentRefIterator {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DocumentRefs", ctx)
+	ret0, _ := ret[0].(DocumentRefIterator)
+	return ret0
+}
+
+// DocumentRefs indicates an expected call of DocumentRefs.
+func (mr *MockCollectionRefMockRecorder) DocumentRefs(ctx any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DocumentRefs", reflect.TypeOf((*MockCollectionRef)(nil).DocumentRefs), ctx)
+}
+
 // Documents mocks base method.
 func (m *MockCollectionRef) Documents(ctx context.Context) DocumentIterator {
 	m.ctrl.T.Helper()
@@ -217,6 +231,20 @@ func (mr *MockCollectionRefMockRecorder) OrderBy(path, dir any) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "OrderBy", reflect.TypeOf((*MockCollectionRef)(nil).OrderBy), path, dir)
 }
 
+// OrderByPath mocks base method.
+func (m *MockCollectionRef) OrderByPath(fp firestore.FieldPath, dir firestore.Direction) Query {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "OrderByPath", fp, dir)
+	ret0, _ := ret[0].(Query)
+	return ret0
+}
+
+// OrderByPath indicates an expected call of OrderByPath.
+func (mr *MockCollectionRefMockRecorder) OrderByPath(fp, dir any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "OrderByPath", reflect.TypeOf((*MockCollectionRef)(nil).OrderByPath), fp, dir)
+}
+
 // Parent mocks base method.
 func (m *MockCollectionRef) Parent() DocumentRef {
 	m.ctrl.T.Helper()
@@ -245,6 +273,20 @@ func (mr *MockCollectionRefMockRecorder) Path() *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Path", reflect.TypeOf((*MockCollectionRef)(nil).Path))
 }
 
+// Reference mocks base method.
+func (m *MockCollectionRef) Reference() *firestore.CollectionRef {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Reference")
+	ret0, _ := ret[0].(*firestore.CollectionRef)
+	return ret0
+}
+
+// Reference indicates an expected call of Reference.
+func (mr *MockCollectionRefMockRecorder) Reference() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Reference", reflect.TypeOf((*MockCollectionRef)(nil).Reference))
+}
+
 // Select mocks base method.
 func (m *MockCollectionRef) Select(paths ...string) Query {
 	m.ctrl.T.Helper()
@@ -261,6 +303,24 @@ func (m *MockCollectionRef) Select(paths ...string) Query {
 func (mr *MockCollectionRefMockRecorder) Select(paths ...any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Select", reflect.TypeOf((*MockCollectionRef)(nil).Select), paths...)
+}
+
+// SelectPaths mocks base method.
+func (m *MockCollectionRef) SelectPaths(fieldPaths ...firestore.FieldPath) Query {
+	m.ctrl.T.Helper()
+	varargs := []any{}
+	for _, a := range fieldPaths {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "SelectPaths", varargs...)
+	ret0, _ := ret[0].(Query)
+	return ret0
+}
+
+// SelectPaths indicates an expected call of SelectPaths.
+func (mr *MockCollectionRefMockRecorder) SelectPaths(fieldPaths ...any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SelectPaths", reflect.TypeOf((*MockCollectionRef)(nil).SelectPaths), fieldPaths...)
 }
 
 // Snapshots mocks base method.
@@ -325,4 +385,32 @@ func (m *MockCollectionRef) Where(path, op string, value any) Query {
 func (mr *MockCollectionRefMockRecorder) Where(path, op, value any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Where", reflect.TypeOf((*MockCollectionRef)(nil).Where), path, op, value)
+}
+
+// WhereEntity mocks base method.
+func (m *MockCollectionRef) WhereEntity(ef firestore.EntityFilter) Query {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "WhereEntity", ef)
+	ret0, _ := ret[0].(Query)
+	return ret0
+}
+
+// WhereEntity indicates an expected call of WhereEntity.
+func (mr *MockCollectionRefMockRecorder) WhereEntity(ef any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WhereEntity", reflect.TypeOf((*MockCollectionRef)(nil).WhereEntity), ef)
+}
+
+// WherePath mocks base method.
+func (m *MockCollectionRef) WherePath(fp firestore.FieldPath, op string, value any) Query {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "WherePath", fp, op, value)
+	ret0, _ := ret[0].(Query)
+	return ret0
+}
+
+// WherePath indicates an expected call of WherePath.
+func (mr *MockCollectionRefMockRecorder) WherePath(fp, op, value any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WherePath", reflect.TypeOf((*MockCollectionRef)(nil).WherePath), fp, op, value)
 }

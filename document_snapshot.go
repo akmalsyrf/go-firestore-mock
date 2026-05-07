@@ -13,6 +13,7 @@ type DocumentSnapshot interface {
 	Data() map[string]interface{}
 	DataTo(p interface{}) error
 	DataAt(path string) (interface{}, error)
+	DataAtPath(fp firestore.FieldPath) (interface{}, error)
 	Exists() bool
 	CreateTime() time.Time
 	UpdateTime() time.Time
@@ -34,6 +35,10 @@ func (w *documentSnapshotWrapper) DataTo(p interface{}) error {
 
 func (w *documentSnapshotWrapper) DataAt(path string) (interface{}, error) {
 	return w.snap.DataAt(path)
+}
+
+func (w *documentSnapshotWrapper) DataAtPath(fp firestore.FieldPath) (interface{}, error) {
+	return w.snap.DataAtPath(fp)
 }
 
 func (w *documentSnapshotWrapper) Exists() bool {

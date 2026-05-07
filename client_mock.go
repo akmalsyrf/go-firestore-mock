@@ -137,6 +137,20 @@ func (mr *MockFirestoreClientMockRecorder) Doc(path any) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Doc", reflect.TypeOf((*MockFirestoreClient)(nil).Doc), path)
 }
 
+// DocFromFullPath mocks base method.
+func (m *MockFirestoreClient) DocFromFullPath(fullPath string) DocumentRef {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DocFromFullPath", fullPath)
+	ret0, _ := ret[0].(DocumentRef)
+	return ret0
+}
+
+// DocFromFullPath indicates an expected call of DocFromFullPath.
+func (mr *MockFirestoreClientMockRecorder) DocFromFullPath(fullPath any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DocFromFullPath", reflect.TypeOf((*MockFirestoreClient)(nil).DocFromFullPath), fullPath)
+}
+
 // GetAll mocks base method.
 func (m *MockFirestoreClient) GetAll(ctx context.Context, docRefs []*firestore.DocumentRef) ([]DocumentSnapshot, error) {
 	m.ctrl.T.Helper()
@@ -314,6 +328,20 @@ func (mr *MockQueryMockRecorder) OrderBy(path, dir any) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "OrderBy", reflect.TypeOf((*MockQuery)(nil).OrderBy), path, dir)
 }
 
+// OrderByPath mocks base method.
+func (m *MockQuery) OrderByPath(fp firestore.FieldPath, dir firestore.Direction) Query {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "OrderByPath", fp, dir)
+	ret0, _ := ret[0].(Query)
+	return ret0
+}
+
+// OrderByPath indicates an expected call of OrderByPath.
+func (mr *MockQueryMockRecorder) OrderByPath(fp, dir any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "OrderByPath", reflect.TypeOf((*MockQuery)(nil).OrderByPath), fp, dir)
+}
+
 // Select mocks base method.
 func (m *MockQuery) Select(paths ...string) Query {
 	m.ctrl.T.Helper()
@@ -330,6 +358,24 @@ func (m *MockQuery) Select(paths ...string) Query {
 func (mr *MockQueryMockRecorder) Select(paths ...any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Select", reflect.TypeOf((*MockQuery)(nil).Select), paths...)
+}
+
+// SelectPaths mocks base method.
+func (m *MockQuery) SelectPaths(fieldPaths ...firestore.FieldPath) Query {
+	m.ctrl.T.Helper()
+	varargs := []any{}
+	for _, a := range fieldPaths {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "SelectPaths", varargs...)
+	ret0, _ := ret[0].(Query)
+	return ret0
+}
+
+// SelectPaths indicates an expected call of SelectPaths.
+func (mr *MockQueryMockRecorder) SelectPaths(fieldPaths ...any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SelectPaths", reflect.TypeOf((*MockQuery)(nil).SelectPaths), fieldPaths...)
 }
 
 // Snapshots mocks base method.
@@ -394,4 +440,32 @@ func (m *MockQuery) Where(path, op string, value any) Query {
 func (mr *MockQueryMockRecorder) Where(path, op, value any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Where", reflect.TypeOf((*MockQuery)(nil).Where), path, op, value)
+}
+
+// WhereEntity mocks base method.
+func (m *MockQuery) WhereEntity(ef firestore.EntityFilter) Query {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "WhereEntity", ef)
+	ret0, _ := ret[0].(Query)
+	return ret0
+}
+
+// WhereEntity indicates an expected call of WhereEntity.
+func (mr *MockQueryMockRecorder) WhereEntity(ef any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WhereEntity", reflect.TypeOf((*MockQuery)(nil).WhereEntity), ef)
+}
+
+// WherePath mocks base method.
+func (m *MockQuery) WherePath(fp firestore.FieldPath, op string, value any) Query {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "WherePath", fp, op, value)
+	ret0, _ := ret[0].(Query)
+	return ret0
+}
+
+// WherePath indicates an expected call of WherePath.
+func (mr *MockQueryMockRecorder) WherePath(fp, op, value any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WherePath", reflect.TypeOf((*MockQuery)(nil).WherePath), fp, op, value)
 }
