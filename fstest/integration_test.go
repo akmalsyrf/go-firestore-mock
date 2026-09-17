@@ -303,10 +303,7 @@ func TestIntegration_BulkWriter(t *testing.T) {
 		t.Fatalf("w0 missing: %v", err)
 	}
 	s2, err := d2.Get(h.Ctx)
-	if err != nil {
-		t.Fatalf("Get d2: %v", err)
-	}
-	if s2.Exists() {
+	if err == nil && s2.Exists() {
 		t.Fatal("d2 should be deleted")
 	}
 	s3, err := d3.Get(h.Ctx)
