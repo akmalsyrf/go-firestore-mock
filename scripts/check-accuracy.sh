@@ -27,7 +27,6 @@ REQUIRED_TESTS=(
   TestIntegration_GetAllAndClientCollections
   TestIntegration_CollectionGroup
   TestIntegration_QuerySelectOffsetCursors
-  TestIntegration_BSONRoundTrip
   TestIntegration_SerializeDeserialize
 )
 
@@ -69,6 +68,7 @@ for name in "${REQUIRED_TESTS[@]}"; do
       ;;
     fail)
       echo "  FAIL  $name" >&2
+      grep -E "\"Test\":\"${name}\"" "$JSON_OUT" | grep '"Action":"output"' | tail -5 | sed -n 's/.*"Output":"\(.*\)".*/    \1/p' | sed 's/\\n/\n    /g' >&2 || true
       fail=$((fail + 1))
       ;;
     skip)

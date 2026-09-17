@@ -15,7 +15,7 @@ import (
 	time "time"
 
 	firestore "cloud.google.com/go/firestore"
-	v2 "github.com/akmalsyrf/go-firestore-mock/v2"
+	fsmock "github.com/akmalsyrf/go-firestore-mock/v2"
 	gomock "go.uber.org/mock/gomock"
 	iterator "google.golang.org/api/iterator"
 )
@@ -45,10 +45,10 @@ func (m *MockClient) EXPECT() *MockClientMockRecorder {
 }
 
 // Batch mocks base method.
-func (m *MockClient) Batch() v2.WriteBatch {
+func (m *MockClient) Batch() fsmock.WriteBatch {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Batch")
-	ret0, _ := ret[0].(v2.WriteBatch)
+	ret0, _ := ret[0].(fsmock.WriteBatch)
 	return ret0
 }
 
@@ -59,10 +59,10 @@ func (mr *MockClientMockRecorder) Batch() *gomock.Call {
 }
 
 // BulkWriter mocks base method.
-func (m *MockClient) BulkWriter(ctx context.Context) v2.BulkWriter {
+func (m *MockClient) BulkWriter(ctx context.Context) fsmock.BulkWriter {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "BulkWriter", ctx)
-	ret0, _ := ret[0].(v2.BulkWriter)
+	ret0, _ := ret[0].(fsmock.BulkWriter)
 	return ret0
 }
 
@@ -87,10 +87,10 @@ func (mr *MockClientMockRecorder) Close() *gomock.Call {
 }
 
 // Collection mocks base method.
-func (m *MockClient) Collection(path string) v2.CollectionRef {
+func (m *MockClient) Collection(path string) fsmock.CollectionRef {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Collection", path)
-	ret0, _ := ret[0].(v2.CollectionRef)
+	ret0, _ := ret[0].(fsmock.CollectionRef)
 	return ret0
 }
 
@@ -101,10 +101,10 @@ func (mr *MockClientMockRecorder) Collection(path any) *gomock.Call {
 }
 
 // CollectionGroup mocks base method.
-func (m *MockClient) CollectionGroup(collectionID string) v2.CollectionGroupRef {
+func (m *MockClient) CollectionGroup(collectionID string) fsmock.CollectionGroupRef {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CollectionGroup", collectionID)
-	ret0, _ := ret[0].(v2.CollectionGroupRef)
+	ret0, _ := ret[0].(fsmock.CollectionGroupRef)
 	return ret0
 }
 
@@ -115,10 +115,10 @@ func (mr *MockClientMockRecorder) CollectionGroup(collectionID any) *gomock.Call
 }
 
 // Collections mocks base method.
-func (m *MockClient) Collections(ctx context.Context) v2.CollectionIterator {
+func (m *MockClient) Collections(ctx context.Context) fsmock.CollectionIterator {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Collections", ctx)
-	ret0, _ := ret[0].(v2.CollectionIterator)
+	ret0, _ := ret[0].(fsmock.CollectionIterator)
 	return ret0
 }
 
@@ -129,10 +129,10 @@ func (mr *MockClientMockRecorder) Collections(ctx any) *gomock.Call {
 }
 
 // Doc mocks base method.
-func (m *MockClient) Doc(path string) v2.DocumentRef {
+func (m *MockClient) Doc(path string) fsmock.DocumentRef {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Doc", path)
-	ret0, _ := ret[0].(v2.DocumentRef)
+	ret0, _ := ret[0].(fsmock.DocumentRef)
 	return ret0
 }
 
@@ -143,10 +143,10 @@ func (mr *MockClientMockRecorder) Doc(path any) *gomock.Call {
 }
 
 // DocFromFullPath mocks base method.
-func (m *MockClient) DocFromFullPath(fullPath string) v2.DocumentRef {
+func (m *MockClient) DocFromFullPath(fullPath string) fsmock.DocumentRef {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "DocFromFullPath", fullPath)
-	ret0, _ := ret[0].(v2.DocumentRef)
+	ret0, _ := ret[0].(fsmock.DocumentRef)
 	return ret0
 }
 
@@ -157,10 +157,10 @@ func (mr *MockClientMockRecorder) DocFromFullPath(fullPath any) *gomock.Call {
 }
 
 // GetAll mocks base method.
-func (m *MockClient) GetAll(ctx context.Context, docRefs []v2.DocumentRef) ([]v2.DocumentSnapshot, error) {
+func (m *MockClient) GetAll(ctx context.Context, docRefs []fsmock.DocumentRef) ([]fsmock.DocumentSnapshot, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetAll", ctx, docRefs)
-	ret0, _ := ret[0].([]v2.DocumentSnapshot)
+	ret0, _ := ret[0].([]fsmock.DocumentSnapshot)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -172,10 +172,10 @@ func (mr *MockClientMockRecorder) GetAll(ctx, docRefs any) *gomock.Call {
 }
 
 // Pipeline mocks base method.
-func (m *MockClient) Pipeline() v2.PipelineSource {
+func (m *MockClient) Pipeline() fsmock.PipelineSource {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Pipeline")
-	ret0, _ := ret[0].(v2.PipelineSource)
+	ret0, _ := ret[0].(fsmock.PipelineSource)
 	return ret0
 }
 
@@ -186,7 +186,7 @@ func (mr *MockClientMockRecorder) Pipeline() *gomock.Call {
 }
 
 // RunTransaction mocks base method.
-func (m *MockClient) RunTransaction(ctx context.Context, f func(context.Context, v2.Transaction) error, opts ...firestore.TransactionOption) error {
+func (m *MockClient) RunTransaction(ctx context.Context, f func(context.Context, fsmock.Transaction) error, opts ...firestore.TransactionOption) error {
 	m.ctrl.T.Helper()
 	varargs := []any{ctx, f}
 	for _, a := range opts {
@@ -205,10 +205,10 @@ func (mr *MockClientMockRecorder) RunTransaction(ctx, f any, opts ...any) *gomoc
 }
 
 // WithAlwaysUseImplicitOrderBy mocks base method.
-func (m *MockClient) WithAlwaysUseImplicitOrderBy(b bool) v2.Client {
+func (m *MockClient) WithAlwaysUseImplicitOrderBy(b bool) fsmock.Client {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "WithAlwaysUseImplicitOrderBy", b)
-	ret0, _ := ret[0].(v2.Client)
+	ret0, _ := ret[0].(fsmock.Client)
 	return ret0
 }
 
@@ -219,14 +219,14 @@ func (mr *MockClientMockRecorder) WithAlwaysUseImplicitOrderBy(b any) *gomock.Ca
 }
 
 // WithReadOptions mocks base method.
-func (m *MockClient) WithReadOptions(opts ...firestore.ReadOption) v2.Client {
+func (m *MockClient) WithReadOptions(opts ...firestore.ReadOption) fsmock.Client {
 	m.ctrl.T.Helper()
 	varargs := []any{}
 	for _, a := range opts {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "WithReadOptions", varargs...)
-	ret0, _ := ret[0].(v2.Client)
+	ret0, _ := ret[0].(fsmock.Client)
 	return ret0
 }
 
@@ -261,10 +261,10 @@ func (m *MockQuery) EXPECT() *MockQueryMockRecorder {
 }
 
 // Deserialize mocks base method.
-func (m *MockQuery) Deserialize(bytes []byte) (v2.Query, error) {
+func (m *MockQuery) Deserialize(bytes []byte) (fsmock.Query, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Deserialize", bytes)
-	ret0, _ := ret[0].(v2.Query)
+	ret0, _ := ret[0].(fsmock.Query)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -276,10 +276,10 @@ func (mr *MockQueryMockRecorder) Deserialize(bytes any) *gomock.Call {
 }
 
 // Documents mocks base method.
-func (m *MockQuery) Documents(ctx context.Context) v2.DocumentIterator {
+func (m *MockQuery) Documents(ctx context.Context) fsmock.DocumentIterator {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Documents", ctx)
-	ret0, _ := ret[0].(v2.DocumentIterator)
+	ret0, _ := ret[0].(fsmock.DocumentIterator)
 	return ret0
 }
 
@@ -290,14 +290,14 @@ func (mr *MockQueryMockRecorder) Documents(ctx any) *gomock.Call {
 }
 
 // EndAt mocks base method.
-func (m *MockQuery) EndAt(docSnapshotOrFieldValues ...any) v2.Query {
+func (m *MockQuery) EndAt(docSnapshotOrFieldValues ...any) fsmock.Query {
 	m.ctrl.T.Helper()
 	varargs := []any{}
 	for _, a := range docSnapshotOrFieldValues {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "EndAt", varargs...)
-	ret0, _ := ret[0].(v2.Query)
+	ret0, _ := ret[0].(fsmock.Query)
 	return ret0
 }
 
@@ -308,14 +308,14 @@ func (mr *MockQueryMockRecorder) EndAt(docSnapshotOrFieldValues ...any) *gomock.
 }
 
 // EndBefore mocks base method.
-func (m *MockQuery) EndBefore(docSnapshotOrFieldValues ...any) v2.Query {
+func (m *MockQuery) EndBefore(docSnapshotOrFieldValues ...any) fsmock.Query {
 	m.ctrl.T.Helper()
 	varargs := []any{}
 	for _, a := range docSnapshotOrFieldValues {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "EndBefore", varargs...)
-	ret0, _ := ret[0].(v2.Query)
+	ret0, _ := ret[0].(fsmock.Query)
 	return ret0
 }
 
@@ -326,10 +326,10 @@ func (mr *MockQueryMockRecorder) EndBefore(docSnapshotOrFieldValues ...any) *gom
 }
 
 // FindNearest mocks base method.
-func (m *MockQuery) FindNearest(vectorField string, queryVector any, limit int, measure firestore.DistanceMeasure, options *firestore.FindNearestOptions) v2.VectorQuery {
+func (m *MockQuery) FindNearest(vectorField string, queryVector any, limit int, measure firestore.DistanceMeasure, options *firestore.FindNearestOptions) fsmock.VectorQuery {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FindNearest", vectorField, queryVector, limit, measure, options)
-	ret0, _ := ret[0].(v2.VectorQuery)
+	ret0, _ := ret[0].(fsmock.VectorQuery)
 	return ret0
 }
 
@@ -340,10 +340,10 @@ func (mr *MockQueryMockRecorder) FindNearest(vectorField, queryVector, limit, me
 }
 
 // FindNearestPath mocks base method.
-func (m *MockQuery) FindNearestPath(vectorFieldPath firestore.FieldPath, queryVector any, limit int, measure firestore.DistanceMeasure, options *firestore.FindNearestOptions) v2.VectorQuery {
+func (m *MockQuery) FindNearestPath(vectorFieldPath firestore.FieldPath, queryVector any, limit int, measure firestore.DistanceMeasure, options *firestore.FindNearestOptions) fsmock.VectorQuery {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FindNearestPath", vectorFieldPath, queryVector, limit, measure, options)
-	ret0, _ := ret[0].(v2.VectorQuery)
+	ret0, _ := ret[0].(fsmock.VectorQuery)
 	return ret0
 }
 
@@ -354,10 +354,10 @@ func (mr *MockQueryMockRecorder) FindNearestPath(vectorFieldPath, queryVector, l
 }
 
 // Limit mocks base method.
-func (m *MockQuery) Limit(n int) v2.Query {
+func (m *MockQuery) Limit(n int) fsmock.Query {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Limit", n)
-	ret0, _ := ret[0].(v2.Query)
+	ret0, _ := ret[0].(fsmock.Query)
 	return ret0
 }
 
@@ -368,10 +368,10 @@ func (mr *MockQueryMockRecorder) Limit(n any) *gomock.Call {
 }
 
 // LimitToLast mocks base method.
-func (m *MockQuery) LimitToLast(n int) v2.Query {
+func (m *MockQuery) LimitToLast(n int) fsmock.Query {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "LimitToLast", n)
-	ret0, _ := ret[0].(v2.Query)
+	ret0, _ := ret[0].(fsmock.Query)
 	return ret0
 }
 
@@ -382,10 +382,10 @@ func (mr *MockQueryMockRecorder) LimitToLast(n any) *gomock.Call {
 }
 
 // NewAggregationQuery mocks base method.
-func (m *MockQuery) NewAggregationQuery() v2.AggregationQuery {
+func (m *MockQuery) NewAggregationQuery() fsmock.AggregationQuery {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "NewAggregationQuery")
-	ret0, _ := ret[0].(v2.AggregationQuery)
+	ret0, _ := ret[0].(fsmock.AggregationQuery)
 	return ret0
 }
 
@@ -396,10 +396,10 @@ func (mr *MockQueryMockRecorder) NewAggregationQuery() *gomock.Call {
 }
 
 // Offset mocks base method.
-func (m *MockQuery) Offset(n int) v2.Query {
+func (m *MockQuery) Offset(n int) fsmock.Query {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Offset", n)
-	ret0, _ := ret[0].(v2.Query)
+	ret0, _ := ret[0].(fsmock.Query)
 	return ret0
 }
 
@@ -410,10 +410,10 @@ func (mr *MockQueryMockRecorder) Offset(n any) *gomock.Call {
 }
 
 // OrderBy mocks base method.
-func (m *MockQuery) OrderBy(path string, dir firestore.Direction) v2.Query {
+func (m *MockQuery) OrderBy(path string, dir firestore.Direction) fsmock.Query {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "OrderBy", path, dir)
-	ret0, _ := ret[0].(v2.Query)
+	ret0, _ := ret[0].(fsmock.Query)
 	return ret0
 }
 
@@ -424,10 +424,10 @@ func (mr *MockQueryMockRecorder) OrderBy(path, dir any) *gomock.Call {
 }
 
 // OrderByPath mocks base method.
-func (m *MockQuery) OrderByPath(fp firestore.FieldPath, dir firestore.Direction) v2.Query {
+func (m *MockQuery) OrderByPath(fp firestore.FieldPath, dir firestore.Direction) fsmock.Query {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "OrderByPath", fp, dir)
-	ret0, _ := ret[0].(v2.Query)
+	ret0, _ := ret[0].(fsmock.Query)
 	return ret0
 }
 
@@ -438,10 +438,10 @@ func (mr *MockQueryMockRecorder) OrderByPath(fp, dir any) *gomock.Call {
 }
 
 // Pipeline mocks base method.
-func (m *MockQuery) Pipeline() v2.Pipeline {
+func (m *MockQuery) Pipeline() fsmock.Pipeline {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Pipeline")
-	ret0, _ := ret[0].(v2.Pipeline)
+	ret0, _ := ret[0].(fsmock.Pipeline)
 	return ret0
 }
 
@@ -452,14 +452,14 @@ func (mr *MockQueryMockRecorder) Pipeline() *gomock.Call {
 }
 
 // Select mocks base method.
-func (m *MockQuery) Select(paths ...string) v2.Query {
+func (m *MockQuery) Select(paths ...string) fsmock.Query {
 	m.ctrl.T.Helper()
 	varargs := []any{}
 	for _, a := range paths {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "Select", varargs...)
-	ret0, _ := ret[0].(v2.Query)
+	ret0, _ := ret[0].(fsmock.Query)
 	return ret0
 }
 
@@ -470,14 +470,14 @@ func (mr *MockQueryMockRecorder) Select(paths ...any) *gomock.Call {
 }
 
 // SelectPaths mocks base method.
-func (m *MockQuery) SelectPaths(fieldPaths ...firestore.FieldPath) v2.Query {
+func (m *MockQuery) SelectPaths(fieldPaths ...firestore.FieldPath) fsmock.Query {
 	m.ctrl.T.Helper()
 	varargs := []any{}
 	for _, a := range fieldPaths {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "SelectPaths", varargs...)
-	ret0, _ := ret[0].(v2.Query)
+	ret0, _ := ret[0].(fsmock.Query)
 	return ret0
 }
 
@@ -503,10 +503,10 @@ func (mr *MockQueryMockRecorder) Serialize() *gomock.Call {
 }
 
 // Snapshots mocks base method.
-func (m *MockQuery) Snapshots(ctx context.Context) v2.QuerySnapshotIterator {
+func (m *MockQuery) Snapshots(ctx context.Context) fsmock.QuerySnapshotIterator {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Snapshots", ctx)
-	ret0, _ := ret[0].(v2.QuerySnapshotIterator)
+	ret0, _ := ret[0].(fsmock.QuerySnapshotIterator)
 	return ret0
 }
 
@@ -517,14 +517,14 @@ func (mr *MockQueryMockRecorder) Snapshots(ctx any) *gomock.Call {
 }
 
 // StartAfter mocks base method.
-func (m *MockQuery) StartAfter(docSnapshotOrFieldValues ...any) v2.Query {
+func (m *MockQuery) StartAfter(docSnapshotOrFieldValues ...any) fsmock.Query {
 	m.ctrl.T.Helper()
 	varargs := []any{}
 	for _, a := range docSnapshotOrFieldValues {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "StartAfter", varargs...)
-	ret0, _ := ret[0].(v2.Query)
+	ret0, _ := ret[0].(fsmock.Query)
 	return ret0
 }
 
@@ -535,14 +535,14 @@ func (mr *MockQueryMockRecorder) StartAfter(docSnapshotOrFieldValues ...any) *go
 }
 
 // StartAt mocks base method.
-func (m *MockQuery) StartAt(docSnapshotOrFieldValues ...any) v2.Query {
+func (m *MockQuery) StartAt(docSnapshotOrFieldValues ...any) fsmock.Query {
 	m.ctrl.T.Helper()
 	varargs := []any{}
 	for _, a := range docSnapshotOrFieldValues {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "StartAt", varargs...)
-	ret0, _ := ret[0].(v2.Query)
+	ret0, _ := ret[0].(fsmock.Query)
 	return ret0
 }
 
@@ -553,10 +553,10 @@ func (mr *MockQueryMockRecorder) StartAt(docSnapshotOrFieldValues ...any) *gomoc
 }
 
 // Where mocks base method.
-func (m *MockQuery) Where(path, op string, value any) v2.Query {
+func (m *MockQuery) Where(path, op string, value any) fsmock.Query {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Where", path, op, value)
-	ret0, _ := ret[0].(v2.Query)
+	ret0, _ := ret[0].(fsmock.Query)
 	return ret0
 }
 
@@ -567,10 +567,10 @@ func (mr *MockQueryMockRecorder) Where(path, op, value any) *gomock.Call {
 }
 
 // WhereEntity mocks base method.
-func (m *MockQuery) WhereEntity(ef firestore.EntityFilter) v2.Query {
+func (m *MockQuery) WhereEntity(ef firestore.EntityFilter) fsmock.Query {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "WhereEntity", ef)
-	ret0, _ := ret[0].(v2.Query)
+	ret0, _ := ret[0].(fsmock.Query)
 	return ret0
 }
 
@@ -581,10 +581,10 @@ func (mr *MockQueryMockRecorder) WhereEntity(ef any) *gomock.Call {
 }
 
 // WherePath mocks base method.
-func (m *MockQuery) WherePath(fp firestore.FieldPath, op string, value any) v2.Query {
+func (m *MockQuery) WherePath(fp firestore.FieldPath, op string, value any) fsmock.Query {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "WherePath", fp, op, value)
-	ret0, _ := ret[0].(v2.Query)
+	ret0, _ := ret[0].(fsmock.Query)
 	return ret0
 }
 
@@ -595,14 +595,14 @@ func (mr *MockQueryMockRecorder) WherePath(fp, op, value any) *gomock.Call {
 }
 
 // WithReadOptions mocks base method.
-func (m *MockQuery) WithReadOptions(opts ...firestore.ReadOption) v2.Query {
+func (m *MockQuery) WithReadOptions(opts ...firestore.ReadOption) fsmock.Query {
 	m.ctrl.T.Helper()
 	varargs := []any{}
 	for _, a := range opts {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "WithReadOptions", varargs...)
-	ret0, _ := ret[0].(v2.Query)
+	ret0, _ := ret[0].(fsmock.Query)
 	return ret0
 }
 
@@ -613,14 +613,14 @@ func (mr *MockQueryMockRecorder) WithReadOptions(opts ...any) *gomock.Call {
 }
 
 // WithRunOptions mocks base method.
-func (m *MockQuery) WithRunOptions(opts ...firestore.RunOption) v2.Query {
+func (m *MockQuery) WithRunOptions(opts ...firestore.RunOption) fsmock.Query {
 	m.ctrl.T.Helper()
 	varargs := []any{}
 	for _, a := range opts {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "WithRunOptions", varargs...)
-	ret0, _ := ret[0].(v2.Query)
+	ret0, _ := ret[0].(fsmock.Query)
 	return ret0
 }
 
@@ -655,10 +655,10 @@ func (m *MockCollectionRef) EXPECT() *MockCollectionRefMockRecorder {
 }
 
 // Add mocks base method.
-func (m *MockCollectionRef) Add(ctx context.Context, data any) (v2.DocumentRef, *firestore.WriteResult, error) {
+func (m *MockCollectionRef) Add(ctx context.Context, data any) (fsmock.DocumentRef, *firestore.WriteResult, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Add", ctx, data)
-	ret0, _ := ret[0].(v2.DocumentRef)
+	ret0, _ := ret[0].(fsmock.DocumentRef)
 	ret1, _ := ret[1].(*firestore.WriteResult)
 	ret2, _ := ret[2].(error)
 	return ret0, ret1, ret2
@@ -671,10 +671,10 @@ func (mr *MockCollectionRefMockRecorder) Add(ctx, data any) *gomock.Call {
 }
 
 // Deserialize mocks base method.
-func (m *MockCollectionRef) Deserialize(bytes []byte) (v2.Query, error) {
+func (m *MockCollectionRef) Deserialize(bytes []byte) (fsmock.Query, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Deserialize", bytes)
-	ret0, _ := ret[0].(v2.Query)
+	ret0, _ := ret[0].(fsmock.Query)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -686,10 +686,10 @@ func (mr *MockCollectionRefMockRecorder) Deserialize(bytes any) *gomock.Call {
 }
 
 // Doc mocks base method.
-func (m *MockCollectionRef) Doc(id string) v2.DocumentRef {
+func (m *MockCollectionRef) Doc(id string) fsmock.DocumentRef {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Doc", id)
-	ret0, _ := ret[0].(v2.DocumentRef)
+	ret0, _ := ret[0].(fsmock.DocumentRef)
 	return ret0
 }
 
@@ -700,10 +700,10 @@ func (mr *MockCollectionRefMockRecorder) Doc(id any) *gomock.Call {
 }
 
 // DocumentRefs mocks base method.
-func (m *MockCollectionRef) DocumentRefs(ctx context.Context) v2.DocumentRefIterator {
+func (m *MockCollectionRef) DocumentRefs(ctx context.Context) fsmock.DocumentRefIterator {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "DocumentRefs", ctx)
-	ret0, _ := ret[0].(v2.DocumentRefIterator)
+	ret0, _ := ret[0].(fsmock.DocumentRefIterator)
 	return ret0
 }
 
@@ -714,10 +714,10 @@ func (mr *MockCollectionRefMockRecorder) DocumentRefs(ctx any) *gomock.Call {
 }
 
 // Documents mocks base method.
-func (m *MockCollectionRef) Documents(ctx context.Context) v2.DocumentIterator {
+func (m *MockCollectionRef) Documents(ctx context.Context) fsmock.DocumentIterator {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Documents", ctx)
-	ret0, _ := ret[0].(v2.DocumentIterator)
+	ret0, _ := ret[0].(fsmock.DocumentIterator)
 	return ret0
 }
 
@@ -728,14 +728,14 @@ func (mr *MockCollectionRefMockRecorder) Documents(ctx any) *gomock.Call {
 }
 
 // EndAt mocks base method.
-func (m *MockCollectionRef) EndAt(docSnapshotOrFieldValues ...any) v2.Query {
+func (m *MockCollectionRef) EndAt(docSnapshotOrFieldValues ...any) fsmock.Query {
 	m.ctrl.T.Helper()
 	varargs := []any{}
 	for _, a := range docSnapshotOrFieldValues {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "EndAt", varargs...)
-	ret0, _ := ret[0].(v2.Query)
+	ret0, _ := ret[0].(fsmock.Query)
 	return ret0
 }
 
@@ -746,14 +746,14 @@ func (mr *MockCollectionRefMockRecorder) EndAt(docSnapshotOrFieldValues ...any) 
 }
 
 // EndBefore mocks base method.
-func (m *MockCollectionRef) EndBefore(docSnapshotOrFieldValues ...any) v2.Query {
+func (m *MockCollectionRef) EndBefore(docSnapshotOrFieldValues ...any) fsmock.Query {
 	m.ctrl.T.Helper()
 	varargs := []any{}
 	for _, a := range docSnapshotOrFieldValues {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "EndBefore", varargs...)
-	ret0, _ := ret[0].(v2.Query)
+	ret0, _ := ret[0].(fsmock.Query)
 	return ret0
 }
 
@@ -764,10 +764,10 @@ func (mr *MockCollectionRefMockRecorder) EndBefore(docSnapshotOrFieldValues ...a
 }
 
 // FindNearest mocks base method.
-func (m *MockCollectionRef) FindNearest(vectorField string, queryVector any, limit int, measure firestore.DistanceMeasure, options *firestore.FindNearestOptions) v2.VectorQuery {
+func (m *MockCollectionRef) FindNearest(vectorField string, queryVector any, limit int, measure firestore.DistanceMeasure, options *firestore.FindNearestOptions) fsmock.VectorQuery {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FindNearest", vectorField, queryVector, limit, measure, options)
-	ret0, _ := ret[0].(v2.VectorQuery)
+	ret0, _ := ret[0].(fsmock.VectorQuery)
 	return ret0
 }
 
@@ -778,10 +778,10 @@ func (mr *MockCollectionRefMockRecorder) FindNearest(vectorField, queryVector, l
 }
 
 // FindNearestPath mocks base method.
-func (m *MockCollectionRef) FindNearestPath(vectorFieldPath firestore.FieldPath, queryVector any, limit int, measure firestore.DistanceMeasure, options *firestore.FindNearestOptions) v2.VectorQuery {
+func (m *MockCollectionRef) FindNearestPath(vectorFieldPath firestore.FieldPath, queryVector any, limit int, measure firestore.DistanceMeasure, options *firestore.FindNearestOptions) fsmock.VectorQuery {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FindNearestPath", vectorFieldPath, queryVector, limit, measure, options)
-	ret0, _ := ret[0].(v2.VectorQuery)
+	ret0, _ := ret[0].(fsmock.VectorQuery)
 	return ret0
 }
 
@@ -806,10 +806,10 @@ func (mr *MockCollectionRefMockRecorder) ID() *gomock.Call {
 }
 
 // Limit mocks base method.
-func (m *MockCollectionRef) Limit(n int) v2.Query {
+func (m *MockCollectionRef) Limit(n int) fsmock.Query {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Limit", n)
-	ret0, _ := ret[0].(v2.Query)
+	ret0, _ := ret[0].(fsmock.Query)
 	return ret0
 }
 
@@ -820,10 +820,10 @@ func (mr *MockCollectionRefMockRecorder) Limit(n any) *gomock.Call {
 }
 
 // LimitToLast mocks base method.
-func (m *MockCollectionRef) LimitToLast(n int) v2.Query {
+func (m *MockCollectionRef) LimitToLast(n int) fsmock.Query {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "LimitToLast", n)
-	ret0, _ := ret[0].(v2.Query)
+	ret0, _ := ret[0].(fsmock.Query)
 	return ret0
 }
 
@@ -834,10 +834,10 @@ func (mr *MockCollectionRefMockRecorder) LimitToLast(n any) *gomock.Call {
 }
 
 // NewAggregationQuery mocks base method.
-func (m *MockCollectionRef) NewAggregationQuery() v2.AggregationQuery {
+func (m *MockCollectionRef) NewAggregationQuery() fsmock.AggregationQuery {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "NewAggregationQuery")
-	ret0, _ := ret[0].(v2.AggregationQuery)
+	ret0, _ := ret[0].(fsmock.AggregationQuery)
 	return ret0
 }
 
@@ -848,10 +848,10 @@ func (mr *MockCollectionRefMockRecorder) NewAggregationQuery() *gomock.Call {
 }
 
 // NewDoc mocks base method.
-func (m *MockCollectionRef) NewDoc() v2.DocumentRef {
+func (m *MockCollectionRef) NewDoc() fsmock.DocumentRef {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "NewDoc")
-	ret0, _ := ret[0].(v2.DocumentRef)
+	ret0, _ := ret[0].(fsmock.DocumentRef)
 	return ret0
 }
 
@@ -862,10 +862,10 @@ func (mr *MockCollectionRefMockRecorder) NewDoc() *gomock.Call {
 }
 
 // Offset mocks base method.
-func (m *MockCollectionRef) Offset(n int) v2.Query {
+func (m *MockCollectionRef) Offset(n int) fsmock.Query {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Offset", n)
-	ret0, _ := ret[0].(v2.Query)
+	ret0, _ := ret[0].(fsmock.Query)
 	return ret0
 }
 
@@ -876,10 +876,10 @@ func (mr *MockCollectionRefMockRecorder) Offset(n any) *gomock.Call {
 }
 
 // OrderBy mocks base method.
-func (m *MockCollectionRef) OrderBy(path string, dir firestore.Direction) v2.Query {
+func (m *MockCollectionRef) OrderBy(path string, dir firestore.Direction) fsmock.Query {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "OrderBy", path, dir)
-	ret0, _ := ret[0].(v2.Query)
+	ret0, _ := ret[0].(fsmock.Query)
 	return ret0
 }
 
@@ -890,10 +890,10 @@ func (mr *MockCollectionRefMockRecorder) OrderBy(path, dir any) *gomock.Call {
 }
 
 // OrderByPath mocks base method.
-func (m *MockCollectionRef) OrderByPath(fp firestore.FieldPath, dir firestore.Direction) v2.Query {
+func (m *MockCollectionRef) OrderByPath(fp firestore.FieldPath, dir firestore.Direction) fsmock.Query {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "OrderByPath", fp, dir)
-	ret0, _ := ret[0].(v2.Query)
+	ret0, _ := ret[0].(fsmock.Query)
 	return ret0
 }
 
@@ -904,10 +904,10 @@ func (mr *MockCollectionRefMockRecorder) OrderByPath(fp, dir any) *gomock.Call {
 }
 
 // Parent mocks base method.
-func (m *MockCollectionRef) Parent() v2.DocumentRef {
+func (m *MockCollectionRef) Parent() fsmock.DocumentRef {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Parent")
-	ret0, _ := ret[0].(v2.DocumentRef)
+	ret0, _ := ret[0].(fsmock.DocumentRef)
 	return ret0
 }
 
@@ -932,10 +932,10 @@ func (mr *MockCollectionRefMockRecorder) Path() *gomock.Call {
 }
 
 // Pipeline mocks base method.
-func (m *MockCollectionRef) Pipeline() v2.Pipeline {
+func (m *MockCollectionRef) Pipeline() fsmock.Pipeline {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Pipeline")
-	ret0, _ := ret[0].(v2.Pipeline)
+	ret0, _ := ret[0].(fsmock.Pipeline)
 	return ret0
 }
 
@@ -960,14 +960,14 @@ func (mr *MockCollectionRefMockRecorder) Reference() *gomock.Call {
 }
 
 // Select mocks base method.
-func (m *MockCollectionRef) Select(paths ...string) v2.Query {
+func (m *MockCollectionRef) Select(paths ...string) fsmock.Query {
 	m.ctrl.T.Helper()
 	varargs := []any{}
 	for _, a := range paths {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "Select", varargs...)
-	ret0, _ := ret[0].(v2.Query)
+	ret0, _ := ret[0].(fsmock.Query)
 	return ret0
 }
 
@@ -978,14 +978,14 @@ func (mr *MockCollectionRefMockRecorder) Select(paths ...any) *gomock.Call {
 }
 
 // SelectPaths mocks base method.
-func (m *MockCollectionRef) SelectPaths(fieldPaths ...firestore.FieldPath) v2.Query {
+func (m *MockCollectionRef) SelectPaths(fieldPaths ...firestore.FieldPath) fsmock.Query {
 	m.ctrl.T.Helper()
 	varargs := []any{}
 	for _, a := range fieldPaths {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "SelectPaths", varargs...)
-	ret0, _ := ret[0].(v2.Query)
+	ret0, _ := ret[0].(fsmock.Query)
 	return ret0
 }
 
@@ -1011,10 +1011,10 @@ func (mr *MockCollectionRefMockRecorder) Serialize() *gomock.Call {
 }
 
 // Snapshots mocks base method.
-func (m *MockCollectionRef) Snapshots(ctx context.Context) v2.QuerySnapshotIterator {
+func (m *MockCollectionRef) Snapshots(ctx context.Context) fsmock.QuerySnapshotIterator {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Snapshots", ctx)
-	ret0, _ := ret[0].(v2.QuerySnapshotIterator)
+	ret0, _ := ret[0].(fsmock.QuerySnapshotIterator)
 	return ret0
 }
 
@@ -1025,14 +1025,14 @@ func (mr *MockCollectionRefMockRecorder) Snapshots(ctx any) *gomock.Call {
 }
 
 // StartAfter mocks base method.
-func (m *MockCollectionRef) StartAfter(docSnapshotOrFieldValues ...any) v2.Query {
+func (m *MockCollectionRef) StartAfter(docSnapshotOrFieldValues ...any) fsmock.Query {
 	m.ctrl.T.Helper()
 	varargs := []any{}
 	for _, a := range docSnapshotOrFieldValues {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "StartAfter", varargs...)
-	ret0, _ := ret[0].(v2.Query)
+	ret0, _ := ret[0].(fsmock.Query)
 	return ret0
 }
 
@@ -1043,14 +1043,14 @@ func (mr *MockCollectionRefMockRecorder) StartAfter(docSnapshotOrFieldValues ...
 }
 
 // StartAt mocks base method.
-func (m *MockCollectionRef) StartAt(docSnapshotOrFieldValues ...any) v2.Query {
+func (m *MockCollectionRef) StartAt(docSnapshotOrFieldValues ...any) fsmock.Query {
 	m.ctrl.T.Helper()
 	varargs := []any{}
 	for _, a := range docSnapshotOrFieldValues {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "StartAt", varargs...)
-	ret0, _ := ret[0].(v2.Query)
+	ret0, _ := ret[0].(fsmock.Query)
 	return ret0
 }
 
@@ -1061,10 +1061,10 @@ func (mr *MockCollectionRefMockRecorder) StartAt(docSnapshotOrFieldValues ...any
 }
 
 // Where mocks base method.
-func (m *MockCollectionRef) Where(path, op string, value any) v2.Query {
+func (m *MockCollectionRef) Where(path, op string, value any) fsmock.Query {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Where", path, op, value)
-	ret0, _ := ret[0].(v2.Query)
+	ret0, _ := ret[0].(fsmock.Query)
 	return ret0
 }
 
@@ -1075,10 +1075,10 @@ func (mr *MockCollectionRefMockRecorder) Where(path, op, value any) *gomock.Call
 }
 
 // WhereEntity mocks base method.
-func (m *MockCollectionRef) WhereEntity(ef firestore.EntityFilter) v2.Query {
+func (m *MockCollectionRef) WhereEntity(ef firestore.EntityFilter) fsmock.Query {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "WhereEntity", ef)
-	ret0, _ := ret[0].(v2.Query)
+	ret0, _ := ret[0].(fsmock.Query)
 	return ret0
 }
 
@@ -1089,10 +1089,10 @@ func (mr *MockCollectionRefMockRecorder) WhereEntity(ef any) *gomock.Call {
 }
 
 // WherePath mocks base method.
-func (m *MockCollectionRef) WherePath(fp firestore.FieldPath, op string, value any) v2.Query {
+func (m *MockCollectionRef) WherePath(fp firestore.FieldPath, op string, value any) fsmock.Query {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "WherePath", fp, op, value)
-	ret0, _ := ret[0].(v2.Query)
+	ret0, _ := ret[0].(fsmock.Query)
 	return ret0
 }
 
@@ -1103,14 +1103,14 @@ func (mr *MockCollectionRefMockRecorder) WherePath(fp, op, value any) *gomock.Ca
 }
 
 // WithReadOptions mocks base method.
-func (m *MockCollectionRef) WithReadOptions(opts ...firestore.ReadOption) v2.Query {
+func (m *MockCollectionRef) WithReadOptions(opts ...firestore.ReadOption) fsmock.Query {
 	m.ctrl.T.Helper()
 	varargs := []any{}
 	for _, a := range opts {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "WithReadOptions", varargs...)
-	ret0, _ := ret[0].(v2.Query)
+	ret0, _ := ret[0].(fsmock.Query)
 	return ret0
 }
 
@@ -1121,14 +1121,14 @@ func (mr *MockCollectionRefMockRecorder) WithReadOptions(opts ...any) *gomock.Ca
 }
 
 // WithRunOptions mocks base method.
-func (m *MockCollectionRef) WithRunOptions(opts ...firestore.RunOption) v2.Query {
+func (m *MockCollectionRef) WithRunOptions(opts ...firestore.RunOption) fsmock.Query {
 	m.ctrl.T.Helper()
 	varargs := []any{}
 	for _, a := range opts {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "WithRunOptions", varargs...)
-	ret0, _ := ret[0].(v2.Query)
+	ret0, _ := ret[0].(fsmock.Query)
 	return ret0
 }
 
@@ -1163,10 +1163,10 @@ func (m *MockCollectionGroupRef) EXPECT() *MockCollectionGroupRefMockRecorder {
 }
 
 // Deserialize mocks base method.
-func (m *MockCollectionGroupRef) Deserialize(bytes []byte) (v2.Query, error) {
+func (m *MockCollectionGroupRef) Deserialize(bytes []byte) (fsmock.Query, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Deserialize", bytes)
-	ret0, _ := ret[0].(v2.Query)
+	ret0, _ := ret[0].(fsmock.Query)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -1178,10 +1178,10 @@ func (mr *MockCollectionGroupRefMockRecorder) Deserialize(bytes any) *gomock.Cal
 }
 
 // Documents mocks base method.
-func (m *MockCollectionGroupRef) Documents(ctx context.Context) v2.DocumentIterator {
+func (m *MockCollectionGroupRef) Documents(ctx context.Context) fsmock.DocumentIterator {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Documents", ctx)
-	ret0, _ := ret[0].(v2.DocumentIterator)
+	ret0, _ := ret[0].(fsmock.DocumentIterator)
 	return ret0
 }
 
@@ -1192,14 +1192,14 @@ func (mr *MockCollectionGroupRefMockRecorder) Documents(ctx any) *gomock.Call {
 }
 
 // EndAt mocks base method.
-func (m *MockCollectionGroupRef) EndAt(docSnapshotOrFieldValues ...any) v2.Query {
+func (m *MockCollectionGroupRef) EndAt(docSnapshotOrFieldValues ...any) fsmock.Query {
 	m.ctrl.T.Helper()
 	varargs := []any{}
 	for _, a := range docSnapshotOrFieldValues {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "EndAt", varargs...)
-	ret0, _ := ret[0].(v2.Query)
+	ret0, _ := ret[0].(fsmock.Query)
 	return ret0
 }
 
@@ -1210,14 +1210,14 @@ func (mr *MockCollectionGroupRefMockRecorder) EndAt(docSnapshotOrFieldValues ...
 }
 
 // EndBefore mocks base method.
-func (m *MockCollectionGroupRef) EndBefore(docSnapshotOrFieldValues ...any) v2.Query {
+func (m *MockCollectionGroupRef) EndBefore(docSnapshotOrFieldValues ...any) fsmock.Query {
 	m.ctrl.T.Helper()
 	varargs := []any{}
 	for _, a := range docSnapshotOrFieldValues {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "EndBefore", varargs...)
-	ret0, _ := ret[0].(v2.Query)
+	ret0, _ := ret[0].(fsmock.Query)
 	return ret0
 }
 
@@ -1228,10 +1228,10 @@ func (mr *MockCollectionGroupRefMockRecorder) EndBefore(docSnapshotOrFieldValues
 }
 
 // FindNearest mocks base method.
-func (m *MockCollectionGroupRef) FindNearest(vectorField string, queryVector any, limit int, measure firestore.DistanceMeasure, options *firestore.FindNearestOptions) v2.VectorQuery {
+func (m *MockCollectionGroupRef) FindNearest(vectorField string, queryVector any, limit int, measure firestore.DistanceMeasure, options *firestore.FindNearestOptions) fsmock.VectorQuery {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FindNearest", vectorField, queryVector, limit, measure, options)
-	ret0, _ := ret[0].(v2.VectorQuery)
+	ret0, _ := ret[0].(fsmock.VectorQuery)
 	return ret0
 }
 
@@ -1242,10 +1242,10 @@ func (mr *MockCollectionGroupRefMockRecorder) FindNearest(vectorField, queryVect
 }
 
 // FindNearestPath mocks base method.
-func (m *MockCollectionGroupRef) FindNearestPath(vectorFieldPath firestore.FieldPath, queryVector any, limit int, measure firestore.DistanceMeasure, options *firestore.FindNearestOptions) v2.VectorQuery {
+func (m *MockCollectionGroupRef) FindNearestPath(vectorFieldPath firestore.FieldPath, queryVector any, limit int, measure firestore.DistanceMeasure, options *firestore.FindNearestOptions) fsmock.VectorQuery {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FindNearestPath", vectorFieldPath, queryVector, limit, measure, options)
-	ret0, _ := ret[0].(v2.VectorQuery)
+	ret0, _ := ret[0].(fsmock.VectorQuery)
 	return ret0
 }
 
@@ -1256,10 +1256,10 @@ func (mr *MockCollectionGroupRefMockRecorder) FindNearestPath(vectorFieldPath, q
 }
 
 // GetPartitionedQueries mocks base method.
-func (m *MockCollectionGroupRef) GetPartitionedQueries(ctx context.Context, partitionCount int) ([]v2.Query, error) {
+func (m *MockCollectionGroupRef) GetPartitionedQueries(ctx context.Context, partitionCount int) ([]fsmock.Query, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetPartitionedQueries", ctx, partitionCount)
-	ret0, _ := ret[0].([]v2.Query)
+	ret0, _ := ret[0].([]fsmock.Query)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -1271,10 +1271,10 @@ func (mr *MockCollectionGroupRefMockRecorder) GetPartitionedQueries(ctx, partiti
 }
 
 // Limit mocks base method.
-func (m *MockCollectionGroupRef) Limit(n int) v2.Query {
+func (m *MockCollectionGroupRef) Limit(n int) fsmock.Query {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Limit", n)
-	ret0, _ := ret[0].(v2.Query)
+	ret0, _ := ret[0].(fsmock.Query)
 	return ret0
 }
 
@@ -1285,10 +1285,10 @@ func (mr *MockCollectionGroupRefMockRecorder) Limit(n any) *gomock.Call {
 }
 
 // LimitToLast mocks base method.
-func (m *MockCollectionGroupRef) LimitToLast(n int) v2.Query {
+func (m *MockCollectionGroupRef) LimitToLast(n int) fsmock.Query {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "LimitToLast", n)
-	ret0, _ := ret[0].(v2.Query)
+	ret0, _ := ret[0].(fsmock.Query)
 	return ret0
 }
 
@@ -1299,10 +1299,10 @@ func (mr *MockCollectionGroupRefMockRecorder) LimitToLast(n any) *gomock.Call {
 }
 
 // NewAggregationQuery mocks base method.
-func (m *MockCollectionGroupRef) NewAggregationQuery() v2.AggregationQuery {
+func (m *MockCollectionGroupRef) NewAggregationQuery() fsmock.AggregationQuery {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "NewAggregationQuery")
-	ret0, _ := ret[0].(v2.AggregationQuery)
+	ret0, _ := ret[0].(fsmock.AggregationQuery)
 	return ret0
 }
 
@@ -1313,10 +1313,10 @@ func (mr *MockCollectionGroupRefMockRecorder) NewAggregationQuery() *gomock.Call
 }
 
 // Offset mocks base method.
-func (m *MockCollectionGroupRef) Offset(n int) v2.Query {
+func (m *MockCollectionGroupRef) Offset(n int) fsmock.Query {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Offset", n)
-	ret0, _ := ret[0].(v2.Query)
+	ret0, _ := ret[0].(fsmock.Query)
 	return ret0
 }
 
@@ -1327,10 +1327,10 @@ func (mr *MockCollectionGroupRefMockRecorder) Offset(n any) *gomock.Call {
 }
 
 // OrderBy mocks base method.
-func (m *MockCollectionGroupRef) OrderBy(path string, dir firestore.Direction) v2.Query {
+func (m *MockCollectionGroupRef) OrderBy(path string, dir firestore.Direction) fsmock.Query {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "OrderBy", path, dir)
-	ret0, _ := ret[0].(v2.Query)
+	ret0, _ := ret[0].(fsmock.Query)
 	return ret0
 }
 
@@ -1341,10 +1341,10 @@ func (mr *MockCollectionGroupRefMockRecorder) OrderBy(path, dir any) *gomock.Cal
 }
 
 // OrderByPath mocks base method.
-func (m *MockCollectionGroupRef) OrderByPath(fp firestore.FieldPath, dir firestore.Direction) v2.Query {
+func (m *MockCollectionGroupRef) OrderByPath(fp firestore.FieldPath, dir firestore.Direction) fsmock.Query {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "OrderByPath", fp, dir)
-	ret0, _ := ret[0].(v2.Query)
+	ret0, _ := ret[0].(fsmock.Query)
 	return ret0
 }
 
@@ -1355,10 +1355,10 @@ func (mr *MockCollectionGroupRefMockRecorder) OrderByPath(fp, dir any) *gomock.C
 }
 
 // Pipeline mocks base method.
-func (m *MockCollectionGroupRef) Pipeline() v2.Pipeline {
+func (m *MockCollectionGroupRef) Pipeline() fsmock.Pipeline {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Pipeline")
-	ret0, _ := ret[0].(v2.Pipeline)
+	ret0, _ := ret[0].(fsmock.Pipeline)
 	return ret0
 }
 
@@ -1383,14 +1383,14 @@ func (mr *MockCollectionGroupRefMockRecorder) Reference() *gomock.Call {
 }
 
 // Select mocks base method.
-func (m *MockCollectionGroupRef) Select(paths ...string) v2.Query {
+func (m *MockCollectionGroupRef) Select(paths ...string) fsmock.Query {
 	m.ctrl.T.Helper()
 	varargs := []any{}
 	for _, a := range paths {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "Select", varargs...)
-	ret0, _ := ret[0].(v2.Query)
+	ret0, _ := ret[0].(fsmock.Query)
 	return ret0
 }
 
@@ -1401,14 +1401,14 @@ func (mr *MockCollectionGroupRefMockRecorder) Select(paths ...any) *gomock.Call 
 }
 
 // SelectPaths mocks base method.
-func (m *MockCollectionGroupRef) SelectPaths(fieldPaths ...firestore.FieldPath) v2.Query {
+func (m *MockCollectionGroupRef) SelectPaths(fieldPaths ...firestore.FieldPath) fsmock.Query {
 	m.ctrl.T.Helper()
 	varargs := []any{}
 	for _, a := range fieldPaths {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "SelectPaths", varargs...)
-	ret0, _ := ret[0].(v2.Query)
+	ret0, _ := ret[0].(fsmock.Query)
 	return ret0
 }
 
@@ -1434,10 +1434,10 @@ func (mr *MockCollectionGroupRefMockRecorder) Serialize() *gomock.Call {
 }
 
 // Snapshots mocks base method.
-func (m *MockCollectionGroupRef) Snapshots(ctx context.Context) v2.QuerySnapshotIterator {
+func (m *MockCollectionGroupRef) Snapshots(ctx context.Context) fsmock.QuerySnapshotIterator {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Snapshots", ctx)
-	ret0, _ := ret[0].(v2.QuerySnapshotIterator)
+	ret0, _ := ret[0].(fsmock.QuerySnapshotIterator)
 	return ret0
 }
 
@@ -1448,14 +1448,14 @@ func (mr *MockCollectionGroupRefMockRecorder) Snapshots(ctx any) *gomock.Call {
 }
 
 // StartAfter mocks base method.
-func (m *MockCollectionGroupRef) StartAfter(docSnapshotOrFieldValues ...any) v2.Query {
+func (m *MockCollectionGroupRef) StartAfter(docSnapshotOrFieldValues ...any) fsmock.Query {
 	m.ctrl.T.Helper()
 	varargs := []any{}
 	for _, a := range docSnapshotOrFieldValues {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "StartAfter", varargs...)
-	ret0, _ := ret[0].(v2.Query)
+	ret0, _ := ret[0].(fsmock.Query)
 	return ret0
 }
 
@@ -1466,14 +1466,14 @@ func (mr *MockCollectionGroupRefMockRecorder) StartAfter(docSnapshotOrFieldValue
 }
 
 // StartAt mocks base method.
-func (m *MockCollectionGroupRef) StartAt(docSnapshotOrFieldValues ...any) v2.Query {
+func (m *MockCollectionGroupRef) StartAt(docSnapshotOrFieldValues ...any) fsmock.Query {
 	m.ctrl.T.Helper()
 	varargs := []any{}
 	for _, a := range docSnapshotOrFieldValues {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "StartAt", varargs...)
-	ret0, _ := ret[0].(v2.Query)
+	ret0, _ := ret[0].(fsmock.Query)
 	return ret0
 }
 
@@ -1484,10 +1484,10 @@ func (mr *MockCollectionGroupRefMockRecorder) StartAt(docSnapshotOrFieldValues .
 }
 
 // Where mocks base method.
-func (m *MockCollectionGroupRef) Where(path, op string, value any) v2.Query {
+func (m *MockCollectionGroupRef) Where(path, op string, value any) fsmock.Query {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Where", path, op, value)
-	ret0, _ := ret[0].(v2.Query)
+	ret0, _ := ret[0].(fsmock.Query)
 	return ret0
 }
 
@@ -1498,10 +1498,10 @@ func (mr *MockCollectionGroupRefMockRecorder) Where(path, op, value any) *gomock
 }
 
 // WhereEntity mocks base method.
-func (m *MockCollectionGroupRef) WhereEntity(ef firestore.EntityFilter) v2.Query {
+func (m *MockCollectionGroupRef) WhereEntity(ef firestore.EntityFilter) fsmock.Query {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "WhereEntity", ef)
-	ret0, _ := ret[0].(v2.Query)
+	ret0, _ := ret[0].(fsmock.Query)
 	return ret0
 }
 
@@ -1512,10 +1512,10 @@ func (mr *MockCollectionGroupRefMockRecorder) WhereEntity(ef any) *gomock.Call {
 }
 
 // WherePath mocks base method.
-func (m *MockCollectionGroupRef) WherePath(fp firestore.FieldPath, op string, value any) v2.Query {
+func (m *MockCollectionGroupRef) WherePath(fp firestore.FieldPath, op string, value any) fsmock.Query {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "WherePath", fp, op, value)
-	ret0, _ := ret[0].(v2.Query)
+	ret0, _ := ret[0].(fsmock.Query)
 	return ret0
 }
 
@@ -1526,14 +1526,14 @@ func (mr *MockCollectionGroupRefMockRecorder) WherePath(fp, op, value any) *gomo
 }
 
 // WithReadOptions mocks base method.
-func (m *MockCollectionGroupRef) WithReadOptions(opts ...firestore.ReadOption) v2.Query {
+func (m *MockCollectionGroupRef) WithReadOptions(opts ...firestore.ReadOption) fsmock.Query {
 	m.ctrl.T.Helper()
 	varargs := []any{}
 	for _, a := range opts {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "WithReadOptions", varargs...)
-	ret0, _ := ret[0].(v2.Query)
+	ret0, _ := ret[0].(fsmock.Query)
 	return ret0
 }
 
@@ -1544,14 +1544,14 @@ func (mr *MockCollectionGroupRefMockRecorder) WithReadOptions(opts ...any) *gomo
 }
 
 // WithRunOptions mocks base method.
-func (m *MockCollectionGroupRef) WithRunOptions(opts ...firestore.RunOption) v2.Query {
+func (m *MockCollectionGroupRef) WithRunOptions(opts ...firestore.RunOption) fsmock.Query {
 	m.ctrl.T.Helper()
 	varargs := []any{}
 	for _, a := range opts {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "WithRunOptions", varargs...)
-	ret0, _ := ret[0].(v2.Query)
+	ret0, _ := ret[0].(fsmock.Query)
 	return ret0
 }
 
@@ -1586,10 +1586,10 @@ func (m *MockDocumentRef) EXPECT() *MockDocumentRefMockRecorder {
 }
 
 // Collection mocks base method.
-func (m *MockDocumentRef) Collection(path string) v2.CollectionRef {
+func (m *MockDocumentRef) Collection(path string) fsmock.CollectionRef {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Collection", path)
-	ret0, _ := ret[0].(v2.CollectionRef)
+	ret0, _ := ret[0].(fsmock.CollectionRef)
 	return ret0
 }
 
@@ -1600,10 +1600,10 @@ func (mr *MockDocumentRefMockRecorder) Collection(path any) *gomock.Call {
 }
 
 // Collections mocks base method.
-func (m *MockDocumentRef) Collections(ctx context.Context) v2.CollectionIterator {
+func (m *MockDocumentRef) Collections(ctx context.Context) fsmock.CollectionIterator {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Collections", ctx)
-	ret0, _ := ret[0].(v2.CollectionIterator)
+	ret0, _ := ret[0].(fsmock.CollectionIterator)
 	return ret0
 }
 
@@ -1649,10 +1649,10 @@ func (mr *MockDocumentRefMockRecorder) Delete(ctx any, opts ...any) *gomock.Call
 }
 
 // Get mocks base method.
-func (m *MockDocumentRef) Get(ctx context.Context) (v2.DocumentSnapshot, error) {
+func (m *MockDocumentRef) Get(ctx context.Context) (fsmock.DocumentSnapshot, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Get", ctx)
-	ret0, _ := ret[0].(v2.DocumentSnapshot)
+	ret0, _ := ret[0].(fsmock.DocumentSnapshot)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -1678,10 +1678,10 @@ func (mr *MockDocumentRefMockRecorder) ID() *gomock.Call {
 }
 
 // Parent mocks base method.
-func (m *MockDocumentRef) Parent() v2.CollectionRef {
+func (m *MockDocumentRef) Parent() fsmock.CollectionRef {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Parent")
-	ret0, _ := ret[0].(v2.CollectionRef)
+	ret0, _ := ret[0].(fsmock.CollectionRef)
 	return ret0
 }
 
@@ -1740,10 +1740,10 @@ func (mr *MockDocumentRefMockRecorder) Set(ctx, data any, opts ...any) *gomock.C
 }
 
 // Snapshots mocks base method.
-func (m *MockDocumentRef) Snapshots(ctx context.Context) v2.DocumentSnapshotIterator {
+func (m *MockDocumentRef) Snapshots(ctx context.Context) fsmock.DocumentSnapshotIterator {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Snapshots", ctx)
-	ret0, _ := ret[0].(v2.DocumentSnapshotIterator)
+	ret0, _ := ret[0].(fsmock.DocumentSnapshotIterator)
 	return ret0
 }
 
@@ -1774,14 +1774,14 @@ func (mr *MockDocumentRefMockRecorder) Update(ctx, updates any, preconds ...any)
 }
 
 // WithReadOptions mocks base method.
-func (m *MockDocumentRef) WithReadOptions(opts ...firestore.ReadOption) v2.DocumentRef {
+func (m *MockDocumentRef) WithReadOptions(opts ...firestore.ReadOption) fsmock.DocumentRef {
 	m.ctrl.T.Helper()
 	varargs := []any{}
 	for _, a := range opts {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "WithReadOptions", varargs...)
-	ret0, _ := ret[0].(v2.DocumentRef)
+	ret0, _ := ret[0].(fsmock.DocumentRef)
 	return ret0
 }
 
@@ -1916,10 +1916,10 @@ func (mr *MockDocumentSnapshotMockRecorder) ReadTime() *gomock.Call {
 }
 
 // Ref mocks base method.
-func (m *MockDocumentSnapshot) Ref() v2.DocumentRef {
+func (m *MockDocumentSnapshot) Ref() fsmock.DocumentRef {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Ref")
-	ret0, _ := ret[0].(v2.DocumentRef)
+	ret0, _ := ret[0].(fsmock.DocumentRef)
 	return ret0
 }
 
@@ -1982,10 +1982,10 @@ func (mr *MockQuerySnapshotMockRecorder) Changes() *gomock.Call {
 }
 
 // Documents mocks base method.
-func (m *MockQuerySnapshot) Documents() v2.DocumentIterator {
+func (m *MockQuerySnapshot) Documents() fsmock.DocumentIterator {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Documents")
-	ret0, _ := ret[0].(v2.DocumentIterator)
+	ret0, _ := ret[0].(fsmock.DocumentIterator)
 	return ret0
 }
 
@@ -2048,7 +2048,7 @@ func (m *MockTransaction) EXPECT() *MockTransactionMockRecorder {
 }
 
 // Create mocks base method.
-func (m *MockTransaction) Create(docRef v2.DocumentRef, data any) error {
+func (m *MockTransaction) Create(docRef fsmock.DocumentRef, data any) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Create", docRef, data)
 	ret0, _ := ret[0].(error)
@@ -2062,7 +2062,7 @@ func (mr *MockTransactionMockRecorder) Create(docRef, data any) *gomock.Call {
 }
 
 // Delete mocks base method.
-func (m *MockTransaction) Delete(docRef v2.DocumentRef, preconds ...firestore.Precondition) error {
+func (m *MockTransaction) Delete(docRef fsmock.DocumentRef, preconds ...firestore.Precondition) error {
 	m.ctrl.T.Helper()
 	varargs := []any{docRef}
 	for _, a := range preconds {
@@ -2081,10 +2081,10 @@ func (mr *MockTransactionMockRecorder) Delete(docRef any, preconds ...any) *gomo
 }
 
 // DocumentRefs mocks base method.
-func (m *MockTransaction) DocumentRefs(coll v2.CollectionRef) (v2.DocumentRefIterator, error) {
+func (m *MockTransaction) DocumentRefs(coll fsmock.CollectionRef) (fsmock.DocumentRefIterator, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "DocumentRefs", coll)
-	ret0, _ := ret[0].(v2.DocumentRefIterator)
+	ret0, _ := ret[0].(fsmock.DocumentRefIterator)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -2096,10 +2096,10 @@ func (mr *MockTransactionMockRecorder) DocumentRefs(coll any) *gomock.Call {
 }
 
 // Documents mocks base method.
-func (m *MockTransaction) Documents(q v2.Query) (v2.DocumentIterator, error) {
+func (m *MockTransaction) Documents(q fsmock.Query) (fsmock.DocumentIterator, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Documents", q)
-	ret0, _ := ret[0].(v2.DocumentIterator)
+	ret0, _ := ret[0].(fsmock.DocumentIterator)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -2111,14 +2111,14 @@ func (mr *MockTransactionMockRecorder) Documents(q any) *gomock.Call {
 }
 
 // Execute mocks base method.
-func (m *MockTransaction) Execute(p v2.Pipeline, opts ...firestore.ExecuteOption) (v2.PipelineSnapshot, error) {
+func (m *MockTransaction) Execute(p fsmock.Pipeline, opts ...firestore.ExecuteOption) (fsmock.PipelineSnapshot, error) {
 	m.ctrl.T.Helper()
 	varargs := []any{p}
 	for _, a := range opts {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "Execute", varargs...)
-	ret0, _ := ret[0].(v2.PipelineSnapshot)
+	ret0, _ := ret[0].(fsmock.PipelineSnapshot)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -2131,10 +2131,10 @@ func (mr *MockTransactionMockRecorder) Execute(p any, opts ...any) *gomock.Call 
 }
 
 // Get mocks base method.
-func (m *MockTransaction) Get(docRef v2.DocumentRef) (v2.DocumentSnapshot, error) {
+func (m *MockTransaction) Get(docRef fsmock.DocumentRef) (fsmock.DocumentSnapshot, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Get", docRef)
-	ret0, _ := ret[0].(v2.DocumentSnapshot)
+	ret0, _ := ret[0].(fsmock.DocumentSnapshot)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -2146,10 +2146,10 @@ func (mr *MockTransactionMockRecorder) Get(docRef any) *gomock.Call {
 }
 
 // GetAll mocks base method.
-func (m *MockTransaction) GetAll(docRefs []v2.DocumentRef) ([]v2.DocumentSnapshot, error) {
+func (m *MockTransaction) GetAll(docRefs []fsmock.DocumentRef) ([]fsmock.DocumentSnapshot, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetAll", docRefs)
-	ret0, _ := ret[0].([]v2.DocumentSnapshot)
+	ret0, _ := ret[0].([]fsmock.DocumentSnapshot)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -2161,7 +2161,7 @@ func (mr *MockTransactionMockRecorder) GetAll(docRefs any) *gomock.Call {
 }
 
 // Set mocks base method.
-func (m *MockTransaction) Set(docRef v2.DocumentRef, data any, opts ...firestore.SetOption) error {
+func (m *MockTransaction) Set(docRef fsmock.DocumentRef, data any, opts ...firestore.SetOption) error {
 	m.ctrl.T.Helper()
 	varargs := []any{docRef, data}
 	for _, a := range opts {
@@ -2180,7 +2180,7 @@ func (mr *MockTransactionMockRecorder) Set(docRef, data any, opts ...any) *gomoc
 }
 
 // Update mocks base method.
-func (m *MockTransaction) Update(docRef v2.DocumentRef, updates []firestore.Update, preconds ...firestore.Precondition) error {
+func (m *MockTransaction) Update(docRef fsmock.DocumentRef, updates []firestore.Update, preconds ...firestore.Precondition) error {
 	m.ctrl.T.Helper()
 	varargs := []any{docRef, updates}
 	for _, a := range preconds {
@@ -2199,14 +2199,14 @@ func (mr *MockTransactionMockRecorder) Update(docRef, updates any, preconds ...a
 }
 
 // WithReadOptions mocks base method.
-func (m *MockTransaction) WithReadOptions(opts ...firestore.ReadOption) v2.Transaction {
+func (m *MockTransaction) WithReadOptions(opts ...firestore.ReadOption) fsmock.Transaction {
 	m.ctrl.T.Helper()
 	varargs := []any{}
 	for _, a := range opts {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "WithReadOptions", varargs...)
-	ret0, _ := ret[0].(v2.Transaction)
+	ret0, _ := ret[0].(fsmock.Transaction)
 	return ret0
 }
 
@@ -2256,10 +2256,10 @@ func (mr *MockWriteBatchMockRecorder) Commit(ctx any) *gomock.Call {
 }
 
 // Create mocks base method.
-func (m *MockWriteBatch) Create(docRef v2.DocumentRef, data any) v2.WriteBatch {
+func (m *MockWriteBatch) Create(docRef fsmock.DocumentRef, data any) fsmock.WriteBatch {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Create", docRef, data)
-	ret0, _ := ret[0].(v2.WriteBatch)
+	ret0, _ := ret[0].(fsmock.WriteBatch)
 	return ret0
 }
 
@@ -2270,14 +2270,14 @@ func (mr *MockWriteBatchMockRecorder) Create(docRef, data any) *gomock.Call {
 }
 
 // Delete mocks base method.
-func (m *MockWriteBatch) Delete(docRef v2.DocumentRef, preconds ...firestore.Precondition) v2.WriteBatch {
+func (m *MockWriteBatch) Delete(docRef fsmock.DocumentRef, preconds ...firestore.Precondition) fsmock.WriteBatch {
 	m.ctrl.T.Helper()
 	varargs := []any{docRef}
 	for _, a := range preconds {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "Delete", varargs...)
-	ret0, _ := ret[0].(v2.WriteBatch)
+	ret0, _ := ret[0].(fsmock.WriteBatch)
 	return ret0
 }
 
@@ -2289,14 +2289,14 @@ func (mr *MockWriteBatchMockRecorder) Delete(docRef any, preconds ...any) *gomoc
 }
 
 // Set mocks base method.
-func (m *MockWriteBatch) Set(docRef v2.DocumentRef, data any, opts ...firestore.SetOption) v2.WriteBatch {
+func (m *MockWriteBatch) Set(docRef fsmock.DocumentRef, data any, opts ...firestore.SetOption) fsmock.WriteBatch {
 	m.ctrl.T.Helper()
 	varargs := []any{docRef, data}
 	for _, a := range opts {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "Set", varargs...)
-	ret0, _ := ret[0].(v2.WriteBatch)
+	ret0, _ := ret[0].(fsmock.WriteBatch)
 	return ret0
 }
 
@@ -2308,14 +2308,14 @@ func (mr *MockWriteBatchMockRecorder) Set(docRef, data any, opts ...any) *gomock
 }
 
 // Update mocks base method.
-func (m *MockWriteBatch) Update(docRef v2.DocumentRef, updates []firestore.Update, preconds ...firestore.Precondition) v2.WriteBatch {
+func (m *MockWriteBatch) Update(docRef fsmock.DocumentRef, updates []firestore.Update, preconds ...firestore.Precondition) fsmock.WriteBatch {
 	m.ctrl.T.Helper()
 	varargs := []any{docRef, updates}
 	for _, a := range preconds {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "Update", varargs...)
-	ret0, _ := ret[0].(v2.WriteBatch)
+	ret0, _ := ret[0].(fsmock.WriteBatch)
 	return ret0
 }
 
@@ -2351,7 +2351,7 @@ func (m *MockBulkWriter) EXPECT() *MockBulkWriterMockRecorder {
 }
 
 // Create mocks base method.
-func (m *MockBulkWriter) Create(docRef v2.DocumentRef, data any) (*firestore.BulkWriterJob, error) {
+func (m *MockBulkWriter) Create(docRef fsmock.DocumentRef, data any) (*firestore.BulkWriterJob, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Create", docRef, data)
 	ret0, _ := ret[0].(*firestore.BulkWriterJob)
@@ -2366,7 +2366,7 @@ func (mr *MockBulkWriterMockRecorder) Create(docRef, data any) *gomock.Call {
 }
 
 // Delete mocks base method.
-func (m *MockBulkWriter) Delete(docRef v2.DocumentRef, preconds ...firestore.Precondition) (*firestore.BulkWriterJob, error) {
+func (m *MockBulkWriter) Delete(docRef fsmock.DocumentRef, preconds ...firestore.Precondition) (*firestore.BulkWriterJob, error) {
 	m.ctrl.T.Helper()
 	varargs := []any{docRef}
 	for _, a := range preconds {
@@ -2410,7 +2410,7 @@ func (mr *MockBulkWriterMockRecorder) Flush() *gomock.Call {
 }
 
 // Set mocks base method.
-func (m *MockBulkWriter) Set(docRef v2.DocumentRef, data any, opts ...firestore.SetOption) (*firestore.BulkWriterJob, error) {
+func (m *MockBulkWriter) Set(docRef fsmock.DocumentRef, data any, opts ...firestore.SetOption) (*firestore.BulkWriterJob, error) {
 	m.ctrl.T.Helper()
 	varargs := []any{docRef, data}
 	for _, a := range opts {
@@ -2430,7 +2430,7 @@ func (mr *MockBulkWriterMockRecorder) Set(docRef, data any, opts ...any) *gomock
 }
 
 // Update mocks base method.
-func (m *MockBulkWriter) Update(docRef v2.DocumentRef, updates []firestore.Update, preconds ...firestore.Precondition) (*firestore.BulkWriterJob, error) {
+func (m *MockBulkWriter) Update(docRef fsmock.DocumentRef, updates []firestore.Update, preconds ...firestore.Precondition) (*firestore.BulkWriterJob, error) {
 	m.ctrl.T.Helper()
 	varargs := []any{docRef, updates}
 	for _, a := range preconds {
@@ -2474,10 +2474,10 @@ func (m *MockAggregationQuery) EXPECT() *MockAggregationQueryMockRecorder {
 }
 
 // Get mocks base method.
-func (m *MockAggregationQuery) Get(ctx context.Context) (v2.AggregationResult, error) {
+func (m *MockAggregationQuery) Get(ctx context.Context) (fsmock.AggregationResult, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Get", ctx)
-	ret0, _ := ret[0].(v2.AggregationResult)
+	ret0, _ := ret[0].(fsmock.AggregationResult)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -2489,10 +2489,10 @@ func (mr *MockAggregationQueryMockRecorder) Get(ctx any) *gomock.Call {
 }
 
 // GetResponse mocks base method.
-func (m *MockAggregationQuery) GetResponse(ctx context.Context) (*v2.AggregationResponse, error) {
+func (m *MockAggregationQuery) GetResponse(ctx context.Context) (*fsmock.AggregationResponse, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetResponse", ctx)
-	ret0, _ := ret[0].(*v2.AggregationResponse)
+	ret0, _ := ret[0].(*fsmock.AggregationResponse)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -2504,10 +2504,10 @@ func (mr *MockAggregationQueryMockRecorder) GetResponse(ctx any) *gomock.Call {
 }
 
 // Pipeline mocks base method.
-func (m *MockAggregationQuery) Pipeline() v2.Pipeline {
+func (m *MockAggregationQuery) Pipeline() fsmock.Pipeline {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Pipeline")
-	ret0, _ := ret[0].(v2.Pipeline)
+	ret0, _ := ret[0].(fsmock.Pipeline)
 	return ret0
 }
 
@@ -2518,10 +2518,10 @@ func (mr *MockAggregationQueryMockRecorder) Pipeline() *gomock.Call {
 }
 
 // Transaction mocks base method.
-func (m *MockAggregationQuery) Transaction(tx v2.Transaction) (v2.AggregationQuery, error) {
+func (m *MockAggregationQuery) Transaction(tx fsmock.Transaction) (fsmock.AggregationQuery, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Transaction", tx)
-	ret0, _ := ret[0].(v2.AggregationQuery)
+	ret0, _ := ret[0].(fsmock.AggregationQuery)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -2533,10 +2533,10 @@ func (mr *MockAggregationQueryMockRecorder) Transaction(tx any) *gomock.Call {
 }
 
 // WithAvg mocks base method.
-func (m *MockAggregationQuery) WithAvg(path, alias string) v2.AggregationQuery {
+func (m *MockAggregationQuery) WithAvg(path, alias string) fsmock.AggregationQuery {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "WithAvg", path, alias)
-	ret0, _ := ret[0].(v2.AggregationQuery)
+	ret0, _ := ret[0].(fsmock.AggregationQuery)
 	return ret0
 }
 
@@ -2547,10 +2547,10 @@ func (mr *MockAggregationQueryMockRecorder) WithAvg(path, alias any) *gomock.Cal
 }
 
 // WithAvgPath mocks base method.
-func (m *MockAggregationQuery) WithAvgPath(fp firestore.FieldPath, alias string) v2.AggregationQuery {
+func (m *MockAggregationQuery) WithAvgPath(fp firestore.FieldPath, alias string) fsmock.AggregationQuery {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "WithAvgPath", fp, alias)
-	ret0, _ := ret[0].(v2.AggregationQuery)
+	ret0, _ := ret[0].(fsmock.AggregationQuery)
 	return ret0
 }
 
@@ -2561,10 +2561,10 @@ func (mr *MockAggregationQueryMockRecorder) WithAvgPath(fp, alias any) *gomock.C
 }
 
 // WithCount mocks base method.
-func (m *MockAggregationQuery) WithCount(alias string) v2.AggregationQuery {
+func (m *MockAggregationQuery) WithCount(alias string) fsmock.AggregationQuery {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "WithCount", alias)
-	ret0, _ := ret[0].(v2.AggregationQuery)
+	ret0, _ := ret[0].(fsmock.AggregationQuery)
 	return ret0
 }
 
@@ -2575,10 +2575,10 @@ func (mr *MockAggregationQueryMockRecorder) WithCount(alias any) *gomock.Call {
 }
 
 // WithSum mocks base method.
-func (m *MockAggregationQuery) WithSum(path, alias string) v2.AggregationQuery {
+func (m *MockAggregationQuery) WithSum(path, alias string) fsmock.AggregationQuery {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "WithSum", path, alias)
-	ret0, _ := ret[0].(v2.AggregationQuery)
+	ret0, _ := ret[0].(fsmock.AggregationQuery)
 	return ret0
 }
 
@@ -2589,10 +2589,10 @@ func (mr *MockAggregationQueryMockRecorder) WithSum(path, alias any) *gomock.Cal
 }
 
 // WithSumPath mocks base method.
-func (m *MockAggregationQuery) WithSumPath(fp firestore.FieldPath, alias string) v2.AggregationQuery {
+func (m *MockAggregationQuery) WithSumPath(fp firestore.FieldPath, alias string) fsmock.AggregationQuery {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "WithSumPath", fp, alias)
-	ret0, _ := ret[0].(v2.AggregationQuery)
+	ret0, _ := ret[0].(fsmock.AggregationQuery)
 	return ret0
 }
 
@@ -2695,10 +2695,10 @@ func (m *MockVectorQuery) EXPECT() *MockVectorQueryMockRecorder {
 }
 
 // Deserialize mocks base method.
-func (m *MockVectorQuery) Deserialize(bytes []byte) (v2.VectorQuery, error) {
+func (m *MockVectorQuery) Deserialize(bytes []byte) (fsmock.VectorQuery, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Deserialize", bytes)
-	ret0, _ := ret[0].(v2.VectorQuery)
+	ret0, _ := ret[0].(fsmock.VectorQuery)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -2710,10 +2710,10 @@ func (mr *MockVectorQueryMockRecorder) Deserialize(bytes any) *gomock.Call {
 }
 
 // Documents mocks base method.
-func (m *MockVectorQuery) Documents(ctx context.Context) v2.DocumentIterator {
+func (m *MockVectorQuery) Documents(ctx context.Context) fsmock.DocumentIterator {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Documents", ctx)
-	ret0, _ := ret[0].(v2.DocumentIterator)
+	ret0, _ := ret[0].(fsmock.DocumentIterator)
 	return ret0
 }
 
@@ -2763,14 +2763,14 @@ func (m *MockPipeline) EXPECT() *MockPipelineMockRecorder {
 }
 
 // AddFields mocks base method.
-func (m *MockPipeline) AddFields(fields []firestore.Selectable, opts ...firestore.AddFieldsOption) v2.Pipeline {
+func (m *MockPipeline) AddFields(fields []firestore.Selectable, opts ...firestore.AddFieldsOption) fsmock.Pipeline {
 	m.ctrl.T.Helper()
 	varargs := []any{fields}
 	for _, a := range opts {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "AddFields", varargs...)
-	ret0, _ := ret[0].(v2.Pipeline)
+	ret0, _ := ret[0].(fsmock.Pipeline)
 	return ret0
 }
 
@@ -2782,14 +2782,14 @@ func (mr *MockPipelineMockRecorder) AddFields(fields any, opts ...any) *gomock.C
 }
 
 // Aggregate mocks base method.
-func (m *MockPipeline) Aggregate(accumulators []*firestore.AliasedAggregate, opts ...firestore.AggregateOption) v2.Pipeline {
+func (m *MockPipeline) Aggregate(accumulators []*firestore.AliasedAggregate, opts ...firestore.AggregateOption) fsmock.Pipeline {
 	m.ctrl.T.Helper()
 	varargs := []any{accumulators}
 	for _, a := range opts {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "Aggregate", varargs...)
-	ret0, _ := ret[0].(v2.Pipeline)
+	ret0, _ := ret[0].(fsmock.Pipeline)
 	return ret0
 }
 
@@ -2801,14 +2801,14 @@ func (mr *MockPipelineMockRecorder) Aggregate(accumulators any, opts ...any) *go
 }
 
 // Define mocks base method.
-func (m *MockPipeline) Define(variables []*firestore.AliasedExpression, opts ...firestore.DefineOption) v2.Pipeline {
+func (m *MockPipeline) Define(variables []*firestore.AliasedExpression, opts ...firestore.DefineOption) fsmock.Pipeline {
 	m.ctrl.T.Helper()
 	varargs := []any{variables}
 	for _, a := range opts {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "Define", varargs...)
-	ret0, _ := ret[0].(v2.Pipeline)
+	ret0, _ := ret[0].(fsmock.Pipeline)
 	return ret0
 }
 
@@ -2820,14 +2820,14 @@ func (mr *MockPipelineMockRecorder) Define(variables any, opts ...any) *gomock.C
 }
 
 // Delete mocks base method.
-func (m *MockPipeline) Delete(opts ...firestore.DeleteOption) v2.Pipeline {
+func (m *MockPipeline) Delete(opts ...firestore.DeleteOption) fsmock.Pipeline {
 	m.ctrl.T.Helper()
 	varargs := []any{}
 	for _, a := range opts {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "Delete", varargs...)
-	ret0, _ := ret[0].(v2.Pipeline)
+	ret0, _ := ret[0].(fsmock.Pipeline)
 	return ret0
 }
 
@@ -2838,14 +2838,14 @@ func (mr *MockPipelineMockRecorder) Delete(opts ...any) *gomock.Call {
 }
 
 // Distinct mocks base method.
-func (m *MockPipeline) Distinct(fields []any, opts ...firestore.DistinctOption) v2.Pipeline {
+func (m *MockPipeline) Distinct(fields []any, opts ...firestore.DistinctOption) fsmock.Pipeline {
 	m.ctrl.T.Helper()
 	varargs := []any{fields}
 	for _, a := range opts {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "Distinct", varargs...)
-	ret0, _ := ret[0].(v2.Pipeline)
+	ret0, _ := ret[0].(fsmock.Pipeline)
 	return ret0
 }
 
@@ -2857,14 +2857,14 @@ func (mr *MockPipelineMockRecorder) Distinct(fields any, opts ...any) *gomock.Ca
 }
 
 // Execute mocks base method.
-func (m *MockPipeline) Execute(ctx context.Context, opts ...firestore.ExecuteOption) v2.PipelineSnapshot {
+func (m *MockPipeline) Execute(ctx context.Context, opts ...firestore.ExecuteOption) fsmock.PipelineSnapshot {
 	m.ctrl.T.Helper()
 	varargs := []any{ctx}
 	for _, a := range opts {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "Execute", varargs...)
-	ret0, _ := ret[0].(v2.PipelineSnapshot)
+	ret0, _ := ret[0].(fsmock.PipelineSnapshot)
 	return ret0
 }
 
@@ -2876,14 +2876,14 @@ func (mr *MockPipelineMockRecorder) Execute(ctx any, opts ...any) *gomock.Call {
 }
 
 // FindNearest mocks base method.
-func (m *MockPipeline) FindNearest(vectorField, queryVector any, measure firestore.PipelineDistanceMeasure, opts ...firestore.FindNearestOption) v2.Pipeline {
+func (m *MockPipeline) FindNearest(vectorField, queryVector any, measure firestore.PipelineDistanceMeasure, opts ...firestore.FindNearestOption) fsmock.Pipeline {
 	m.ctrl.T.Helper()
 	varargs := []any{vectorField, queryVector, measure}
 	for _, a := range opts {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "FindNearest", varargs...)
-	ret0, _ := ret[0].(v2.Pipeline)
+	ret0, _ := ret[0].(fsmock.Pipeline)
 	return ret0
 }
 
@@ -2895,14 +2895,14 @@ func (mr *MockPipelineMockRecorder) FindNearest(vectorField, queryVector, measur
 }
 
 // Limit mocks base method.
-func (m *MockPipeline) Limit(limit int, opts ...firestore.LimitOption) v2.Pipeline {
+func (m *MockPipeline) Limit(limit int, opts ...firestore.LimitOption) fsmock.Pipeline {
 	m.ctrl.T.Helper()
 	varargs := []any{limit}
 	for _, a := range opts {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "Limit", varargs...)
-	ret0, _ := ret[0].(v2.Pipeline)
+	ret0, _ := ret[0].(fsmock.Pipeline)
 	return ret0
 }
 
@@ -2914,14 +2914,14 @@ func (mr *MockPipelineMockRecorder) Limit(limit any, opts ...any) *gomock.Call {
 }
 
 // Offset mocks base method.
-func (m *MockPipeline) Offset(offset int, opts ...firestore.OffsetOption) v2.Pipeline {
+func (m *MockPipeline) Offset(offset int, opts ...firestore.OffsetOption) fsmock.Pipeline {
 	m.ctrl.T.Helper()
 	varargs := []any{offset}
 	for _, a := range opts {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "Offset", varargs...)
-	ret0, _ := ret[0].(v2.Pipeline)
+	ret0, _ := ret[0].(fsmock.Pipeline)
 	return ret0
 }
 
@@ -2933,14 +2933,14 @@ func (mr *MockPipelineMockRecorder) Offset(offset any, opts ...any) *gomock.Call
 }
 
 // RawStage mocks base method.
-func (m *MockPipeline) RawStage(name string, args []any, opts ...firestore.StageOption) v2.Pipeline {
+func (m *MockPipeline) RawStage(name string, args []any, opts ...firestore.StageOption) fsmock.Pipeline {
 	m.ctrl.T.Helper()
 	varargs := []any{name, args}
 	for _, a := range opts {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "RawStage", varargs...)
-	ret0, _ := ret[0].(v2.Pipeline)
+	ret0, _ := ret[0].(fsmock.Pipeline)
 	return ret0
 }
 
@@ -2966,14 +2966,14 @@ func (mr *MockPipelineMockRecorder) Reference() *gomock.Call {
 }
 
 // RemoveFields mocks base method.
-func (m *MockPipeline) RemoveFields(fields []any, opts ...firestore.RemoveFieldsOption) v2.Pipeline {
+func (m *MockPipeline) RemoveFields(fields []any, opts ...firestore.RemoveFieldsOption) fsmock.Pipeline {
 	m.ctrl.T.Helper()
 	varargs := []any{fields}
 	for _, a := range opts {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "RemoveFields", varargs...)
-	ret0, _ := ret[0].(v2.Pipeline)
+	ret0, _ := ret[0].(fsmock.Pipeline)
 	return ret0
 }
 
@@ -2985,14 +2985,14 @@ func (mr *MockPipelineMockRecorder) RemoveFields(fields any, opts ...any) *gomoc
 }
 
 // ReplaceWith mocks base method.
-func (m *MockPipeline) ReplaceWith(fieldpathOrExpr any, opts ...firestore.ReplaceWithOption) v2.Pipeline {
+func (m *MockPipeline) ReplaceWith(fieldpathOrExpr any, opts ...firestore.ReplaceWithOption) fsmock.Pipeline {
 	m.ctrl.T.Helper()
 	varargs := []any{fieldpathOrExpr}
 	for _, a := range opts {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "ReplaceWith", varargs...)
-	ret0, _ := ret[0].(v2.Pipeline)
+	ret0, _ := ret[0].(fsmock.Pipeline)
 	return ret0
 }
 
@@ -3004,14 +3004,14 @@ func (mr *MockPipelineMockRecorder) ReplaceWith(fieldpathOrExpr any, opts ...any
 }
 
 // Sample mocks base method.
-func (m *MockPipeline) Sample(sampler *firestore.Sampler, opts ...firestore.SampleOption) v2.Pipeline {
+func (m *MockPipeline) Sample(sampler *firestore.Sampler, opts ...firestore.SampleOption) fsmock.Pipeline {
 	m.ctrl.T.Helper()
 	varargs := []any{sampler}
 	for _, a := range opts {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "Sample", varargs...)
-	ret0, _ := ret[0].(v2.Pipeline)
+	ret0, _ := ret[0].(fsmock.Pipeline)
 	return ret0
 }
 
@@ -3023,14 +3023,14 @@ func (mr *MockPipelineMockRecorder) Sample(sampler any, opts ...any) *gomock.Cal
 }
 
 // Search mocks base method.
-func (m *MockPipeline) Search(opts ...firestore.SearchOption) v2.Pipeline {
+func (m *MockPipeline) Search(opts ...firestore.SearchOption) fsmock.Pipeline {
 	m.ctrl.T.Helper()
 	varargs := []any{}
 	for _, a := range opts {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "Search", varargs...)
-	ret0, _ := ret[0].(v2.Pipeline)
+	ret0, _ := ret[0].(fsmock.Pipeline)
 	return ret0
 }
 
@@ -3041,14 +3041,14 @@ func (mr *MockPipelineMockRecorder) Search(opts ...any) *gomock.Call {
 }
 
 // Select mocks base method.
-func (m *MockPipeline) Select(fields []any, opts ...firestore.SelectOption) v2.Pipeline {
+func (m *MockPipeline) Select(fields []any, opts ...firestore.SelectOption) fsmock.Pipeline {
 	m.ctrl.T.Helper()
 	varargs := []any{fields}
 	for _, a := range opts {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "Select", varargs...)
-	ret0, _ := ret[0].(v2.Pipeline)
+	ret0, _ := ret[0].(fsmock.Pipeline)
 	return ret0
 }
 
@@ -3060,14 +3060,14 @@ func (mr *MockPipelineMockRecorder) Select(fields any, opts ...any) *gomock.Call
 }
 
 // Sort mocks base method.
-func (m *MockPipeline) Sort(orders []firestore.Ordering, opts ...firestore.SortOption) v2.Pipeline {
+func (m *MockPipeline) Sort(orders []firestore.Ordering, opts ...firestore.SortOption) fsmock.Pipeline {
 	m.ctrl.T.Helper()
 	varargs := []any{orders}
 	for _, a := range opts {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "Sort", varargs...)
-	ret0, _ := ret[0].(v2.Pipeline)
+	ret0, _ := ret[0].(fsmock.Pipeline)
 	return ret0
 }
 
@@ -3107,14 +3107,14 @@ func (mr *MockPipelineMockRecorder) ToScalarExpression() *gomock.Call {
 }
 
 // Union mocks base method.
-func (m *MockPipeline) Union(other v2.Pipeline, opts ...firestore.UnionOption) (v2.Pipeline, error) {
+func (m *MockPipeline) Union(other fsmock.Pipeline, opts ...firestore.UnionOption) (fsmock.Pipeline, error) {
 	m.ctrl.T.Helper()
 	varargs := []any{other}
 	for _, a := range opts {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "Union", varargs...)
-	ret0, _ := ret[0].(v2.Pipeline)
+	ret0, _ := ret[0].(fsmock.Pipeline)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -3127,14 +3127,14 @@ func (mr *MockPipelineMockRecorder) Union(other any, opts ...any) *gomock.Call {
 }
 
 // Unnest mocks base method.
-func (m *MockPipeline) Unnest(field firestore.Selectable, opts ...firestore.UnnestOption) v2.Pipeline {
+func (m *MockPipeline) Unnest(field firestore.Selectable, opts ...firestore.UnnestOption) fsmock.Pipeline {
 	m.ctrl.T.Helper()
 	varargs := []any{field}
 	for _, a := range opts {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "Unnest", varargs...)
-	ret0, _ := ret[0].(v2.Pipeline)
+	ret0, _ := ret[0].(fsmock.Pipeline)
 	return ret0
 }
 
@@ -3146,14 +3146,14 @@ func (mr *MockPipelineMockRecorder) Unnest(field any, opts ...any) *gomock.Call 
 }
 
 // UnnestWithAlias mocks base method.
-func (m *MockPipeline) UnnestWithAlias(fieldpath any, alias string, opts ...firestore.UnnestOption) v2.Pipeline {
+func (m *MockPipeline) UnnestWithAlias(fieldpath any, alias string, opts ...firestore.UnnestOption) fsmock.Pipeline {
 	m.ctrl.T.Helper()
 	varargs := []any{fieldpath, alias}
 	for _, a := range opts {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "UnnestWithAlias", varargs...)
-	ret0, _ := ret[0].(v2.Pipeline)
+	ret0, _ := ret[0].(fsmock.Pipeline)
 	return ret0
 }
 
@@ -3165,14 +3165,14 @@ func (mr *MockPipelineMockRecorder) UnnestWithAlias(fieldpath, alias any, opts .
 }
 
 // Update mocks base method.
-func (m *MockPipeline) Update(opts ...firestore.UpdateOption) v2.Pipeline {
+func (m *MockPipeline) Update(opts ...firestore.UpdateOption) fsmock.Pipeline {
 	m.ctrl.T.Helper()
 	varargs := []any{}
 	for _, a := range opts {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "Update", varargs...)
-	ret0, _ := ret[0].(v2.Pipeline)
+	ret0, _ := ret[0].(fsmock.Pipeline)
 	return ret0
 }
 
@@ -3183,14 +3183,14 @@ func (mr *MockPipelineMockRecorder) Update(opts ...any) *gomock.Call {
 }
 
 // Where mocks base method.
-func (m *MockPipeline) Where(condition firestore.BooleanExpression, opts ...firestore.WhereOption) v2.Pipeline {
+func (m *MockPipeline) Where(condition firestore.BooleanExpression, opts ...firestore.WhereOption) fsmock.Pipeline {
 	m.ctrl.T.Helper()
 	varargs := []any{condition}
 	for _, a := range opts {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "Where", varargs...)
-	ret0, _ := ret[0].(v2.Pipeline)
+	ret0, _ := ret[0].(fsmock.Pipeline)
 	return ret0
 }
 
@@ -3202,14 +3202,14 @@ func (mr *MockPipelineMockRecorder) Where(condition any, opts ...any) *gomock.Ca
 }
 
 // WithReadOptions mocks base method.
-func (m *MockPipeline) WithReadOptions(opts ...firestore.ReadOption) v2.Pipeline {
+func (m *MockPipeline) WithReadOptions(opts ...firestore.ReadOption) fsmock.Pipeline {
 	m.ctrl.T.Helper()
 	varargs := []any{}
 	for _, a := range opts {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "WithReadOptions", varargs...)
-	ret0, _ := ret[0].(v2.Pipeline)
+	ret0, _ := ret[0].(fsmock.Pipeline)
 	return ret0
 }
 
@@ -3244,14 +3244,14 @@ func (m *MockPipelineSource) EXPECT() *MockPipelineSourceMockRecorder {
 }
 
 // Collection mocks base method.
-func (m *MockPipelineSource) Collection(path string, opts ...firestore.CollectionOption) v2.Pipeline {
+func (m *MockPipelineSource) Collection(path string, opts ...firestore.CollectionOption) fsmock.Pipeline {
 	m.ctrl.T.Helper()
 	varargs := []any{path}
 	for _, a := range opts {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "Collection", varargs...)
-	ret0, _ := ret[0].(v2.Pipeline)
+	ret0, _ := ret[0].(fsmock.Pipeline)
 	return ret0
 }
 
@@ -3263,14 +3263,14 @@ func (mr *MockPipelineSourceMockRecorder) Collection(path any, opts ...any) *gom
 }
 
 // CollectionGroup mocks base method.
-func (m *MockPipelineSource) CollectionGroup(collectionID string, opts ...firestore.CollectionGroupOption) v2.Pipeline {
+func (m *MockPipelineSource) CollectionGroup(collectionID string, opts ...firestore.CollectionGroupOption) fsmock.Pipeline {
 	m.ctrl.T.Helper()
 	varargs := []any{collectionID}
 	for _, a := range opts {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "CollectionGroup", varargs...)
-	ret0, _ := ret[0].(v2.Pipeline)
+	ret0, _ := ret[0].(fsmock.Pipeline)
 	return ret0
 }
 
@@ -3282,10 +3282,10 @@ func (mr *MockPipelineSourceMockRecorder) CollectionGroup(collectionID any, opts
 }
 
 // CreateFromAggregationQuery mocks base method.
-func (m *MockPipelineSource) CreateFromAggregationQuery(query v2.AggregationQuery) (v2.Pipeline, error) {
+func (m *MockPipelineSource) CreateFromAggregationQuery(query fsmock.AggregationQuery) (fsmock.Pipeline, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreateFromAggregationQuery", query)
-	ret0, _ := ret[0].(v2.Pipeline)
+	ret0, _ := ret[0].(fsmock.Pipeline)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -3297,10 +3297,10 @@ func (mr *MockPipelineSourceMockRecorder) CreateFromAggregationQuery(query any) 
 }
 
 // CreateFromQuery mocks base method.
-func (m *MockPipelineSource) CreateFromQuery(query v2.Query) (v2.Pipeline, error) {
+func (m *MockPipelineSource) CreateFromQuery(query fsmock.Query) (fsmock.Pipeline, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreateFromQuery", query)
-	ret0, _ := ret[0].(v2.Pipeline)
+	ret0, _ := ret[0].(fsmock.Pipeline)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -3312,14 +3312,14 @@ func (mr *MockPipelineSourceMockRecorder) CreateFromQuery(query any) *gomock.Cal
 }
 
 // Database mocks base method.
-func (m *MockPipelineSource) Database(opts ...firestore.DatabaseOption) v2.Pipeline {
+func (m *MockPipelineSource) Database(opts ...firestore.DatabaseOption) fsmock.Pipeline {
 	m.ctrl.T.Helper()
 	varargs := []any{}
 	for _, a := range opts {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "Database", varargs...)
-	ret0, _ := ret[0].(v2.Pipeline)
+	ret0, _ := ret[0].(fsmock.Pipeline)
 	return ret0
 }
 
@@ -3330,14 +3330,14 @@ func (mr *MockPipelineSourceMockRecorder) Database(opts ...any) *gomock.Call {
 }
 
 // Documents mocks base method.
-func (m *MockPipelineSource) Documents(refs []v2.DocumentRef, opts ...firestore.DocumentsOption) (v2.Pipeline, error) {
+func (m *MockPipelineSource) Documents(refs []fsmock.DocumentRef, opts ...firestore.DocumentsOption) (fsmock.Pipeline, error) {
 	m.ctrl.T.Helper()
 	varargs := []any{refs}
 	for _, a := range opts {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "Documents", varargs...)
-	ret0, _ := ret[0].(v2.Pipeline)
+	ret0, _ := ret[0].(fsmock.Pipeline)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -3350,14 +3350,14 @@ func (mr *MockPipelineSourceMockRecorder) Documents(refs any, opts ...any) *gomo
 }
 
 // Literals mocks base method.
-func (m *MockPipelineSource) Literals(documents []map[string]any, opts ...firestore.LiteralsOption) v2.Pipeline {
+func (m *MockPipelineSource) Literals(documents []map[string]any, opts ...firestore.LiteralsOption) fsmock.Pipeline {
 	m.ctrl.T.Helper()
 	varargs := []any{documents}
 	for _, a := range opts {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "Literals", varargs...)
-	ret0, _ := ret[0].(v2.Pipeline)
+	ret0, _ := ret[0].(fsmock.Pipeline)
 	return ret0
 }
 
@@ -3422,10 +3422,10 @@ func (mr *MockPipelineSnapshotMockRecorder) ExplainStats() *gomock.Call {
 }
 
 // Results mocks base method.
-func (m *MockPipelineSnapshot) Results() v2.PipelineResultIterator {
+func (m *MockPipelineSnapshot) Results() fsmock.PipelineResultIterator {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Results")
-	ret0, _ := ret[0].(v2.PipelineResultIterator)
+	ret0, _ := ret[0].(fsmock.PipelineResultIterator)
 	return ret0
 }
 
@@ -3530,10 +3530,10 @@ func (mr *MockPipelineResultMockRecorder) Exists() *gomock.Call {
 }
 
 // Ref mocks base method.
-func (m *MockPipelineResult) Ref() v2.DocumentRef {
+func (m *MockPipelineResult) Ref() fsmock.DocumentRef {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Ref")
-	ret0, _ := ret[0].(v2.DocumentRef)
+	ret0, _ := ret[0].(fsmock.DocumentRef)
 	return ret0
 }
 
@@ -3597,10 +3597,10 @@ func (mr *MockDocumentIteratorMockRecorder) ExplainMetrics() *gomock.Call {
 }
 
 // GetAll mocks base method.
-func (m *MockDocumentIterator) GetAll() ([]v2.DocumentSnapshot, error) {
+func (m *MockDocumentIterator) GetAll() ([]fsmock.DocumentSnapshot, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetAll")
-	ret0, _ := ret[0].([]v2.DocumentSnapshot)
+	ret0, _ := ret[0].([]fsmock.DocumentSnapshot)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -3612,10 +3612,10 @@ func (mr *MockDocumentIteratorMockRecorder) GetAll() *gomock.Call {
 }
 
 // Next mocks base method.
-func (m *MockDocumentIterator) Next() (v2.DocumentSnapshot, error) {
+func (m *MockDocumentIterator) Next() (fsmock.DocumentSnapshot, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Next")
-	ret0, _ := ret[0].(v2.DocumentSnapshot)
+	ret0, _ := ret[0].(fsmock.DocumentSnapshot)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -3663,10 +3663,10 @@ func (m *MockDocumentRefIterator) EXPECT() *MockDocumentRefIteratorMockRecorder 
 }
 
 // GetAll mocks base method.
-func (m *MockDocumentRefIterator) GetAll() ([]v2.DocumentRef, error) {
+func (m *MockDocumentRefIterator) GetAll() ([]fsmock.DocumentRef, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetAll")
-	ret0, _ := ret[0].([]v2.DocumentRef)
+	ret0, _ := ret[0].([]fsmock.DocumentRef)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -3678,10 +3678,10 @@ func (mr *MockDocumentRefIteratorMockRecorder) GetAll() *gomock.Call {
 }
 
 // Next mocks base method.
-func (m *MockDocumentRefIterator) Next() (v2.DocumentRef, error) {
+func (m *MockDocumentRefIterator) Next() (fsmock.DocumentRef, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Next")
-	ret0, _ := ret[0].(v2.DocumentRef)
+	ret0, _ := ret[0].(fsmock.DocumentRef)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -3731,10 +3731,10 @@ func (m *MockCollectionIterator) EXPECT() *MockCollectionIteratorMockRecorder {
 }
 
 // GetAll mocks base method.
-func (m *MockCollectionIterator) GetAll() ([]v2.CollectionRef, error) {
+func (m *MockCollectionIterator) GetAll() ([]fsmock.CollectionRef, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetAll")
-	ret0, _ := ret[0].([]v2.CollectionRef)
+	ret0, _ := ret[0].([]fsmock.CollectionRef)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -3746,10 +3746,10 @@ func (mr *MockCollectionIteratorMockRecorder) GetAll() *gomock.Call {
 }
 
 // Next mocks base method.
-func (m *MockCollectionIterator) Next() (v2.CollectionRef, error) {
+func (m *MockCollectionIterator) Next() (fsmock.CollectionRef, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Next")
-	ret0, _ := ret[0].(v2.CollectionRef)
+	ret0, _ := ret[0].(fsmock.CollectionRef)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -3799,10 +3799,10 @@ func (m *MockQuerySnapshotIterator) EXPECT() *MockQuerySnapshotIteratorMockRecor
 }
 
 // Next mocks base method.
-func (m *MockQuerySnapshotIterator) Next() (v2.QuerySnapshot, error) {
+func (m *MockQuerySnapshotIterator) Next() (fsmock.QuerySnapshot, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Next")
-	ret0, _ := ret[0].(v2.QuerySnapshot)
+	ret0, _ := ret[0].(fsmock.QuerySnapshot)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -3850,10 +3850,10 @@ func (m *MockDocumentSnapshotIterator) EXPECT() *MockDocumentSnapshotIteratorMoc
 }
 
 // Next mocks base method.
-func (m *MockDocumentSnapshotIterator) Next() (v2.DocumentSnapshot, error) {
+func (m *MockDocumentSnapshotIterator) Next() (fsmock.DocumentSnapshot, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Next")
-	ret0, _ := ret[0].(v2.DocumentSnapshot)
+	ret0, _ := ret[0].(fsmock.DocumentSnapshot)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -3901,10 +3901,10 @@ func (m *MockPipelineResultIterator) EXPECT() *MockPipelineResultIteratorMockRec
 }
 
 // GetAll mocks base method.
-func (m *MockPipelineResultIterator) GetAll() ([]v2.PipelineResult, error) {
+func (m *MockPipelineResultIterator) GetAll() ([]fsmock.PipelineResult, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetAll")
-	ret0, _ := ret[0].([]v2.PipelineResult)
+	ret0, _ := ret[0].([]fsmock.PipelineResult)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -3916,10 +3916,10 @@ func (mr *MockPipelineResultIteratorMockRecorder) GetAll() *gomock.Call {
 }
 
 // Next mocks base method.
-func (m *MockPipelineResultIterator) Next() (v2.PipelineResult, error) {
+func (m *MockPipelineResultIterator) Next() (fsmock.PipelineResult, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Next")
-	ret0, _ := ret[0].(v2.PipelineResult)
+	ret0, _ := ret[0].(fsmock.PipelineResult)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
