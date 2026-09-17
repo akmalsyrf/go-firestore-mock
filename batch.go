@@ -17,7 +17,7 @@ type WriteBatch interface {
 }
 
 type writeBatchWrapper struct {
-	wb  *firestore.WriteBatch
+	wb  *firestore.WriteBatch //nolint:staticcheck // SDK still ships WriteBatch; wrap for mocks.
 	err error
 }
 

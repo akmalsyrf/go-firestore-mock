@@ -54,7 +54,7 @@ func TestMethodParity(t *testing.T) {
 		},
 		{
 			name:  "WriteBatch",
-			sdk:   reflect.TypeOf((*firestore.WriteBatch)(nil)),
+			sdk:   reflect.TypeOf((*firestore.WriteBatch)(nil)), //nolint:staticcheck
 			iface: reflect.TypeOf((*fsmock.WriteBatch)(nil)).Elem(),
 		},
 		{
@@ -181,7 +181,7 @@ func methodNames(t reflect.Type) map[string]bool {
 	}
 	// For non-interface types, Method() includes pointer and value receiver methods
 	// depending on whether t is pointer. Normalize to pointer for structs.
-	if t.Kind() != reflect.Interface && t.Kind() != reflect.Ptr {
+	if t.Kind() != reflect.Interface && t.Kind() != reflect.Pointer {
 		t = reflect.PointerTo(t)
 	}
 	for i := 0; i < t.NumMethod(); i++ {

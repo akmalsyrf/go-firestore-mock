@@ -52,7 +52,8 @@ func (w *clientWrapper) BulkWriter(ctx context.Context) BulkWriter {
 }
 
 func (w *clientWrapper) Batch() WriteBatch {
-	return &writeBatchWrapper{wb: w.client.Batch()}
+	// WriteBatch remains in the SDK (deprecated) and is still used by consumers.
+	return &writeBatchWrapper{wb: w.client.Batch()} //nolint:staticcheck
 }
 
 func (w *clientWrapper) RunTransaction(ctx context.Context, f func(context.Context, Transaction) error, opts ...firestore.TransactionOption) error {

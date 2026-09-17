@@ -79,7 +79,7 @@ func TestToDocumentRef_Nil(t *testing.T) {
 }
 
 func TestWriteBatch_DeferredUnwrapError(t *testing.T) {
-	wb := &writeBatchWrapper{wb: &firestore.WriteBatch{}}
+	wb := &writeBatchWrapper{wb: &firestore.WriteBatch{}} //nolint:staticcheck
 	wb.Set(nil, map[string]any{"a": 1})
 	_, err := wb.Commit(context.Background())
 	if err == nil {
