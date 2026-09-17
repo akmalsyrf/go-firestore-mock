@@ -1,0 +1,92 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.25.x"
+      - uses: golangci/golangci-lint-action@v7
+        with:
+          version: v2.1.6
+
+  unit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.25.x"
+      - name: Vet
+        run: go vet ./...
+      - name: Unit + apicheck + race
+        run: go test -race -count=1 ./...
+
+  generate-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.25.x"
+      - name: Install mockgen
+        run: go install go.uber.org/mock/mockgen@v0.6.0
+      - name: Regenerate mocks
+        run: go generate ./...
+      - name: Fail if mocks are stale
+        run: git diff --exit-code -- mocks/
+
+  accuracy:
+    name: accuracy (parity + apicheck gate)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.25.x"
+      - name: Start Firestore emulator
+        run: |
+          docker run -d --name firestore-emulator -p 8080:8080 \
+            gcr.io/google.com/cloudsdktool/google-cloud-cli:emulators \
+            gcloud beta emulators firestore start --host-port=0.0.0.0:8080
+          for i in $(seq 1 60); do
+            if nc -z 127.0.0.1 8080 2>/dev/null; then echo "emulator up"; exit 0; fi
+            sleep 2
+          done
+          docker logs firestore-emulator || true
+          exit 1
+      - name: Accuracy gate
+        env:
+          FIRESTORE_EMULATOR_HOST: 127.0.0.1:8080
+        run: |
+          chmod +x scripts/check-accuracy.sh
+          ./scripts/check-accuracy.sh
+
+  # Single required status check for branch protection: "gate"
+  gate:
+    name: gate
+    runs-on: ubuntu-latest
+    needs: [lint, unit, generate-check, accuracy]
+    if: always()
+    steps:
+      - name: Require all jobs green
+        run: |
+          echo "lint=${{ needs.lint.result }}"
+          echo "unit=${{ needs.unit.result }}"
+          echo "generate-check=${{ needs.generate-check.result }}"
+          echo "accuracy=${{ needs.accuracy.result }}"
+          test "${{ needs.lint.result }}" = "success"
+          test "${{ needs.unit.result }}" = "success"
+          test "${{ needs['generate-check'].result }}" = "success"
+          test "${{ needs.accuracy.result }}" = "success"
