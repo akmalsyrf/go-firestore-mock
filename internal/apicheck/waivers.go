@@ -126,32 +126,6 @@ var waivers = map[string]waiver{
 		Issue:  "n/a: extend fstest later",
 	},
 
-	// Document snapshot path helpers
-	"documentSnapshotWrapper.DataAt": {
-		Reason: "Data() covered; DataAt thin passthrough",
-		Issue:  "n/a: low priority",
-	},
-	"documentSnapshotWrapper.DataAtPath": {
-		Reason: "Data() covered; DataAtPath thin passthrough",
-		Issue:  "n/a: low priority",
-	},
-	"documentSnapshotWrapper.DataTo": {
-		Reason: "Data() covered; DataTo thin passthrough",
-		Issue:  "n/a: low priority",
-	},
-	"documentSnapshotWrapper.CreateTime": {
-		Reason: "field accessor; Exists/Data covered",
-		Issue:  "n/a: low priority",
-	},
-	"documentSnapshotWrapper.UpdateTime": {
-		Reason: "field accessor; Exists/Data covered",
-		Issue:  "n/a: low priority",
-	},
-	"documentSnapshotWrapper.ReadTime": {
-		Reason: "field accessor; Exists/Data covered",
-		Issue:  "n/a: low priority",
-	},
-
 	// Query path / select variants
 	"queryWrapper.WherePath": {
 		Reason: "Where covered; Path variant thin",
@@ -384,14 +358,6 @@ var waivers = map[string]waiver{
 	// Iterator explain / page helpers
 	"documentIteratorWrapper.ExplainMetrics": {
 		Reason: "explain metrics optional",
-		Issue:  "n/a: low priority",
-	},
-	"documentRefIteratorWrapper.PageInfo": {
-		Reason: "pagination metadata",
-		Issue:  "n/a: low priority",
-	},
-	"collectionIteratorWrapper.PageInfo": {
-		Reason: "pagination metadata",
 		Issue:  "n/a: low priority",
 	},
 

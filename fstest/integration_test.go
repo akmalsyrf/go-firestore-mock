@@ -81,8 +81,8 @@ func TestIntegration_CollectionAddNewDocParent(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Add: %v", err)
 	}
-	if ref.ID() == "" || ref.Parent().ID() == "" {
-		t.Fatalf("ref=%s parent=%s", ref.ID(), ref.Parent().ID())
+	if ref.ID() == "" || ref.Path() == "" || ref.Reference() == nil || ref.Parent().ID() == "" {
+		t.Fatalf("ref id=%s path=%s parent=%s", ref.ID(), ref.Path(), ref.Parent().ID())
 	}
 	nd := coll.NewDoc()
 	if _, err := nd.Set(h.Ctx, map[string]any{"y": 2}); err != nil {
@@ -103,17 +103,17 @@ func TestIntegration_SubcollectionAndCollectionsIterator(t *testing.T) {
 	if _, err := sub.Doc("i1").Set(h.Ctx, map[string]any{"n": 1}); err != nil {
 		t.Fatal(err)
 	}
+	if sub.Parent() == nil || sub.Parent().ID() != "p1" {
+		t.Fatalf("sub.Parent=%v", sub.Parent())
+	}
 
 	it := parent.Collections(h.Ctx)
+	allColls, err := it.GetAll()
+	if err != nil {
+		t.Fatalf("Collections.GetAll: %v", err)
+	}
 	found := false
-	for {
-		c, err := it.Next()
-		if err == iterator.Done {
-			break
-		}
-		if err != nil {
-			t.Fatal(err)
-		}
+	for _, c := range allColls {
 		if c.ID() == "items" {
 			found = true
 		}
@@ -171,9 +171,17 @@ func TestIntegration_DocumentRefsIterator(t *testing.T) {
 	if it.PageInfo() == nil {
 		t.Fatal("DocumentRefIterator.PageInfo nil")
 	}
-	refs, err := it.GetAll()
+	first, err := it.Next()
+	if err != nil {
+		t.Fatalf("DocumentRefs.Next: %v", err)
+	}
+	if first == nil || first.ID() == "" {
+		t.Fatal("DocumentRefs.Next returned empty")
+	}
+	// Drain remaining via GetAll on a fresh iterator.
+	refs, err := coll.DocumentRefs(h.Ctx).GetAll()
 	if err != nil || len(refs) < 1 {
-		t.Fatalf("DocumentRefs: %d %v", len(refs), err)
+		t.Fatalf("DocumentRefs.GetAll: %d %v", len(refs), err)
 	}
 }
 
@@ -350,8 +358,14 @@ func TestIntegration_Aggregation(t *testing.T) {
 
 func TestIntegration_GetAllAndClientCollections(t *testing.T) {
 	h := fstest.NewHarness(t)
-	coll := h.Client.Collection(h.Coll("getall"))
+	collPath := h.Coll("getall")
+	coll := h.Client.Collection(collPath)
 	d1, d2 := coll.Doc("g1"), coll.Doc("g2")
+	// Also exercise Client.Doc (slash path form).
+	viaDoc := h.Client.Doc(collPath + "/g1")
+	if viaDoc == nil || viaDoc.ID() != "g1" {
+		t.Fatalf("Client.Doc: %#v", viaDoc)
+	}
 	if _, err := d1.Set(h.Ctx, map[string]any{"k": 1}); err != nil {
 		t.Fatal(err)
 	}
@@ -389,6 +403,9 @@ func TestIntegration_CollectionGroup(t *testing.T) {
 	}
 
 	cg := h.Client.CollectionGroup("notes")
+	if cg.Reference() == nil {
+		t.Fatal("CollectionGroup.Reference nil")
+	}
 	all, err := cg.Where("tag", "==", "cg").Documents(h.Ctx).GetAll()
 	if err != nil {
 		t.Fatalf("CollectionGroup query: %v", err)
