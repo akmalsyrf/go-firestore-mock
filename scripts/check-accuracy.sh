@@ -45,6 +45,9 @@ while IFS= read -r line; do
   case "$action" in
     fail)
       echo "  FAIL  $pkg $test" >&2
+      # Dump last outputs for this test so CI logs show the assertion.
+      grep -E "\"Test\":\"${test}\"" "$JSON_OUT" | grep '"Action":"output"' | tail -8 \
+        | sed -n 's/.*"Output":"\(.*\)".*/    \1/p' | sed 's/\\n/\n    /g' >&2 || true
       fail=$((fail + 1))
       ;;
     skip)

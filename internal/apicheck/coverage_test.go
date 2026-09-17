@@ -52,9 +52,6 @@ func TestWrapperMethodCoverage(t *testing.T) {
 	for _, m := range methods {
 		ok := methodCovered(covered, m)
 		if ok {
-			if _, w := waivers[m.Key]; w {
-				// Stale waiver check at end
-			}
 			continue
 		}
 		if w, ok := waivers[m.Key]; ok {
@@ -183,7 +180,7 @@ func parseCoverProfile(path, root string) ([]coverBlock, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer f.Close()
+	defer func() { _ = f.Close() }()
 
 	var blocks []coverBlock
 	sc := bufio.NewScanner(f)

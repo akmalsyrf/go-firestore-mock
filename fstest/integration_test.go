@@ -252,10 +252,10 @@ func TestIntegration_Transaction(t *testing.T) {
 func TestIntegration_BulkWriter(t *testing.T) {
 	h := fstest.NewHarness(t)
 	coll := h.Client.Collection(h.Coll("bw"))
-	bw := h.Client.BulkWriter(h.Ctx)
 
+	// One write per path per BulkWriter (SDK ≥ v1.23 rejects duplicates).
+	// Create/Update/Delete are exercised via separate writers so covercheck still sees them.
 	d1, d2, d3 := coll.Doc("w1"), coll.Doc("w2"), coll.Doc("w3")
-	// Seed docs that will be Update/Delete'd — BulkWriter rejects two ops on the same path.
 	if _, err := d2.Set(h.Ctx, map[string]any{"a": 2}); err != nil {
 		t.Fatal(err)
 	}
@@ -263,27 +263,44 @@ func TestIntegration_BulkWriter(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if _, err := bw.Create(coll.Doc("w0"), map[string]any{"a": 0}); err != nil {
-		t.Fatalf("Create: %v", err)
-	}
-	if _, err := bw.Set(d1, map[string]any{"a": 1}); err != nil {
+	bwSet := h.Client.BulkWriter(h.Ctx)
+	if _, err := bwSet.Set(d1, map[string]any{"a": 1}); err != nil {
 		t.Fatalf("Set: %v", err)
 	}
-	if _, err := bw.Update(d3, []firestore.Update{{Path: "a", Value: 33}}); err != nil {
+	bwSet.Flush()
+	bwSet.End()
+
+	bwCreate := h.Client.BulkWriter(h.Ctx)
+	if _, err := bwCreate.Create(coll.Doc("w0"), map[string]any{"a": 0}); err != nil {
+		t.Fatalf("Create: %v", err)
+	}
+	bwCreate.Flush()
+	bwCreate.End()
+
+	bwUpdate := h.Client.BulkWriter(h.Ctx)
+	if _, err := bwUpdate.Update(d3, []firestore.Update{{Path: "a", Value: 33}}); err != nil {
 		t.Fatalf("Update: %v", err)
 	}
-	if _, err := bw.Delete(d2); err != nil {
+	bwUpdate.Flush()
+	bwUpdate.End()
+
+	bwDelete := h.Client.BulkWriter(h.Ctx)
+	if _, err := bwDelete.Delete(d2); err != nil {
 		t.Fatalf("Delete: %v", err)
 	}
-	bw.Flush()
-	bw.End()
+	bwDelete.Flush()
+	bwDelete.End()
 
 	s, err := d1.Get(h.Ctx)
 	if err != nil {
 		t.Fatalf("Get d1: %v", err)
 	}
 	if !s.Exists() || s.Data()["a"] != int64(1) {
-		t.Fatalf("after flush: data=%v", s.Data())
+		t.Fatalf("after set: data=%v", s.Data())
+	}
+	s0, err := coll.Doc("w0").Get(h.Ctx)
+	if err != nil || !s0.Exists() {
+		t.Fatalf("w0 missing: %v", err)
 	}
 	s2, err := d2.Get(h.Ctx)
 	if err != nil {

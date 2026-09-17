@@ -28,29 +28,26 @@ func sdkModuleDir() (string, error) {
 // discoverSDKTypesWithMethods returns exported type names in the firestore package
 // that have at least one exported method (value or pointer receiver).
 func discoverSDKTypesWithMethods(sdkDir string) (map[string][]string, error) {
-	fset := token.NewFileSet()
-	pkgs, err := parser.ParseDir(fset, sdkDir, func(info os.FileInfo) bool {
-		name := info.Name()
-		if !strings.HasSuffix(name, ".go") || strings.HasSuffix(name, "_test.go") {
-			return false
-		}
-		// Skip subdirectories handled separately; ParseDir is non-recursive for files in sdkDir only.
-		return true
-	}, 0)
+	entries, err := os.ReadDir(sdkDir)
 	if err != nil {
 		return nil, err
 	}
-	pkg, ok := pkgs["firestore"]
-	if !ok {
-		return nil, fmt.Errorf("firestore package not found in %s", sdkDir)
-	}
 
+	fset := token.NewFileSet()
 	methods := map[string][]string{}
 	seen := map[string]map[string]bool{}
 
-	for _, f := range pkg.Files {
-		// Only files directly in sdkDir (ignore nested if any slipped in).
-		if filepath.Dir(fset.File(f.Pos()).Name()) != sdkDir {
+	for _, e := range entries {
+		name := e.Name()
+		if e.IsDir() || !strings.HasSuffix(name, ".go") || strings.HasSuffix(name, "_test.go") {
+			continue
+		}
+		path := filepath.Join(sdkDir, name)
+		f, err := parser.ParseFile(fset, path, nil, 0)
+		if err != nil {
+			return nil, fmt.Errorf("parse %s: %w", path, err)
+		}
+		if f.Name == nil || f.Name.Name != "firestore" {
 			continue
 		}
 		for _, decl := range f.Decls {

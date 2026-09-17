@@ -16,7 +16,7 @@ func ExampleNewClient() {
 		fmt.Println("skip:", err)
 		return
 	}
-	defer fs.Close()
+	defer func() { _ = fs.Close() }()
 
 	client, err := fsmock.NewClient(fs)
 	if err != nil {
