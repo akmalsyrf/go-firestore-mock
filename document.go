@@ -1,4 +1,4 @@
-package firestore
+package fsmock
 
 import (
 	"context"
@@ -6,9 +6,7 @@ import (
 	"cloud.google.com/go/firestore"
 )
 
-// DocumentRef abstracts Firestore document behavior used by repos.
-//
-//go:generate mockgen -source=document.go -destination=document_mock.go -package=firestore
+// DocumentRef abstracts *firestore.DocumentRef.
 type DocumentRef interface {
 	Set(ctx context.Context, data any, opts ...firestore.SetOption) (*firestore.WriteResult, error)
 	Get(ctx context.Context) (DocumentSnapshot, error)
@@ -21,10 +19,13 @@ type DocumentRef interface {
 	Reference() *firestore.DocumentRef
 	ID() string
 	Path() string
-	Parent() *firestore.CollectionRef
+	Parent() CollectionRef
+	WithReadOptions(opts ...firestore.ReadOption) DocumentRef
 }
 
-type documentRefWrapper struct{ ref *firestore.DocumentRef }
+type documentRefWrapper struct {
+	ref *firestore.DocumentRef
+}
 
 func (w *documentRefWrapper) Set(ctx context.Context, data any, opts ...firestore.SetOption) (*firestore.WriteResult, error) {
 	return w.ref.Set(ctx, data, opts...)
@@ -51,11 +52,11 @@ func (w *documentRefWrapper) Create(ctx context.Context, data any) (*firestore.W
 }
 
 func (w *documentRefWrapper) Collection(path string) CollectionRef {
-	return &collectionRefWrapper{ref: w.ref.Collection(path)}
+	return newCollectionRef(w.ref.Collection(path))
 }
 
 func (w *documentRefWrapper) Collections(ctx context.Context) CollectionIterator {
-	return &collectionIteratorWrapper{iter: w.ref.Collections(ctx)}
+	return newCollectionIterator(w.ref.Collections(ctx))
 }
 
 func (w *documentRefWrapper) Snapshots(ctx context.Context) DocumentSnapshotIterator {
@@ -74,6 +75,11 @@ func (w *documentRefWrapper) Path() string {
 	return w.ref.Path
 }
 
-func (w *documentRefWrapper) Parent() *firestore.CollectionRef {
-	return w.ref.Parent
+func (w *documentRefWrapper) Parent() CollectionRef {
+	return newCollectionRef(w.ref.Parent)
+}
+
+func (w *documentRefWrapper) WithReadOptions(opts ...firestore.ReadOption) DocumentRef {
+	clone := cloneDocumentRefWithFreshReadSettings(w.ref)
+	return newDocumentRef(clone.WithReadOptions(opts...))
 }

@@ -1,113 +1,114 @@
-package firestore
+package fsmock
 
 import (
-	"fmt"
-
 	"cloud.google.com/go/firestore"
 )
 
-//go:generate mockgen -source=transaction.go -destination=transaction_mock.go -package=firestore
-
-// Transaction abstracts Firestore Transaction behavior.
+// Transaction abstracts *firestore.Transaction.
 //
 // Read methods (Get, GetAll, Documents, DocumentRefs) read inside the transaction.
 // Firestore requires all reads to happen before any writes within a transaction.
 type Transaction interface {
-	Get(docRef *firestore.DocumentRef) (DocumentSnapshot, error)
-	GetAll(docRefs []*firestore.DocumentRef) ([]DocumentSnapshot, error)
-	// Documents returns a DocumentIterator for the given Query or CollectionRef
-	// (CollectionRef is a Query because it embeds Query in its interface),
-	// matching the *firestore.Transaction.Documents(q Queryer) signature.
-	Documents(q Query) DocumentIterator
-	// DocumentRefs returns a DocumentRefIterator for the given CollectionRef,
-	// including missing documents (those that have sub-documents but no own data).
-	DocumentRefs(coll CollectionRef) DocumentRefIterator
-	Create(docRef *firestore.DocumentRef, data interface{}) error
-	Set(docRef *firestore.DocumentRef, data interface{}, opts ...firestore.SetOption) error
-	Update(docRef *firestore.DocumentRef, updates []firestore.Update, preconds ...firestore.Precondition) error
-	Delete(docRef *firestore.DocumentRef, preconds ...firestore.Precondition) error
+	Get(docRef DocumentRef) (DocumentSnapshot, error)
+	GetAll(docRefs []DocumentRef) ([]DocumentSnapshot, error)
+	Documents(q Query) (DocumentIterator, error)
+	DocumentRefs(coll CollectionRef) (DocumentRefIterator, error)
+	Create(docRef DocumentRef, data any) error
+	Set(docRef DocumentRef, data any, opts ...firestore.SetOption) error
+	Update(docRef DocumentRef, updates []firestore.Update, preconds ...firestore.Precondition) error
+	Delete(docRef DocumentRef, preconds ...firestore.Precondition) error
+	WithReadOptions(opts ...firestore.ReadOption) Transaction
+	Execute(p Pipeline, opts ...firestore.ExecuteOption) (PipelineSnapshot, error)
 }
 
 type transactionWrapper struct {
 	tx *firestore.Transaction
 }
 
-func (w *transactionWrapper) Get(docRef *firestore.DocumentRef) (DocumentSnapshot, error) {
-	snap, err := w.tx.Get(docRef)
+func (w *transactionWrapper) Get(docRef DocumentRef) (DocumentSnapshot, error) {
+	ref, err := toDocumentRef(docRef)
+	if err != nil {
+		return nil, err
+	}
+	snap, err := w.tx.Get(ref)
 	if err != nil {
 		return nil, err
 	}
 	return &documentSnapshotWrapper{snap: snap}, nil
 }
 
-func (w *transactionWrapper) GetAll(docRefs []*firestore.DocumentRef) ([]DocumentSnapshot, error) {
-	snaps, err := w.tx.GetAll(docRefs)
+func (w *transactionWrapper) GetAll(docRefs []DocumentRef) ([]DocumentSnapshot, error) {
+	refs, err := wrapDocumentRefs(docRefs)
 	if err != nil {
 		return nil, err
 	}
-
-	result := make([]DocumentSnapshot, len(snaps))
-	for i, snap := range snaps {
-		result[i] = &documentSnapshotWrapper{snap: snap}
+	snaps, err := w.tx.GetAll(refs)
+	if err != nil {
+		return nil, err
 	}
-	return result, nil
+	return wrapSnapshots(snaps), nil
 }
 
-func (w *transactionWrapper) Create(docRef *firestore.DocumentRef, data interface{}) error {
-	return w.tx.Create(docRef, data)
+func (w *transactionWrapper) Create(docRef DocumentRef, data any) error {
+	ref, err := toDocumentRef(docRef)
+	if err != nil {
+		return err
+	}
+	return w.tx.Create(ref, data)
 }
 
-func (w *transactionWrapper) Set(docRef *firestore.DocumentRef, data interface{}, opts ...firestore.SetOption) error {
-	return w.tx.Set(docRef, data, opts...)
+func (w *transactionWrapper) Set(docRef DocumentRef, data any, opts ...firestore.SetOption) error {
+	ref, err := toDocumentRef(docRef)
+	if err != nil {
+		return err
+	}
+	return w.tx.Set(ref, data, opts...)
 }
 
-func (w *transactionWrapper) Update(docRef *firestore.DocumentRef, updates []firestore.Update, preconds ...firestore.Precondition) error {
-	return w.tx.Update(docRef, updates, preconds...)
+func (w *transactionWrapper) Update(docRef DocumentRef, updates []firestore.Update, preconds ...firestore.Precondition) error {
+	ref, err := toDocumentRef(docRef)
+	if err != nil {
+		return err
+	}
+	return w.tx.Update(ref, updates, preconds...)
 }
 
-func (w *transactionWrapper) Delete(docRef *firestore.DocumentRef, preconds ...firestore.Precondition) error {
-	return w.tx.Delete(docRef, preconds...)
+func (w *transactionWrapper) Delete(docRef DocumentRef, preconds ...firestore.Precondition) error {
+	ref, err := toDocumentRef(docRef)
+	if err != nil {
+		return err
+	}
+	return w.tx.Delete(ref, preconds...)
 }
 
-// Documents converts q (Query or CollectionRef wrapper) to the underlying
-// firestore.Queryer and delegates to *firestore.Transaction.Documents.
-//
-// q must be one of the wrappers produced by this package (queryWrapper /
-// collectionRefWrapper) or a CollectionRef whose Reference() returns a real
-// *firestore.CollectionRef. Custom mocks that satisfy Query but do not back a
-// real Firestore queryer cannot be used with the production wrapper; in tests
-// you should mock the Transaction interface directly.
-func (w *transactionWrapper) Documents(q Query) DocumentIterator {
+// Documents converts q to the underlying firestore.Queryer and delegates.
+// q must be a package wrapper (or CollectionRef with a real Reference()).
+// Custom mocks that only satisfy Query cannot be used with the production wrapper;
+// mock Transaction directly in unit tests instead.
+func (w *transactionWrapper) Documents(q Query) (DocumentIterator, error) {
 	queryer, err := toFirestoreQueryer(q)
 	if err != nil {
-		panic(fmt.Sprintf("go-firestore-mock: transactionWrapper.Documents: %v", err))
+		return nil, err
 	}
-	return &documentIteratorWrapper{iter: w.tx.Documents(queryer)}
+	return newDocumentIterator(w.tx.Documents(queryer)), nil
 }
 
-// DocumentRefs delegates to *firestore.Transaction.DocumentRefs using the
-// underlying *firestore.CollectionRef behind the CollectionRef wrapper.
-func (w *transactionWrapper) DocumentRefs(coll CollectionRef) DocumentRefIterator {
-	if coll == nil {
-		panic("go-firestore-mock: transactionWrapper.DocumentRefs: nil CollectionRef")
+func (w *transactionWrapper) DocumentRefs(coll CollectionRef) (DocumentRefIterator, error) {
+	ref, err := toCollectionRef(coll)
+	if err != nil {
+		return nil, err
 	}
-	return &documentRefIteratorWrapper{iter: w.tx.DocumentRefs(coll.Reference())}
+	return newDocumentRefIterator(w.tx.DocumentRefs(ref)), nil
 }
 
-// toFirestoreQueryer extracts the real firestore.Queryer behind a Query wrapper.
-// Returns an error for custom Query implementations that do not back a real
-// Firestore type.
-func toFirestoreQueryer(q Query) (firestore.Queryer, error) {
-	switch v := q.(type) {
-	case *queryWrapper:
-		return v.q, nil
-	case *collectionRefWrapper:
-		return v.ref, nil
+func (w *transactionWrapper) WithReadOptions(opts ...firestore.ReadOption) Transaction {
+	return &transactionWrapper{tx: w.tx.WithReadOptions(opts...)}
+}
+
+func (w *transactionWrapper) Execute(p Pipeline, opts ...firestore.ExecuteOption) (PipelineSnapshot, error) {
+	pl, err := toPipeline(p)
+	if err != nil {
+		return nil, err
 	}
-	if cr, ok := q.(CollectionRef); ok {
-		if ref := cr.Reference(); ref != nil {
-			return ref, nil
-		}
-	}
-	return nil, fmt.Errorf("Query implementation %T cannot be converted to firestore.Queryer (use a wrapper produced by NewFirestoreClient)", q)
+	return newPipelineSnapshot(w.tx.Execute(pl, opts...)), nil
 }

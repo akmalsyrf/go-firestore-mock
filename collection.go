@@ -1,4 +1,4 @@
-package firestore
+package fsmock
 
 import (
 	"context"
@@ -6,14 +6,15 @@ import (
 	"cloud.google.com/go/firestore"
 )
 
-// CollectionRef abstracts Firestore collection behavior used by repos.
-// It also behaves like a Query (Where, Documents).
+// CollectionRef abstracts *firestore.CollectionRef.
 //
-//go:generate mockgen -source=collection.go -destination=collection_mock.go -package=firestore
+// WithReadOptions is inherited from Query (returns Query). The wrapper
+// implementation still applies options to the underlying *firestore.CollectionRef
+// and returns a CollectionRef value that also satisfies Query.
 type CollectionRef interface {
 	Query
 	Doc(id string) DocumentRef
-	Add(ctx context.Context, data any) (*firestore.DocumentRef, *firestore.WriteResult, error)
+	Add(ctx context.Context, data any) (DocumentRef, *firestore.WriteResult, error)
 	NewDoc() DocumentRef
 	DocumentRefs(ctx context.Context) DocumentRefIterator
 	Parent() DocumentRef
@@ -22,97 +23,41 @@ type CollectionRef interface {
 	Path() string
 }
 
-type collectionRefWrapper struct{ ref *firestore.CollectionRef }
+// CollectionGroupRef abstracts *firestore.CollectionGroupRef.
+type CollectionGroupRef interface {
+	Query
+	GetPartitionedQueries(ctx context.Context, partitionCount int) ([]Query, error)
+	Reference() *firestore.CollectionGroupRef
+}
+
+// collectionRefWrapper embeds queryWrapper so Query methods are not duplicated.
+type collectionRefWrapper struct {
+	queryWrapper
+	ref *firestore.CollectionRef
+}
 
 func (w *collectionRefWrapper) Doc(id string) DocumentRef {
-	return &documentRefWrapper{ref: w.ref.Doc(id)}
+	return newDocumentRef(w.ref.Doc(id))
 }
 
-func (w *collectionRefWrapper) Add(ctx context.Context, data any) (*firestore.DocumentRef, *firestore.WriteResult, error) {
-	return w.ref.Add(ctx, data)
-}
-
-func (w *collectionRefWrapper) Where(path string, op string, value any) Query {
-	return &queryWrapper{q: w.ref.Where(path, op, value)}
-}
-
-func (w *collectionRefWrapper) WherePath(fp firestore.FieldPath, op string, value any) Query {
-	return &queryWrapper{q: w.ref.WherePath(fp, op, value)}
-}
-
-func (w *collectionRefWrapper) WhereEntity(ef firestore.EntityFilter) Query {
-	return &queryWrapper{q: w.ref.WhereEntity(ef)}
-}
-
-func (w *collectionRefWrapper) Documents(ctx context.Context) DocumentIterator {
-	return &documentIteratorWrapper{iter: w.ref.Documents(ctx)}
-}
-
-func (w *collectionRefWrapper) OrderBy(path string, dir firestore.Direction) Query {
-	return &queryWrapper{q: w.ref.OrderBy(path, dir)}
-}
-
-func (w *collectionRefWrapper) OrderByPath(fp firestore.FieldPath, dir firestore.Direction) Query {
-	return &queryWrapper{q: w.ref.OrderByPath(fp, dir)}
-}
-
-func (w *collectionRefWrapper) Limit(n int) Query {
-	return &queryWrapper{q: w.ref.Limit(n)}
-}
-
-func (w *collectionRefWrapper) LimitToLast(n int) Query {
-	return &queryWrapper{q: w.ref.LimitToLast(n)}
-}
-
-func (w *collectionRefWrapper) Offset(n int) Query {
-	return &queryWrapper{q: w.ref.Offset(n)}
-}
-
-func (w *collectionRefWrapper) StartAt(docSnapshotOrFieldValues ...any) Query {
-	return &queryWrapper{q: w.ref.StartAt(docSnapshotOrFieldValues...)}
-}
-
-func (w *collectionRefWrapper) StartAfter(docSnapshotOrFieldValues ...any) Query {
-	return &queryWrapper{q: w.ref.StartAfter(docSnapshotOrFieldValues...)}
-}
-
-func (w *collectionRefWrapper) EndAt(docSnapshotOrFieldValues ...any) Query {
-	return &queryWrapper{q: w.ref.EndAt(docSnapshotOrFieldValues...)}
-}
-
-func (w *collectionRefWrapper) EndBefore(docSnapshotOrFieldValues ...any) Query {
-	return &queryWrapper{q: w.ref.EndBefore(docSnapshotOrFieldValues...)}
-}
-
-func (w *collectionRefWrapper) Select(paths ...string) Query {
-	return &queryWrapper{q: w.ref.Select(paths...)}
-}
-
-func (w *collectionRefWrapper) SelectPaths(fieldPaths ...firestore.FieldPath) Query {
-	return &queryWrapper{q: w.ref.SelectPaths(fieldPaths...)}
-}
-
-func (w *collectionRefWrapper) Snapshots(ctx context.Context) QuerySnapshotIterator {
-	return &querySnapshotIteratorWrapper{iter: w.ref.Snapshots(ctx)}
-}
-
-func (w *collectionRefWrapper) NewAggregationQuery() AggregationQuery {
-	return &aggregationQueryWrapper{aq: w.ref.NewAggregationQuery()}
+func (w *collectionRefWrapper) Add(ctx context.Context, data any) (DocumentRef, *firestore.WriteResult, error) {
+	ref, wr, err := w.ref.Add(ctx, data)
+	if err != nil {
+		return nil, wr, err
+	}
+	return newDocumentRef(ref), wr, nil
 }
 
 func (w *collectionRefWrapper) NewDoc() DocumentRef {
-	return &documentRefWrapper{ref: w.ref.NewDoc()}
+	return newDocumentRef(w.ref.NewDoc())
 }
 
 func (w *collectionRefWrapper) DocumentRefs(ctx context.Context) DocumentRefIterator {
-	return &documentRefIteratorWrapper{iter: w.ref.DocumentRefs(ctx)}
+	return newDocumentRefIterator(w.ref.DocumentRefs(ctx))
 }
 
 func (w *collectionRefWrapper) Parent() DocumentRef {
-	if w.ref.Parent == nil {
-		return nil
-	}
-	return &documentRefWrapper{ref: w.ref.Parent}
+	return newDocumentRef(w.ref.Parent)
 }
 
 func (w *collectionRefWrapper) Reference() *firestore.CollectionRef {
@@ -125,4 +70,33 @@ func (w *collectionRefWrapper) ID() string {
 
 func (w *collectionRefWrapper) Path() string {
 	return w.ref.Path
+}
+
+// WithReadOptions overrides the embedded queryWrapper method so options apply
+// to a cloned CollectionRef (and its shared Query.readSettings), leaving the
+// receiver unmodified.
+func (w *collectionRefWrapper) WithReadOptions(opts ...firestore.ReadOption) Query {
+	clone := cloneCollectionRefWithFreshReadSettings(w.ref)
+	return newCollectionRef(clone.WithReadOptions(opts...))
+}
+
+type collectionGroupRefWrapper struct {
+	queryWrapper
+	ref *firestore.CollectionGroupRef
+}
+
+func (w *collectionGroupRefWrapper) GetPartitionedQueries(ctx context.Context, partitionCount int) ([]Query, error) {
+	qs, err := w.ref.GetPartitionedQueries(ctx, partitionCount)
+	if err != nil {
+		return nil, err
+	}
+	out := make([]Query, len(qs))
+	for i := range qs {
+		out[i] = newQuery(qs[i])
+	}
+	return out, nil
+}
+
+func (w *collectionGroupRefWrapper) Reference() *firestore.CollectionGroupRef {
+	return w.ref
 }
