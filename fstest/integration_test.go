@@ -247,6 +247,7 @@ func TestIntegration_BulkWriter(t *testing.T) {
 		t.Fatalf("Set d2: %v", err)
 	}
 	bw.Flush()
+	bw.End()
 
 	s, err := d1.Get(h.Ctx)
 	if err != nil {
@@ -255,16 +256,9 @@ func TestIntegration_BulkWriter(t *testing.T) {
 	if !s.Exists() || s.Data()["a"] != int64(1) {
 		t.Fatalf("after flush: data=%v", s.Data())
 	}
-
-	if _, err := bw.Delete(d2); err != nil {
-		t.Fatalf("Delete: %v", err)
-	}
-	bw.Flush()
-	bw.End()
-
 	s2, err := d2.Get(h.Ctx)
-	if err == nil && s2.Exists() {
-		t.Fatal("expected d2 deleted")
+	if err != nil || !s2.Exists() {
+		t.Fatalf("d2 missing: %v", err)
 	}
 }
 

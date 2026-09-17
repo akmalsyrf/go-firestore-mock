@@ -10,11 +10,13 @@ linters:
     - ineffassign
     - staticcheck
     - unused
+  exclusions:
+    paths:
+      - third_party$
+      - builtin$
+      - examples$
+      - mocks$
 
 formatters:
   enable:
     - gofmt
-
-issues:
-  exclude-dirs:
-    - mocks
