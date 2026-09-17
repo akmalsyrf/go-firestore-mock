@@ -33,6 +33,18 @@ jobs:
       - name: Unit + apicheck + race
         run: go test -race -count=1 ./...
 
+  version-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.25.x"
+      - name: Version pairing
+        run: |
+          chmod +x scripts/check-version.sh
+          ./scripts/check-version.sh
+
   generate-check:
     runs-on: ubuntu-latest
     steps:
@@ -48,7 +60,7 @@ jobs:
         run: git diff --exit-code -- mocks/
 
   accuracy:
-    name: accuracy (parity + apicheck gate)
+    name: accuracy (parity + covercheck gate)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -77,16 +89,18 @@ jobs:
   gate:
     name: gate
     runs-on: ubuntu-latest
-    needs: [lint, unit, generate-check, accuracy]
+    needs: [lint, unit, version-check, generate-check, accuracy]
     if: always()
     steps:
       - name: Require all jobs green
         run: |
           echo "lint=${{ needs.lint.result }}"
           echo "unit=${{ needs.unit.result }}"
+          echo "version-check=${{ needs['version-check'].result }}"
           echo "generate-check=${{ needs.generate-check.result }}"
           echo "accuracy=${{ needs.accuracy.result }}"
           test "${{ needs.lint.result }}" = "success"
           test "${{ needs.unit.result }}" = "success"
+          test "${{ needs['version-check'].result }}" = "success"
           test "${{ needs['generate-check'].result }}" = "success"
           test "${{ needs.accuracy.result }}" = "success"

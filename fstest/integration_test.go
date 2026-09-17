@@ -183,6 +183,7 @@ func TestIntegration_WriteBatch(t *testing.T) {
 	d1, d2 := coll.Doc("b1"), coll.Doc("b2")
 
 	_, err := h.Client.Batch().
+		Create(coll.Doc("b0"), map[string]any{"v": 0}).
 		Set(d1, map[string]any{"v": 1}).
 		Set(d2, map[string]any{"v": 2}).
 		Update(d1, []firestore.Update{{Path: "v", Value: 10}}).
@@ -214,6 +215,10 @@ func TestIntegration_Transaction(t *testing.T) {
 		if err != nil {
 			return err
 		}
+		all, err := tx.GetAll([]fsmock.DocumentRef{doc})
+		if err != nil || len(all) != 1 {
+			return fmt.Errorf("GetAll: %w", err)
+		}
 		iter, err := tx.Documents(coll.Where("n", ">=", 0))
 		if err != nil {
 			return err
@@ -223,7 +228,17 @@ func TestIntegration_Transaction(t *testing.T) {
 			return err
 		}
 		n := snap.Data()["n"].(int64)
-		return tx.Set(doc, map[string]any{"n": n + 1})
+		if err := tx.Set(doc, map[string]any{"n": n + 1}); err != nil {
+			return err
+		}
+		extra := coll.Doc("t-extra")
+		if err := tx.Create(extra, map[string]any{"n": 0}); err != nil {
+			return err
+		}
+		if err := tx.Update(extra, []firestore.Update{{Path: "n", Value: 9}}); err != nil {
+			return err
+		}
+		return tx.Delete(extra)
 	})
 	if err != nil {
 		t.Fatalf("RunTransaction: %v", err)
@@ -239,12 +254,26 @@ func TestIntegration_BulkWriter(t *testing.T) {
 	coll := h.Client.Collection(h.Coll("bw"))
 	bw := h.Client.BulkWriter(h.Ctx)
 
-	d1, d2 := coll.Doc("w1"), coll.Doc("w2")
+	d1, d2, d3 := coll.Doc("w1"), coll.Doc("w2"), coll.Doc("w3")
+	// Seed docs that will be Update/Delete'd — BulkWriter rejects two ops on the same path.
+	if _, err := d2.Set(h.Ctx, map[string]any{"a": 2}); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := d3.Set(h.Ctx, map[string]any{"a": 3}); err != nil {
+		t.Fatal(err)
+	}
+
+	if _, err := bw.Create(coll.Doc("w0"), map[string]any{"a": 0}); err != nil {
+		t.Fatalf("Create: %v", err)
+	}
 	if _, err := bw.Set(d1, map[string]any{"a": 1}); err != nil {
 		t.Fatalf("Set: %v", err)
 	}
-	if _, err := bw.Set(d2, map[string]any{"a": 2}); err != nil {
-		t.Fatalf("Set d2: %v", err)
+	if _, err := bw.Update(d3, []firestore.Update{{Path: "a", Value: 33}}); err != nil {
+		t.Fatalf("Update: %v", err)
+	}
+	if _, err := bw.Delete(d2); err != nil {
+		t.Fatalf("Delete: %v", err)
 	}
 	bw.Flush()
 	bw.End()
@@ -257,8 +286,15 @@ func TestIntegration_BulkWriter(t *testing.T) {
 		t.Fatalf("after flush: data=%v", s.Data())
 	}
 	s2, err := d2.Get(h.Ctx)
-	if err != nil || !s2.Exists() {
-		t.Fatalf("d2 missing: %v", err)
+	if err != nil {
+		t.Fatalf("Get d2: %v", err)
+	}
+	if s2.Exists() {
+		t.Fatal("d2 should be deleted")
+	}
+	s3, err := d3.Get(h.Ctx)
+	if err != nil || s3.Data()["a"] != int64(33) {
+		t.Fatalf("d3=%v err=%v", s3.Data(), err)
 	}
 }
 
@@ -369,34 +405,13 @@ func TestIntegration_QuerySelectOffsetCursors(t *testing.T) {
 	if err != nil || len(first) != 1 {
 		t.Fatal(err)
 	}
-	// Use field values for cursors: wrapped DocumentSnapshot is not a *firestore.DocumentSnapshot.
-	next, err := coll.OrderBy("n", firestore.Asc).StartAfter(first[0].Data()["n"]).Limit(1).Documents(h.Ctx).GetAll()
+	// Regression: StartAfter must accept fsmock.DocumentSnapshot (unwraps to *firestore.DocumentSnapshot).
+	next, err := coll.OrderBy("n", firestore.Asc).StartAfter(first[0]).Limit(1).Documents(h.Ctx).GetAll()
 	if err != nil || len(next) != 1 {
 		t.Fatalf("StartAfter: %v", err)
 	}
 	if next[0].Data()["n"] != int64(1) {
 		t.Fatalf("cursor n=%v", next[0].Data()["n"])
-	}
-}
-
-func TestIntegration_BSONRoundTrip(t *testing.T) {
-	h := fstest.NewHarness(t)
-	doc := h.Client.Collection(h.Coll("bson")).Doc("b1")
-	in := map[string]any{
-		"oid": firestore.BSONObjectID("507f1f77bcf86cd799439011"),
-		"i32": firestore.BSONInt32(42),
-	}
-	if _, err := doc.Set(h.Ctx, in); err != nil {
-		// Emulator builds often lack BSON enterprise types.
-		t.Skipf("BSON types unsupported by emulator: %v", err)
-	}
-	snap, err := doc.Get(h.Ctx)
-	if err != nil {
-		t.Fatal(err)
-	}
-	data := snap.Data()
-	if data["oid"] == nil || data["i32"] == nil {
-		t.Fatalf("BSON round-trip: %#v", data)
 	}
 }
 

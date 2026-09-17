@@ -1,7 +1,6 @@
 package fsmock
 
 import (
-	"fmt"
 	"time"
 
 	"cloud.google.com/go/firestore"
@@ -18,6 +17,8 @@ type DocumentSnapshot interface {
 	UpdateTime() time.Time
 	ReadTime() time.Time
 	Ref() DocumentRef
+	// Reference returns the underlying SDK snapshot (escape hatch for cursor APIs).
+	Reference() *firestore.DocumentSnapshot
 }
 
 // QuerySnapshot abstracts *firestore.QuerySnapshot.
@@ -26,6 +27,8 @@ type QuerySnapshot interface {
 	Size() int
 	Changes() []firestore.DocumentChange
 	ReadTime() time.Time
+	// Reference returns the underlying SDK query snapshot.
+	Reference() *firestore.QuerySnapshot
 }
 
 type documentSnapshotWrapper struct {
@@ -68,6 +71,10 @@ func (w *documentSnapshotWrapper) Ref() DocumentRef {
 	return newDocumentRef(w.snap.Ref)
 }
 
+func (w *documentSnapshotWrapper) Reference() *firestore.DocumentSnapshot {
+	return w.snap
+}
+
 type querySnapshotWrapper struct {
 	snap *firestore.QuerySnapshot
 }
@@ -88,13 +95,6 @@ func (w *querySnapshotWrapper) ReadTime() time.Time {
 	return w.snap.ReadTime
 }
 
-// safeAggregationData recovers from SDK AggregationResult.Data panics
-// (SDK panics on decode bugs / unexpected value shapes).
-func safeAggregationData(ar firestore.AggregationResult) (m map[string]any, err error) {
-	defer func() {
-		if r := recover(); r != nil {
-			err = fmt.Errorf("fsmock: AggregationResult.Data panic: %v", r)
-		}
-	}()
-	return ar.Data(), nil
+func (w *querySnapshotWrapper) Reference() *firestore.QuerySnapshot {
+	return w.snap
 }

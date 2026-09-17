@@ -2,14 +2,14 @@
 
 [![Go Reference](https://pkg.go.dev/badge/github.com/akmalsyrf/go-firestore-mock/v2.svg)](https://pkg.go.dev/github.com/akmalsyrf/go-firestore-mock/v2)
 
-Thin wrapper interfaces and gomock stubs over [`cloud.google.com/go/firestore`](https://pkg.go.dev/cloud.google.com/go/firestore) **v1.25.0**.
+Thin wrapper interfaces and gomock stubs over [`cloud.google.com/go/firestore`](https://pkg.go.dev/cloud.google.com/go/firestore).
 
-Package: **`fsmock`**.
+Package: **`fsmock`**. Current pairing: **fsmock `v2.25.x` ↔ Firestore `v1.25.x`** — see [COMPATIBILITY.md](COMPATIBILITY.md).
 
 ## Install
 
 ```bash
-go get github.com/akmalsyrf/go-firestore-mock/v2
+go get github.com/akmalsyrf/go-firestore-mock/v2@v2.25.0
 ```
 
 Requires **Go 1.25+**.
@@ -36,33 +36,28 @@ mockClient.EXPECT().Collection("users").Return(mockColl)
 | `/` (`fsmock`) | Interfaces + wrappers |
 | `/mocks` | Generated gomock stubs |
 | `/fstest` | Emulator integration + parity |
-| `/internal/apicheck` | SDK method-set completeness |
+| `/internal/apicheck` | Discover + signature parity + covercheck |
 | `/scripts/check-accuracy.sh` | PR accuracy gate |
+| `COMPATIBILITY.md` | Version pairing table |
 
 ## PR gate (required)
 
 CI job **`gate`** fails unless all of these succeed:
 
-1. **lint** / **unit** (includes apicheck + race)
+1. **lint** / **unit** (includes apicheck + race) / **version-check**
 2. **generate-check** — mocks not stale
 3. **accuracy** — `scripts/check-accuracy.sh`
-   - apicheck must pass
-   - required integration + **parity** tests must **pass** (`t.Skip` = fail)
-
-Enable branch protection: require status check **`gate`**.
+   - integration tests must pass (`t.Skip` in `fstest` = fail)
+   - every `*xxxWrapper` method covered or waived
 
 ```bash
-export FIRESTORE_EMULATOR_HOST=127.0.0.1:8080
-make accuracy   # or: make gate
+make bootstrap
+make gate          # starts emulator via docker if needed
 ```
 
 ## Development
 
-```bash
-make test
-make generate-check
-make accuracy          # needs emulator
-```
+Read [AGENTS.md](AGENTS.md) / [CONTRIBUTING.md](CONTRIBUTING.md) before opening a PR.
 
 Migrating from v1: [MIGRATION-v1-to-v2.md](MIGRATION-v1-to-v2.md).
 

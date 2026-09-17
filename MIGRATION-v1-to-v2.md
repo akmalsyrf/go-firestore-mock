@@ -39,9 +39,17 @@ Package name is now `fsmock` (no alias required vs `cloud.google.com/go/firestor
 
 `CollectionIterator` no longer has `Stop()`; use `GetAll` / `PageInfo` like the SDK.
 
+## Version pairing
+
+v2 tags follow **`v2.<firestore-minor>.<patch>`**. This release line is `v2.25.x` and pairs with Firestore `v1.25.x`. See [COMPATIBILITY.md](COMPATIBILITY.md).
+
 ## Writes
 
 Pass `fsmock.DocumentRef` into batch/transaction/bulkwriter. Invalid refs on `WriteBatch` surface as errors from `Commit`.
+
+## Cursors
+
+`StartAt` / `StartAfter` / `EndAt` / `EndBefore` accept `fsmock.DocumentSnapshot` (unwrapped to `*firestore.DocumentSnapshot` for the SDK).
 
 ## Mocks
 

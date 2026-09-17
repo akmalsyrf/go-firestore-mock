@@ -3,9 +3,9 @@
 //
 // # Versioning
 //
-// This is module path v2. Breaking changes to interfaces require a new major version.
-// The pinned Firestore SDK minor is declared in go.mod; upgrades are expected to be
-// routine (go get + go generate + fix apicheck exceptions).
+// Module path v2. Tags follow v2.<firestore-minor>.<patch> so the minor matches
+// the Firestore SDK minor this release was tested against (see version.go and
+// COMPATIBILITY.md). Breaking interface changes require a new major module path.
 //
 // # Scope
 //

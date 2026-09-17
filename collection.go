@@ -73,9 +73,11 @@ func (w *collectionRefWrapper) Path() string {
 }
 
 // WithReadOptions overrides the embedded queryWrapper method so options apply
-// to the CollectionRef (and its shared Query.readSettings).
+// to a cloned CollectionRef (and its shared Query.readSettings), leaving the
+// receiver unmodified.
 func (w *collectionRefWrapper) WithReadOptions(opts ...firestore.ReadOption) Query {
-	return newCollectionRef(w.ref.WithReadOptions(opts...))
+	clone := cloneCollectionRefWithFreshReadSettings(w.ref)
+	return newCollectionRef(clone.WithReadOptions(opts...))
 }
 
 type collectionGroupRefWrapper struct {

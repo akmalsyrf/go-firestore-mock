@@ -33,6 +33,10 @@ type Query interface {
 	WithReadOptions(opts ...firestore.ReadOption) Query
 	WithRunOptions(opts ...firestore.RunOption) Query
 	Pipeline() Pipeline
+	// SDKQuery returns the underlying firestore.Query value.
+	// Named distinctly from CollectionRef.Reference / CollectionGroupRef.Reference
+	// because Go interfaces cannot overload by return type.
+	SDKQuery() firestore.Query
 }
 
 type queryWrapper struct {
@@ -72,19 +76,19 @@ func (w *queryWrapper) Offset(n int) Query {
 }
 
 func (w *queryWrapper) StartAt(docSnapshotOrFieldValues ...any) Query {
-	return &queryWrapper{q: w.q.StartAt(docSnapshotOrFieldValues...)}
+	return &queryWrapper{q: w.q.StartAt(unwrapCursorArgs(docSnapshotOrFieldValues)...)}
 }
 
 func (w *queryWrapper) StartAfter(docSnapshotOrFieldValues ...any) Query {
-	return &queryWrapper{q: w.q.StartAfter(docSnapshotOrFieldValues...)}
+	return &queryWrapper{q: w.q.StartAfter(unwrapCursorArgs(docSnapshotOrFieldValues)...)}
 }
 
 func (w *queryWrapper) EndAt(docSnapshotOrFieldValues ...any) Query {
-	return &queryWrapper{q: w.q.EndAt(docSnapshotOrFieldValues...)}
+	return &queryWrapper{q: w.q.EndAt(unwrapCursorArgs(docSnapshotOrFieldValues)...)}
 }
 
 func (w *queryWrapper) EndBefore(docSnapshotOrFieldValues ...any) Query {
-	return &queryWrapper{q: w.q.EndBefore(docSnapshotOrFieldValues...)}
+	return &queryWrapper{q: w.q.EndBefore(unwrapCursorArgs(docSnapshotOrFieldValues)...)}
 }
 
 func (w *queryWrapper) Select(paths ...string) Query {
@@ -129,7 +133,7 @@ func (w *queryWrapper) Deserialize(bytes []byte) (Query, error) {
 }
 
 func (w *queryWrapper) WithReadOptions(opts ...firestore.ReadOption) Query {
-	q := w.q
+	q := cloneQueryWithFreshReadSettings(w.q)
 	(&q).WithReadOptions(opts...)
 	return &queryWrapper{q: q}
 }
@@ -140,4 +144,8 @@ func (w *queryWrapper) WithRunOptions(opts ...firestore.RunOption) Query {
 
 func (w *queryWrapper) Pipeline() Pipeline {
 	return newPipeline(w.q.Pipeline())
+}
+
+func (w *queryWrapper) SDKQuery() firestore.Query {
+	return w.q
 }

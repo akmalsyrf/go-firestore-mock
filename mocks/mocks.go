@@ -451,6 +451,20 @@ func (mr *MockQueryMockRecorder) Pipeline() *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Pipeline", reflect.TypeOf((*MockQuery)(nil).Pipeline))
 }
 
+// SDKQuery mocks base method.
+func (m *MockQuery) SDKQuery() firestore.Query {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "SDKQuery")
+	ret0, _ := ret[0].(firestore.Query)
+	return ret0
+}
+
+// SDKQuery indicates an expected call of SDKQuery.
+func (mr *MockQueryMockRecorder) SDKQuery() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SDKQuery", reflect.TypeOf((*MockQuery)(nil).SDKQuery))
+}
+
 // Select mocks base method.
 func (m *MockQuery) Select(paths ...string) fsmock.Query {
 	m.ctrl.T.Helper()
@@ -959,6 +973,20 @@ func (mr *MockCollectionRefMockRecorder) Reference() *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Reference", reflect.TypeOf((*MockCollectionRef)(nil).Reference))
 }
 
+// SDKQuery mocks base method.
+func (m *MockCollectionRef) SDKQuery() firestore.Query {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "SDKQuery")
+	ret0, _ := ret[0].(firestore.Query)
+	return ret0
+}
+
+// SDKQuery indicates an expected call of SDKQuery.
+func (mr *MockCollectionRefMockRecorder) SDKQuery() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SDKQuery", reflect.TypeOf((*MockCollectionRef)(nil).SDKQuery))
+}
+
 // Select mocks base method.
 func (m *MockCollectionRef) Select(paths ...string) fsmock.Query {
 	m.ctrl.T.Helper()
@@ -1380,6 +1408,20 @@ func (m *MockCollectionGroupRef) Reference() *firestore.CollectionGroupRef {
 func (mr *MockCollectionGroupRefMockRecorder) Reference() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Reference", reflect.TypeOf((*MockCollectionGroupRef)(nil).Reference))
+}
+
+// SDKQuery mocks base method.
+func (m *MockCollectionGroupRef) SDKQuery() firestore.Query {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "SDKQuery")
+	ret0, _ := ret[0].(firestore.Query)
+	return ret0
+}
+
+// SDKQuery indicates an expected call of SDKQuery.
+func (mr *MockCollectionGroupRefMockRecorder) SDKQuery() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SDKQuery", reflect.TypeOf((*MockCollectionGroupRef)(nil).SDKQuery))
 }
 
 // Select mocks base method.
@@ -1929,6 +1971,20 @@ func (mr *MockDocumentSnapshotMockRecorder) Ref() *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Ref", reflect.TypeOf((*MockDocumentSnapshot)(nil).Ref))
 }
 
+// Reference mocks base method.
+func (m *MockDocumentSnapshot) Reference() *firestore.DocumentSnapshot {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Reference")
+	ret0, _ := ret[0].(*firestore.DocumentSnapshot)
+	return ret0
+}
+
+// Reference indicates an expected call of Reference.
+func (mr *MockDocumentSnapshotMockRecorder) Reference() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Reference", reflect.TypeOf((*MockDocumentSnapshot)(nil).Reference))
+}
+
 // UpdateTime mocks base method.
 func (m *MockDocumentSnapshot) UpdateTime() time.Time {
 	m.ctrl.T.Helper()
@@ -2007,6 +2063,20 @@ func (m *MockQuerySnapshot) ReadTime() time.Time {
 func (mr *MockQuerySnapshotMockRecorder) ReadTime() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ReadTime", reflect.TypeOf((*MockQuerySnapshot)(nil).ReadTime))
+}
+
+// Reference mocks base method.
+func (m *MockQuerySnapshot) Reference() *firestore.QuerySnapshot {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Reference")
+	ret0, _ := ret[0].(*firestore.QuerySnapshot)
+	return ret0
+}
+
+// Reference indicates an expected call of Reference.
+func (mr *MockQuerySnapshotMockRecorder) Reference() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Reference", reflect.TypeOf((*MockQuerySnapshot)(nil).Reference))
 }
 
 // Size mocks base method.

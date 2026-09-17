@@ -80,5 +80,6 @@ func (w *documentRefWrapper) Parent() CollectionRef {
 }
 
 func (w *documentRefWrapper) WithReadOptions(opts ...firestore.ReadOption) DocumentRef {
-	return newDocumentRef(w.ref.WithReadOptions(opts...))
+	clone := cloneDocumentRefWithFreshReadSettings(w.ref)
+	return newDocumentRef(clone.WithReadOptions(opts...))
 }

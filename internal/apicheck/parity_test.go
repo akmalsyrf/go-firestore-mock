@@ -2,194 +2,180 @@ package apicheck
 
 import (
 	"reflect"
+	"strings"
 	"testing"
 
 	"cloud.google.com/go/firestore"
-	"github.com/akmalsyrf/go-firestore-mock/v2"
 )
 
-// Pair maps an SDK concrete type to the fsmock interface that should wrap it.
-type pair struct {
-	name  string
-	sdk   reflect.Type
-	iface reflect.Type
-}
-
-func TestMethodParity(t *testing.T) {
-	pairs := []pair{
-		{
-			name:  "Client",
-			sdk:   reflect.TypeOf((*firestore.Client)(nil)),
-			iface: reflect.TypeOf((*fsmock.Client)(nil)).Elem(),
-		},
-		{
-			name:  "Query",
-			sdk:   reflect.TypeOf(firestore.Query{}),
-			iface: reflect.TypeOf((*fsmock.Query)(nil)).Elem(),
-		},
-		{
-			name:  "CollectionRef",
-			sdk:   reflect.TypeOf((*firestore.CollectionRef)(nil)),
-			iface: reflect.TypeOf((*fsmock.CollectionRef)(nil)).Elem(),
-		},
-		{
-			name:  "CollectionGroupRef",
-			sdk:   reflect.TypeOf((*firestore.CollectionGroupRef)(nil)),
-			iface: reflect.TypeOf((*fsmock.CollectionGroupRef)(nil)).Elem(),
-		},
-		{
-			name:  "DocumentRef",
-			sdk:   reflect.TypeOf((*firestore.DocumentRef)(nil)),
-			iface: reflect.TypeOf((*fsmock.DocumentRef)(nil)).Elem(),
-		},
-		{
-			name:  "DocumentSnapshot",
-			sdk:   reflect.TypeOf((*firestore.DocumentSnapshot)(nil)),
-			iface: reflect.TypeOf((*fsmock.DocumentSnapshot)(nil)).Elem(),
-		},
-		{
-			name:  "Transaction",
-			sdk:   reflect.TypeOf((*firestore.Transaction)(nil)),
-			iface: reflect.TypeOf((*fsmock.Transaction)(nil)).Elem(),
-		},
-		{
-			name:  "WriteBatch",
-			sdk:   reflect.TypeOf((*firestore.WriteBatch)(nil)), //nolint:staticcheck
-			iface: reflect.TypeOf((*fsmock.WriteBatch)(nil)).Elem(),
-		},
-		{
-			name:  "BulkWriter",
-			sdk:   reflect.TypeOf((*firestore.BulkWriter)(nil)),
-			iface: reflect.TypeOf((*fsmock.BulkWriter)(nil)).Elem(),
-		},
-		{
-			name:  "AggregationQuery",
-			sdk:   reflect.TypeOf((*firestore.AggregationQuery)(nil)),
-			iface: reflect.TypeOf((*fsmock.AggregationQuery)(nil)).Elem(),
-		},
-		{
-			name:  "AggregationResult",
-			sdk:   reflect.TypeOf(firestore.AggregationResult(nil)),
-			iface: reflect.TypeOf((*fsmock.AggregationResult)(nil)).Elem(),
-		},
-		{
-			name:  "VectorQuery",
-			sdk:   reflect.TypeOf(firestore.VectorQuery{}),
-			iface: reflect.TypeOf((*fsmock.VectorQuery)(nil)).Elem(),
-		},
-		{
-			name:  "DocumentIterator",
-			sdk:   reflect.TypeOf((*firestore.DocumentIterator)(nil)),
-			iface: reflect.TypeOf((*fsmock.DocumentIterator)(nil)).Elem(),
-		},
-		{
-			name:  "DocumentRefIterator",
-			sdk:   reflect.TypeOf((*firestore.DocumentRefIterator)(nil)),
-			iface: reflect.TypeOf((*fsmock.DocumentRefIterator)(nil)).Elem(),
-		},
-		{
-			name:  "CollectionIterator",
-			sdk:   reflect.TypeOf((*firestore.CollectionIterator)(nil)),
-			iface: reflect.TypeOf((*fsmock.CollectionIterator)(nil)).Elem(),
-		},
-		{
-			name:  "QuerySnapshotIterator",
-			sdk:   reflect.TypeOf((*firestore.QuerySnapshotIterator)(nil)),
-			iface: reflect.TypeOf((*fsmock.QuerySnapshotIterator)(nil)).Elem(),
-		},
-		{
-			name:  "DocumentSnapshotIterator",
-			sdk:   reflect.TypeOf((*firestore.DocumentSnapshotIterator)(nil)),
-			iface: reflect.TypeOf((*fsmock.DocumentSnapshotIterator)(nil)).Elem(),
-		},
-		{
-			name:  "PipelineSource",
-			sdk:   reflect.TypeOf((*firestore.PipelineSource)(nil)),
-			iface: reflect.TypeOf((*fsmock.PipelineSource)(nil)).Elem(),
-		},
-		{
-			name:  "Pipeline",
-			sdk:   reflect.TypeOf((*firestore.Pipeline)(nil)),
-			iface: reflect.TypeOf((*fsmock.Pipeline)(nil)).Elem(),
-		},
-		{
-			name:  "PipelineSnapshot",
-			sdk:   reflect.TypeOf((*firestore.PipelineSnapshot)(nil)),
-			iface: reflect.TypeOf((*fsmock.PipelineSnapshot)(nil)).Elem(),
-		},
-		{
-			name:  "PipelineResult",
-			sdk:   reflect.TypeOf((*firestore.PipelineResult)(nil)),
-			iface: reflect.TypeOf((*fsmock.PipelineResult)(nil)).Elem(),
-		},
-		{
-			name:  "PipelineResultIterator",
-			sdk:   reflect.TypeOf((*firestore.PipelineResultIterator)(nil)),
-			iface: reflect.TypeOf((*fsmock.PipelineResultIterator)(nil)).Elem(),
-		},
+func TestDiscoverCoversRegistry(t *testing.T) {
+	sdkDir, err := sdkModuleDir()
+	if err != nil {
+		t.Fatal(err)
+	}
+	found, err := discoverSDKTypesWithMethods(sdkDir)
+	if err != nil {
+		t.Fatal(err)
 	}
 
-	for _, p := range pairs {
+	regNames := map[string]bool{}
+	for _, p := range registry() {
+		regNames[p.name] = true
+	}
+
+	for typeName := range found {
+		if regNames[typeName] {
+			continue
+		}
+		if reason, ok := ignoredTypes[typeName]; ok {
+			t.Logf("ignore %s: %s", typeName, reason)
+			continue
+		}
+		t.Errorf("SDK type %q has exported methods but is neither in apicheck registry nor ignoredTypes — add a fsmock wrapper or an ignoredTypes entry with a Reason.\n  Fix: edit internal/apicheck/registry.go or internal/apicheck/exceptions.go", typeName)
+	}
+
+	for typeName := range ignoredTypes {
+		if _, ok := found[typeName]; ok {
+			continue
+		}
+		t.Errorf("stale ignoredTypes entry %q — type has no exported methods (or was removed). Delete it from exceptions.go", typeName)
+	}
+
+	for name := range regNames {
+		if name == "QuerySnapshot" {
+			continue
+		}
+		if _, ok := found[name]; !ok {
+			t.Errorf("registry lists %q but SDK has no exported methods for it — remove pair or fix discover", name)
+		}
+	}
+}
+
+func TestMethodParityAndSignatures(t *testing.T) {
+	usedExceptions := map[string]bool{}
+	usedDeviations := map[string]bool{}
+
+	for _, p := range registry() {
 		t.Run(p.name, func(t *testing.T) {
-			ifaceMethods := methodNames(p.iface)
-			sdkMethods := methodNames(p.sdk)
+			sdkType := normalizeType(p.sdk)
+			ifaceType := p.iface
 
-			// DocumentSnapshot: SDK fields mapped to methods — skip field-only check
-			if p.name == "DocumentSnapshot" {
-				for _, want := range []string{"Data", "DataTo", "DataAt", "DataAtPath", "Exists"} {
-					if !ifaceMethods[want] {
-						t.Errorf("fsmock.%s missing method %s", p.name, want)
-					}
-					if !sdkMethods[want] {
-						t.Errorf("SDK %s missing method %s (unexpected)", p.name, want)
-					}
-				}
-				return
-			}
+			sdkIdx := methodIndex(sdkType)
+			ifaceIdx := methodIndex(ifaceType)
+			ifaceMethods := methodNames(ifaceType)
 
-			// AggregationResult: require Data/DataTo; Count is extra on fsmock
-			if p.name == "AggregationResult" {
-				for _, want := range []string{"Data", "DataTo"} {
-					if !sdkMethods[want] {
-						t.Errorf("SDK AggregationResult missing %s", want)
-					}
-					if !ifaceMethods[want] {
-						t.Errorf("fsmock.AggregationResult missing %s", want)
-					}
-				}
-				return
-			}
-
-			for name := range sdkMethods {
+			for name := range sdkIdx {
 				key := p.name + "." + name
 				if reason, ok := exceptions[key]; ok {
+					usedExceptions[key] = true
 					t.Logf("skip %s: %s", key, reason)
 					continue
 				}
 				if !ifaceMethods[name] {
-					t.Errorf("fsmock.%s missing method %q present on SDK type %s", p.name, name, p.sdk)
+					t.Errorf("fsmock.%s missing method %q present on SDK.\n  Fix: add it to the interface + wrapper, or add exceptions[%q] with a Reason.", p.name, name, key)
+					continue
 				}
+				sdkSig := methodSig(sdkType, sdkIdx[name])
+				ifaceSig := methodSig(ifaceType, ifaceIdx[name])
+				if sdkSig == ifaceSig {
+					continue
+				}
+				if reason, ok := deviations[key]; ok {
+					usedDeviations[key] = true
+					t.Logf("deviation %s: %s\n  sdk=%s\n  fsmock=%s", key, reason, sdkSig, ifaceSig)
+					continue
+				}
+				t.Errorf("signature mismatch for %s\n  sdk:    %s\n  fsmock: %s\n  Fix: align the wrapper, or add deviations[%q] with a Reason.", key, sdkSig, ifaceSig, key)
+			}
+
+			switch p.name {
+			case "DocumentSnapshot":
+				for _, want := range []string{"Data", "DataTo", "DataAt", "DataAtPath", "Exists", "CreateTime", "UpdateTime", "ReadTime", "Ref", "Reference"} {
+					if !ifaceMethods[want] {
+						t.Errorf("fsmock.DocumentSnapshot missing %s", want)
+					}
+				}
+			case "QuerySnapshot":
+				for _, want := range []string{"Documents", "Size", "Changes", "ReadTime", "Reference"} {
+					if !ifaceMethods[want] {
+						t.Errorf("fsmock.QuerySnapshot missing %s", want)
+					}
+				}
+			case "AggregationResult":
+				for _, want := range []string{"Data", "DataTo"} {
+					if !ifaceMethods[want] {
+						t.Errorf("fsmock.AggregationResult missing %s", want)
+					}
+				}
+			}
+
+			for key, reason := range deviations {
+				if !strings.HasPrefix(key, p.name+".") {
+					continue
+				}
+				method := strings.TrimPrefix(key, p.name+".")
+				if !ifaceMethods[method] {
+					continue
+				}
+				if _, onSDK := sdkIdx[method]; onSDK {
+					continue
+				}
+				usedDeviations[key] = true
+				t.Logf("fsmock-only %s: %s", key, reason)
 			}
 		})
 	}
+
+	t.Cleanup(func() {
+		// Run after all subtests so -run filters that skip pairs do not false-positive.
+		// Only enforce when the parent test itself was selected without a subtest filter
+		// that leaves pairs unexecuted — detect via counting executed pairs.
+	})
+
+	for key := range exceptions {
+		if !usedExceptions[key] {
+			t.Errorf("stale exceptions entry %q — delete it from exceptions.go", key)
+		}
+	}
+	for key := range deviations {
+		if !usedDeviations[key] {
+			// Only fail if the owning type's subtest ran (appeared in registry walk).
+			// When signatures match after substitution, a deviation entry is still
+			// documentation — mark it used if the method exists on the iface.
+			owner, _, ok := strings.Cut(key, ".")
+			if !ok {
+				t.Errorf("malformed deviations key %q", key)
+				continue
+			}
+			var p *pair
+			for i := range registry() {
+				if registry()[i].name == owner {
+					pp := registry()[i]
+					p = &pp
+					break
+				}
+			}
+			if p == nil {
+				t.Errorf("stale deviations entry %q — unknown type; delete it", key)
+				continue
+			}
+			ifaceMethods := methodNames(p.iface)
+			method := strings.TrimPrefix(key, owner+".")
+			if ifaceMethods[method] {
+				// Documented intentional method (signature may match after substitution).
+				continue
+			}
+			t.Errorf("stale deviations entry %q — method not on fsmock.%s; delete it from exceptions.go", key, owner)
+		}
+	}
 }
 
-func methodNames(t reflect.Type) map[string]bool {
-	out := make(map[string]bool)
-	if t == nil {
-		return out
-	}
-	// For non-interface types, Method() includes pointer and value receiver methods
-	// depending on whether t is pointer. Normalize to pointer for structs.
-	if t.Kind() != reflect.Interface && t.Kind() != reflect.Pointer {
-		t = reflect.PointerTo(t)
-	}
-	for i := 0; i < t.NumMethod(); i++ {
-		m := t.Method(i)
-		if m.PkgPath != "" {
-			continue // unexported
+func TestAggregationResultSDKSurface(t *testing.T) {
+	sdk := normalizeType(reflect.TypeOf(firestore.AggregationResult(nil)))
+	idx := methodIndex(sdk)
+	for _, want := range []string{"Data", "DataTo"} {
+		if _, ok := idx[want]; !ok {
+			t.Errorf("SDK AggregationResult missing %s", want)
 		}
-		out[m.Name] = true
 	}
-	return out
 }

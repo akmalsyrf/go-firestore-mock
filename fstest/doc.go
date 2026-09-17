@@ -2,13 +2,14 @@
 //
 // Correctness layers:
 //
-//   - apicheck: SDK surface completeness (CI unit job)
+//   - apicheck: SDK surface completeness + signature parity (CI unit job)
 //
-//   - unit: unwrap / nil / panic-recovery contracts
+//   - unit: unwrap / nil / panic-recovery / readSettings aliasing contracts
 //
-//   - accuracy: scripts/check-accuracy.sh — required parity + integration;
-//     t.Skip on a required test fails the gate
+//   - accuracy: scripts/check-accuracy.sh — integration tests with coverage;
+//     any fstest skip fails the gate; every *xxxWrapper method must be covered
+//     or listed in internal/apicheck/waivers.go
 //
-//     export FIRESTORE_EMULATOR_HOST=127.0.0.1:8080
+//     make emulator-up
 //     make accuracy
 package fstest

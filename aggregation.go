@@ -121,6 +121,17 @@ func (w *aggregationResultWrapper) DataTo(p any) error {
 	return w.ar.DataTo(p)
 }
 
+// safeAggregationData recovers from SDK AggregationResult.Data panics
+// (SDK panics on decode bugs / unexpected value shapes).
+func safeAggregationData(ar firestore.AggregationResult) (m map[string]any, err error) {
+	defer func() {
+		if r := recover(); r != nil {
+			err = fmt.Errorf("fsmock: AggregationResult.Data panic: %v", r)
+		}
+	}()
+	return ar.Data(), nil
+}
+
 func aggregationFieldToInt64(v interface{}) (int64, error) {
 	switch x := v.(type) {
 	case *pb.Value:

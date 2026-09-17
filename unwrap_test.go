@@ -2,6 +2,7 @@ package fsmock
 
 import (
 	"context"
+	"errors"
 	"testing"
 
 	"cloud.google.com/go/firestore"
@@ -45,18 +46,19 @@ func (foreignQuery) WithReadOptions(...firestore.ReadOption) Query {
 }
 func (foreignQuery) WithRunOptions(...firestore.RunOption) Query { return nil }
 func (foreignQuery) Pipeline() Pipeline                          { return nil }
+func (foreignQuery) SDKQuery() firestore.Query                   { return firestore.Query{} }
 
 func TestToFirestoreQueryer_RejectsForeign(t *testing.T) {
 	_, err := toFirestoreQueryer(foreignQuery{})
-	if err == nil {
-		t.Fatal("expected error for foreign Query")
+	if !errors.Is(err, ErrForeignImplementation) {
+		t.Fatalf("expected ErrForeignImplementation, got %v", err)
 	}
 }
 
 func TestToFirestoreQueryer_Nil(t *testing.T) {
 	_, err := toFirestoreQueryer(nil)
-	if err == nil {
-		t.Fatal("expected error")
+	if !errors.Is(err, ErrNilArgument) {
+		t.Fatalf("expected ErrNilArgument, got %v", err)
 	}
 }
 

@@ -9,7 +9,7 @@ import (
 // toFirestoreQueryer extracts the real firestore.Queryer behind a Query wrapper.
 func toFirestoreQueryer(q Query) (firestore.Queryer, error) {
 	if q == nil {
-		return nil, fmt.Errorf("fsmock: nil Query")
+		return nil, fmt.Errorf("%w: Query", ErrNilArgument)
 	}
 	switch v := q.(type) {
 	case *queryWrapper:
@@ -24,13 +24,13 @@ func toFirestoreQueryer(q Query) (firestore.Queryer, error) {
 			return ref, nil
 		}
 	}
-	return nil, fmt.Errorf("fsmock: Query implementation %T cannot be converted to firestore.Queryer (use a wrapper from NewClient)", q)
+	return nil, fmt.Errorf("%w: Query %T (use a wrapper from NewClient)", ErrForeignImplementation, q)
 }
 
 // toDocumentRef extracts *firestore.DocumentRef from a DocumentRef wrapper.
 func toDocumentRef(d DocumentRef) (*firestore.DocumentRef, error) {
 	if d == nil {
-		return nil, fmt.Errorf("fsmock: nil DocumentRef")
+		return nil, fmt.Errorf("%w: DocumentRef", ErrNilArgument)
 	}
 	if w, ok := d.(*documentRefWrapper); ok {
 		return w.ref, nil
@@ -38,13 +38,13 @@ func toDocumentRef(d DocumentRef) (*firestore.DocumentRef, error) {
 	if ref := d.Reference(); ref != nil {
 		return ref, nil
 	}
-	return nil, fmt.Errorf("fsmock: DocumentRef implementation %T has nil Reference()", d)
+	return nil, fmt.Errorf("%w: DocumentRef %T has nil Reference()", ErrForeignImplementation, d)
 }
 
 // toCollectionRef extracts *firestore.CollectionRef from a CollectionRef wrapper.
 func toCollectionRef(c CollectionRef) (*firestore.CollectionRef, error) {
 	if c == nil {
-		return nil, fmt.Errorf("fsmock: nil CollectionRef")
+		return nil, fmt.Errorf("%w: CollectionRef", ErrNilArgument)
 	}
 	if w, ok := c.(*collectionRefWrapper); ok {
 		return w.ref, nil
@@ -52,40 +52,68 @@ func toCollectionRef(c CollectionRef) (*firestore.CollectionRef, error) {
 	if ref := c.Reference(); ref != nil {
 		return ref, nil
 	}
-	return nil, fmt.Errorf("fsmock: CollectionRef implementation %T has nil Reference()", c)
+	return nil, fmt.Errorf("%w: CollectionRef %T has nil Reference()", ErrForeignImplementation, c)
 }
 
 // toTransaction extracts *firestore.Transaction from a Transaction wrapper.
 func toTransaction(t Transaction) (*firestore.Transaction, error) {
 	if t == nil {
-		return nil, fmt.Errorf("fsmock: nil Transaction")
+		return nil, fmt.Errorf("%w: Transaction", ErrNilArgument)
 	}
 	if w, ok := t.(*transactionWrapper); ok {
 		return w.tx, nil
 	}
-	return nil, fmt.Errorf("fsmock: Transaction implementation %T cannot be converted to *firestore.Transaction", t)
+	return nil, fmt.Errorf("%w: Transaction %T", ErrForeignImplementation, t)
 }
 
 // toPipeline extracts *firestore.Pipeline from a Pipeline wrapper.
 func toPipeline(p Pipeline) (*firestore.Pipeline, error) {
 	if p == nil {
-		return nil, fmt.Errorf("fsmock: nil Pipeline")
+		return nil, fmt.Errorf("%w: Pipeline", ErrNilArgument)
 	}
 	if w, ok := p.(*pipelineWrapper); ok {
 		return w.p, nil
 	}
-	return nil, fmt.Errorf("fsmock: Pipeline implementation %T cannot be converted to *firestore.Pipeline", p)
+	return nil, fmt.Errorf("%w: Pipeline %T", ErrForeignImplementation, p)
 }
 
 // toAggregationQuery extracts *firestore.AggregationQuery from a wrapper.
 func toAggregationQuery(aq AggregationQuery) (*firestore.AggregationQuery, error) {
 	if aq == nil {
-		return nil, fmt.Errorf("fsmock: nil AggregationQuery")
+		return nil, fmt.Errorf("%w: AggregationQuery", ErrNilArgument)
 	}
 	if w, ok := aq.(*aggregationQueryWrapper); ok {
 		return w.aq, nil
 	}
-	return nil, fmt.Errorf("fsmock: AggregationQuery implementation %T cannot be converted to *firestore.AggregationQuery", aq)
+	return nil, fmt.Errorf("%w: AggregationQuery %T", ErrForeignImplementation, aq)
+}
+
+// unwrapCursorArgs converts fsmock.DocumentSnapshot values to *firestore.DocumentSnapshot
+// so SDK cursor helpers (StartAt/StartAfter/EndAt/EndBefore) recognize them.
+func unwrapCursorArgs(args []any) []any {
+	if len(args) == 0 {
+		return args
+	}
+	out := make([]any, len(args))
+	for i, a := range args {
+		switch v := a.(type) {
+		case DocumentSnapshot:
+			if v == nil {
+				out[i] = a
+				continue
+			}
+			if ref := v.Reference(); ref != nil {
+				out[i] = ref
+				continue
+			}
+			out[i] = a
+		case *firestore.DocumentSnapshot:
+			out[i] = v
+		default:
+			out[i] = a
+		}
+	}
+	return out
 }
 
 func wrapDocumentRefs(refs []DocumentRef) ([]*firestore.DocumentRef, error) {
