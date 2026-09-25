@@ -1,0 +1,3 @@
+package fsmock
+
+//go:generate mockgen -destination=mocks/mocks.go -package=mocks github.com/akmalsyrf/go-firestore-mock/v2 Client,Query,CollectionRef,CollectionGroupRef,DocumentRef,DocumentSnapshot,QuerySnapshot,Transaction,WriteBatch,BulkWriter,AggregationQuery,AggregationResult,VectorQuery,Pipeline,PipelineSource,PipelineSnapshot,PipelineResult,DocumentIterator,DocumentRefIterator,CollectionIterator,QuerySnapshotIterator,DocumentSnapshotIterator,PipelineResultIterator

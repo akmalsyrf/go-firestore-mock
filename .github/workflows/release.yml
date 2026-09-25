@@ -1,0 +1,66 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v2.*"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.25.x"
+
+      - name: Version pairing (enforces tag ↔ version.go ↔ go.mod)
+        env:
+          GITHUB_REF_TYPE: tag
+          GITHUB_REF_NAME: ${{ github.ref_name }}
+        run: |
+          chmod +x scripts/check-version.sh
+          ./scripts/check-version.sh
+
+      - name: Start Firestore emulator
+        run: |
+          docker run -d --name firestore-emulator -p 8080:8080 \
+            gcr.io/google.com/cloudsdktool/google-cloud-cli:emulators \
+            gcloud beta emulators firestore start --host-port=0.0.0.0:8080
+          for i in $(seq 1 60); do
+            if nc -z 127.0.0.1 8080 2>/dev/null; then echo "emulator up"; exit 0; fi
+            sleep 2
+          done
+          docker logs firestore-emulator || true
+          exit 1
+
+      - name: Accuracy gate
+        env:
+          FIRESTORE_EMULATOR_HOST: 127.0.0.1:8080
+        run: |
+          chmod +x scripts/check-accuracy.sh
+          ./scripts/check-accuracy.sh
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          SDK=$(sed -n 's/^const FirestoreSDKVersion = "\(.*\)".*/\1/p' version.go)
+          VER=$(sed -n 's/^const Version = "\(.*\)".*/\1/p' version.go)
+          gh release create "${{ github.ref_name }}" \
+            --title "fsmock v${VER}" \
+            --notes "$(cat <<EOF
+          ## fsmock v${VER}
+
+          Paired with **cloud.google.com/go/firestore ${SDK}**.
+
+          See [COMPATIBILITY.md](COMPATIBILITY.md) and [CHANGELOG.md](CHANGELOG.md).
+
+          \`\`\`bash
+          go get github.com/akmalsyrf/go-firestore-mock/v2@v${VER}
+          \`\`\`
+          EOF
+          )"

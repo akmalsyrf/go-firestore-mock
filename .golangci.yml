@@ -1,0 +1,22 @@
+version: "2"
+
+run:
+  timeout: 5m
+
+linters:
+  enable:
+    - errcheck
+    - govet
+    - ineffassign
+    - staticcheck
+    - unused
+  exclusions:
+    paths:
+      - third_party$
+      - builtin$
+      - examples$
+      - mocks$
+
+formatters:
+  enable:
+    - gofmt
