@@ -108,16 +108,16 @@ func TestTransaction_DocumentRefsNil(t *testing.T) {
 
 type foreignSnapshot struct{}
 
-func (foreignSnapshot) Data() map[string]any                            { return nil }
-func (foreignSnapshot) DataTo(any) error                                { return nil }
-func (foreignSnapshot) DataAt(string) (any, error)                      { return nil, nil }
-func (foreignSnapshot) DataAtPath(firestore.FieldPath) (any, error)     { return nil, nil }
-func (foreignSnapshot) Exists() bool                                    { return false }
-func (foreignSnapshot) CreateTime() time.Time                           { return time.Time{} }
-func (foreignSnapshot) UpdateTime() time.Time                           { return time.Time{} }
-func (foreignSnapshot) ReadTime() time.Time                             { return time.Time{} }
-func (foreignSnapshot) Ref() DocumentRef                                { return nil }
-func (foreignSnapshot) Reference() *firestore.DocumentSnapshot          { return nil }
+func (foreignSnapshot) Data() map[string]any                        { return nil }
+func (foreignSnapshot) DataTo(any) error                            { return nil }
+func (foreignSnapshot) DataAt(string) (any, error)                  { return nil, nil }
+func (foreignSnapshot) DataAtPath(firestore.FieldPath) (any, error) { return nil, nil }
+func (foreignSnapshot) Exists() bool                                { return false }
+func (foreignSnapshot) CreateTime() time.Time                       { return time.Time{} }
+func (foreignSnapshot) UpdateTime() time.Time                       { return time.Time{} }
+func (foreignSnapshot) ReadTime() time.Time                         { return time.Time{} }
+func (foreignSnapshot) Ref() DocumentRef                            { return nil }
+func (foreignSnapshot) Reference() *firestore.DocumentSnapshot      { return nil }
 
 func TestUnwrapCursorArgs_AcceptsWrapperAndFieldValues(t *testing.T) {
 	snap := &firestore.DocumentSnapshot{}

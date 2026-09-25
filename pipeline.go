@@ -304,7 +304,7 @@ func (w *pipelineWrapper) Define(variables []*firestore.AliasedExpression, opts 
 type errPipelineSnapshot struct{ err error }
 
 func (e errPipelineSnapshot) Results() PipelineResultIterator {
-	return errPipelineResultIterator{err: e.err}
+	return errPipelineResultIterator(e)
 }
 func (e errPipelineSnapshot) ExecutionTime() (*time.Time, error) { return nil, e.err }
 func (e errPipelineSnapshot) ExplainStats() *firestore.ExplainStats {
