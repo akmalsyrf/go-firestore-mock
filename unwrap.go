@@ -122,10 +122,11 @@ func unwrapCursorArgs(args []any) ([]any, error) {
 			if v == nil {
 				return nil, fmt.Errorf("%w: DocumentSnapshot", ErrNilArgument)
 			}
-			if v.snap == nil {
+			ref := v.Reference()
+			if ref == nil {
 				return nil, fmt.Errorf("%w: DocumentSnapshot has nil Reference()", ErrForeignImplementation)
 			}
-			out[i] = v.snap
+			out[i] = ref
 		case DocumentSnapshot:
 			if v == nil {
 				return nil, fmt.Errorf("%w: DocumentSnapshot", ErrNilArgument)

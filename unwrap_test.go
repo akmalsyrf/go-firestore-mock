@@ -121,7 +121,11 @@ func (foreignSnapshot) Reference() *firestore.DocumentSnapshot      { return nil
 
 func TestUnwrapCursorArgs_AcceptsWrapperAndFieldValues(t *testing.T) {
 	snap := &firestore.DocumentSnapshot{}
-	out, err := unwrapCursorArgs([]any{&documentSnapshotWrapper{snap: snap}, "n", 1})
+	wrapper := &documentSnapshotWrapper{snap: snap}
+	if wrapper.Reference() != snap {
+		t.Fatal("Reference escape hatch mismatch")
+	}
+	out, err := unwrapCursorArgs([]any{wrapper, "n", 1})
 	if err != nil {
 		t.Fatal(err)
 	}
