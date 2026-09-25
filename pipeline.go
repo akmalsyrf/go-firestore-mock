@@ -118,109 +118,205 @@ func (w *pipelineSourceWrapper) Literals(documents []map[string]any, opts ...fir
 }
 
 type pipelineWrapper struct {
-	p *firestore.Pipeline
+	p   *firestore.Pipeline
+	err error
+}
+
+func (w *pipelineWrapper) withP(p *firestore.Pipeline) Pipeline {
+	return &pipelineWrapper{p: p, err: w.err}
 }
 
 func (w *pipelineWrapper) Reference() *firestore.Pipeline { return w.p }
 
 func (w *pipelineWrapper) Execute(ctx context.Context, opts ...firestore.ExecuteOption) PipelineSnapshot {
+	if w.err != nil {
+		return errPipelineSnapshot{err: w.err}
+	}
 	return newPipelineSnapshot(w.p.Execute(ctx, opts...))
 }
 
 func (w *pipelineWrapper) WithReadOptions(opts ...firestore.ReadOption) Pipeline {
-	return newPipeline(w.p.WithReadOptions(opts...))
+	if w.err != nil {
+		return w
+	}
+	return w.withP(w.p.WithReadOptions(opts...))
 }
 
 func (w *pipelineWrapper) Limit(limit int, opts ...firestore.LimitOption) Pipeline {
-	return newPipeline(w.p.Limit(limit, opts...))
+	if w.err != nil {
+		return w
+	}
+	return w.withP(w.p.Limit(limit, opts...))
 }
 
 func (w *pipelineWrapper) Sort(orders []firestore.Ordering, opts ...firestore.SortOption) Pipeline {
-	return newPipeline(w.p.Sort(orders, opts...))
+	if w.err != nil {
+		return w
+	}
+	return w.withP(w.p.Sort(orders, opts...))
 }
 
 func (w *pipelineWrapper) Offset(offset int, opts ...firestore.OffsetOption) Pipeline {
-	return newPipeline(w.p.Offset(offset, opts...))
+	if w.err != nil {
+		return w
+	}
+	return w.withP(w.p.Offset(offset, opts...))
 }
 
 func (w *pipelineWrapper) Select(fields []any, opts ...firestore.SelectOption) Pipeline {
-	return newPipeline(w.p.Select(fields, opts...))
+	if w.err != nil {
+		return w
+	}
+	return w.withP(w.p.Select(fields, opts...))
 }
 
 func (w *pipelineWrapper) Distinct(fields []any, opts ...firestore.DistinctOption) Pipeline {
-	return newPipeline(w.p.Distinct(fields, opts...))
+	if w.err != nil {
+		return w
+	}
+	return w.withP(w.p.Distinct(fields, opts...))
 }
 
 func (w *pipelineWrapper) AddFields(fields []firestore.Selectable, opts ...firestore.AddFieldsOption) Pipeline {
-	return newPipeline(w.p.AddFields(fields, opts...))
+	if w.err != nil {
+		return w
+	}
+	return w.withP(w.p.AddFields(fields, opts...))
 }
 
 func (w *pipelineWrapper) RemoveFields(fields []any, opts ...firestore.RemoveFieldsOption) Pipeline {
-	return newPipeline(w.p.RemoveFields(fields, opts...))
+	if w.err != nil {
+		return w
+	}
+	return w.withP(w.p.RemoveFields(fields, opts...))
 }
 
 func (w *pipelineWrapper) Where(condition firestore.BooleanExpression, opts ...firestore.WhereOption) Pipeline {
-	return newPipeline(w.p.Where(condition, opts...))
+	if w.err != nil {
+		return w
+	}
+	return w.withP(w.p.Where(condition, opts...))
 }
 
 func (w *pipelineWrapper) Aggregate(accumulators []*firestore.AliasedAggregate, opts ...firestore.AggregateOption) Pipeline {
-	return newPipeline(w.p.Aggregate(accumulators, opts...))
+	if w.err != nil {
+		return w
+	}
+	return w.withP(w.p.Aggregate(accumulators, opts...))
 }
 
 func (w *pipelineWrapper) Unnest(field firestore.Selectable, opts ...firestore.UnnestOption) Pipeline {
-	return newPipeline(w.p.Unnest(field, opts...))
+	if w.err != nil {
+		return w
+	}
+	return w.withP(w.p.Unnest(field, opts...))
 }
 
 func (w *pipelineWrapper) UnnestWithAlias(fieldpath any, alias string, opts ...firestore.UnnestOption) Pipeline {
-	return newPipeline(w.p.UnnestWithAlias(fieldpath, alias, opts...))
+	if w.err != nil {
+		return w
+	}
+	return w.withP(w.p.UnnestWithAlias(fieldpath, alias, opts...))
 }
 
 func (w *pipelineWrapper) Union(other Pipeline, opts ...firestore.UnionOption) (Pipeline, error) {
+	if w.err != nil {
+		return nil, w.err
+	}
 	op, err := toPipeline(other)
 	if err != nil {
 		return nil, err
 	}
-	return newPipeline(w.p.Union(op, opts...)), nil
+	return w.withP(w.p.Union(op, opts...)), nil
 }
 
 func (w *pipelineWrapper) Sample(sampler *firestore.Sampler, opts ...firestore.SampleOption) Pipeline {
-	return newPipeline(w.p.Sample(sampler, opts...))
+	if w.err != nil {
+		return w
+	}
+	return w.withP(w.p.Sample(sampler, opts...))
 }
 
 func (w *pipelineWrapper) ReplaceWith(fieldpathOrExpr any, opts ...firestore.ReplaceWithOption) Pipeline {
-	return newPipeline(w.p.ReplaceWith(fieldpathOrExpr, opts...))
+	if w.err != nil {
+		return w
+	}
+	return w.withP(w.p.ReplaceWith(fieldpathOrExpr, opts...))
 }
 
 func (w *pipelineWrapper) FindNearest(vectorField any, queryVector any, measure firestore.PipelineDistanceMeasure, opts ...firestore.FindNearestOption) Pipeline {
-	return newPipeline(w.p.FindNearest(vectorField, queryVector, measure, opts...))
+	if w.err != nil {
+		return w
+	}
+	return w.withP(w.p.FindNearest(vectorField, queryVector, measure, opts...))
 }
 
 func (w *pipelineWrapper) Search(opts ...firestore.SearchOption) Pipeline {
-	return newPipeline(w.p.Search(opts...))
+	if w.err != nil {
+		return w
+	}
+	return w.withP(w.p.Search(opts...))
 }
 
 func (w *pipelineWrapper) RawStage(name string, args []any, opts ...firestore.StageOption) Pipeline {
-	return newPipeline(w.p.RawStage(name, args, opts...))
+	if w.err != nil {
+		return w
+	}
+	return w.withP(w.p.RawStage(name, args, opts...))
 }
 
 func (w *pipelineWrapper) Update(opts ...firestore.UpdateOption) Pipeline {
-	return newPipeline(w.p.Update(opts...))
+	if w.err != nil {
+		return w
+	}
+	return w.withP(w.p.Update(opts...))
 }
 
 func (w *pipelineWrapper) Delete(opts ...firestore.DeleteOption) Pipeline {
-	return newPipeline(w.p.Delete(opts...))
+	if w.err != nil {
+		return w
+	}
+	return w.withP(w.p.Delete(opts...))
 }
 
 func (w *pipelineWrapper) ToScalarExpression() firestore.Expression {
+	if w.err != nil || w.p == nil {
+		return nil
+	}
 	return w.p.ToScalarExpression()
 }
 
 func (w *pipelineWrapper) ToArrayExpression() firestore.Expression {
+	if w.err != nil || w.p == nil {
+		return nil
+	}
 	return w.p.ToArrayExpression()
 }
 
 func (w *pipelineWrapper) Define(variables []*firestore.AliasedExpression, opts ...firestore.DefineOption) Pipeline {
-	return newPipeline(w.p.Define(variables, opts...))
+	if w.err != nil {
+		return w
+	}
+	return w.withP(w.p.Define(variables, opts...))
+}
+
+// errPipelineSnapshot surfaces a deferred cursor unwrap error from Pipeline.Execute.
+type errPipelineSnapshot struct{ err error }
+
+func (e errPipelineSnapshot) Results() PipelineResultIterator {
+	return errPipelineResultIterator{err: e.err}
+}
+func (e errPipelineSnapshot) ExecutionTime() (*time.Time, error) { return nil, e.err }
+func (e errPipelineSnapshot) ExplainStats() *firestore.ExplainStats {
+	return nil
+}
+
+type errPipelineResultIterator struct{ err error }
+
+func (e errPipelineResultIterator) Next() (PipelineResult, error) { return nil, e.err }
+func (e errPipelineResultIterator) Stop()                         {}
+func (e errPipelineResultIterator) GetAll() ([]PipelineResult, error) {
+	return nil, e.err
 }
 
 type pipelineSnapshotWrapper struct {

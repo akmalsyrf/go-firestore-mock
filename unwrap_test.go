@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"testing"
+	"time"
 
 	"cloud.google.com/go/firestore"
 )
@@ -102,5 +103,59 @@ func TestTransaction_DocumentRefsNil(t *testing.T) {
 	_, err := tx.DocumentRefs(nil)
 	if err == nil {
 		t.Fatal("expected error")
+	}
+}
+
+type foreignSnapshot struct{}
+
+func (foreignSnapshot) Data() map[string]any                            { return nil }
+func (foreignSnapshot) DataTo(any) error                                { return nil }
+func (foreignSnapshot) DataAt(string) (any, error)                      { return nil, nil }
+func (foreignSnapshot) DataAtPath(firestore.FieldPath) (any, error)     { return nil, nil }
+func (foreignSnapshot) Exists() bool                                    { return false }
+func (foreignSnapshot) CreateTime() time.Time                           { return time.Time{} }
+func (foreignSnapshot) UpdateTime() time.Time                           { return time.Time{} }
+func (foreignSnapshot) ReadTime() time.Time                             { return time.Time{} }
+func (foreignSnapshot) Ref() DocumentRef                                { return nil }
+func (foreignSnapshot) Reference() *firestore.DocumentSnapshot          { return nil }
+
+func TestUnwrapCursorArgs_AcceptsWrapperAndFieldValues(t *testing.T) {
+	snap := &firestore.DocumentSnapshot{}
+	out, err := unwrapCursorArgs([]any{&documentSnapshotWrapper{snap: snap}, "n", 1})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if out[0] != snap {
+		t.Fatalf("snapshot: got %T %#v", out[0], out[0])
+	}
+	if out[1] != "n" || out[2] != 1 {
+		t.Fatalf("field values: %#v", out[1:])
+	}
+}
+
+func TestUnwrapCursorArgs_RejectsForeignSnapshot(t *testing.T) {
+	_, err := unwrapCursorArgs([]any{foreignSnapshot{}})
+	if !errors.Is(err, ErrForeignImplementation) {
+		t.Fatalf("expected ErrForeignImplementation, got %v", err)
+	}
+}
+
+func TestUnwrapCursorArgs_RejectsNilSnapshot(t *testing.T) {
+	var snap DocumentSnapshot = (*documentSnapshotWrapper)(nil)
+	_, err := unwrapCursorArgs([]any{snap})
+	if !errors.Is(err, ErrNilArgument) {
+		t.Fatalf("expected ErrNilArgument, got %v", err)
+	}
+}
+
+func TestQuery_StartAfterForeignSnapshotDeferred(t *testing.T) {
+	q := (&queryWrapper{}).StartAfter(foreignSnapshot{})
+	_, err := q.Documents(context.Background()).GetAll()
+	if !errors.Is(err, ErrForeignImplementation) {
+		t.Fatalf("expected ErrForeignImplementation from Documents, got %v", err)
+	}
+	_, err = q.Limit(1).Documents(context.Background()).GetAll()
+	if !errors.Is(err, ErrForeignImplementation) {
+		t.Fatalf("expected err preserved through Limit, got %v", err)
 	}
 }

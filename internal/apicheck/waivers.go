@@ -3,6 +3,11 @@ package apicheck
 // waivers lists *xxxWrapper methods that are allowed to lack coverage in the
 // accuracy gate. Keys are "receiverType.Method" (e.g. "queryWrapper.Snapshots").
 // Reason and Issue are required so waivers do not rot silently.
+//
+// A waiver means "not exercised on the emulator in CI", not "unused / unwrapped".
+// Large clusters (Pipeline*, Vector*, realtime Snapshots*) are waived because the
+// emulator cannot reliably prove them — prefer a GitHub issue URL in Issue when
+// tracking follow-up coverage.
 type waiver struct {
 	Reason string
 	Issue  string // GitHub issue URL or short tracking id; use "n/a: <why>" if none

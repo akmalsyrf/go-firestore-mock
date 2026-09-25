@@ -155,3 +155,21 @@ func (w *documentSnapshotIteratorWrapper) Next() (DocumentSnapshot, error) {
 func (w *documentSnapshotIteratorWrapper) Stop() {
 	w.iter.Stop()
 }
+
+// errDocumentIterator surfaces a deferred query unwrap error without hitting the SDK.
+type errDocumentIterator struct{ err error }
+
+func (e errDocumentIterator) Next() (DocumentSnapshot, error) { return nil, e.err }
+func (e errDocumentIterator) Stop()                           {}
+func (e errDocumentIterator) GetAll() ([]DocumentSnapshot, error) {
+	return nil, e.err
+}
+func (e errDocumentIterator) ExplainMetrics() (*firestore.ExplainMetrics, error) {
+	return nil, e.err
+}
+
+// errQuerySnapshotIterator surfaces a deferred query unwrap error on Snapshots().
+type errQuerySnapshotIterator struct{ err error }
+
+func (e errQuerySnapshotIterator) Next() (QuerySnapshot, error) { return nil, e.err }
+func (e errQuerySnapshotIterator) Stop()                        {}

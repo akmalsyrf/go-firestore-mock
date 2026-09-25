@@ -47,8 +47,8 @@ CI job **`gate`** fails unless all of these succeed:
 1. **lint** / **unit** (includes apicheck + race) / **version-check**
 2. **generate-check** — mocks not stale
 3. **accuracy** — `scripts/check-accuracy.sh`
-   - integration tests must pass (`t.Skip` in `fstest` = fail)
-   - every `*xxxWrapper` method covered or waived
+   - integration tests must pass (`t.Skip` in `fstest` = fail, except harness when emulator host unset)
+   - every `*xxxWrapper` method covered **or** waived (Pipeline / vector / realtime listeners are largely waived when the emulator cannot exercise them)
 
 ```bash
 make bootstrap

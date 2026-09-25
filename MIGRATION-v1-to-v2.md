@@ -51,6 +51,8 @@ Pass `fsmock.DocumentRef` into batch/transaction/bulkwriter. Invalid refs on `Wr
 
 `StartAt` / `StartAfter` / `EndAt` / `EndBefore` accept `fsmock.DocumentSnapshot` (unwrapped to `*firestore.DocumentSnapshot` for the SDK).
 
+Snapshots that cannot produce a non-nil `Reference()` (e.g. a bare mock) defer `ErrForeignImplementation` onto the query; the error surfaces from `Documents` / `Snapshots` / `Serialize` (not as a silent field-value cursor).
+
 ## Mocks
 
 ```diff

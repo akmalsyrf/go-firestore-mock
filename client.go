@@ -79,10 +79,13 @@ func (w *clientWrapper) GetAll(ctx context.Context, docRefs []DocumentRef) ([]Do
 }
 
 func (w *clientWrapper) WithReadOptions(opts ...firestore.ReadOption) Client {
+	// Matches SDK: *firestore.Client.WithReadOptions mutates the receiver in place
+	// and returns the same pointer. The new wrapper still shares that client.
 	return &clientWrapper{client: w.client.WithReadOptions(opts...)}
 }
 
 func (w *clientWrapper) WithAlwaysUseImplicitOrderBy(b bool) Client {
+	// Matches SDK: mutates the underlying *firestore.Client in place.
 	return &clientWrapper{client: w.client.WithAlwaysUseImplicitOrderBy(b)}
 }
 

@@ -14,14 +14,21 @@ type VectorQuery interface {
 }
 
 type vectorQueryWrapper struct {
-	vq firestore.VectorQuery
+	vq  firestore.VectorQuery
+	err error
 }
 
 func (w *vectorQueryWrapper) Documents(ctx context.Context) DocumentIterator {
+	if w.err != nil {
+		return errDocumentIterator{err: w.err}
+	}
 	return newDocumentIterator(w.vq.Documents(ctx))
 }
 
 func (w *vectorQueryWrapper) Serialize() ([]byte, error) {
+	if w.err != nil {
+		return nil, w.err
+	}
 	return w.vq.Serialize()
 }
 

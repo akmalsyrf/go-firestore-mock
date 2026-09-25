@@ -26,9 +26,9 @@ First v2 release. Version scheme: **`v2.<firestore-minor>.<patch>`** (pairs with
 - Query: `FindNearest`, `FindNearestPath`, `Serialize`/`Deserialize`, `WithReadOptions`, `WithRunOptions`, `Pipeline`.
 - Client: `WithReadOptions`, `WithAlwaysUseImplicitOrderBy`, `Pipeline`.
 - Aggregation: `WithSum`/`WithAvg` (+ Path), `GetResponse`, `Transaction`, `Pipeline`; `AggregationResult.Data`/`DataTo`.
-- `VectorQuery`, full `Pipeline*` mockable boundaries.
-- Cursor args unwrap `fsmock.DocumentSnapshot` → `*firestore.DocumentSnapshot`.
-- `WithReadOptions` clones `readSettings` (no aliasing with the parent query/ref).
+- `VectorQuery`, `Pipeline*` mockable boundaries (emulator behavioral coverage largely waived).
+- Cursor args unwrap `fsmock.DocumentSnapshot` → `*firestore.DocumentSnapshot`; non-unwrappable snapshots fail on execute (`ErrForeignImplementation`).
+- `WithReadOptions` clones `readSettings` on Query/CollectionRef/DocumentRef (no parent aliasing). `Client.WithReadOptions` / `WithAlwaysUseImplicitOrderBy` match SDK in-place mutation.
 - `internal/apicheck` discover + signature parity + covercheck; `fstest` emulator harness.
 - Accuracy gate: coverage-derived method evidence + waivers.
 - Version constants in `version.go`; `COMPATIBILITY.md`.

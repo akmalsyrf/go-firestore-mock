@@ -13,10 +13,19 @@ func toFirestoreQueryer(q Query) (firestore.Queryer, error) {
 	}
 	switch v := q.(type) {
 	case *queryWrapper:
+		if v.err != nil {
+			return nil, v.err
+		}
 		return v.q, nil
 	case *collectionRefWrapper:
+		if v.err != nil {
+			return nil, v.err
+		}
 		return v.ref, nil
 	case *collectionGroupRefWrapper:
+		if v.err != nil {
+			return nil, v.err
+		}
 		return v.ref, nil
 	}
 	if cr, ok := q.(CollectionRef); ok {
@@ -72,6 +81,9 @@ func toPipeline(p Pipeline) (*firestore.Pipeline, error) {
 		return nil, fmt.Errorf("%w: Pipeline", ErrNilArgument)
 	}
 	if w, ok := p.(*pipelineWrapper); ok {
+		if w.err != nil {
+			return nil, w.err
+		}
 		return w.p, nil
 	}
 	return nil, fmt.Errorf("%w: Pipeline %T", ErrForeignImplementation, p)
@@ -83,6 +95,9 @@ func toAggregationQuery(aq AggregationQuery) (*firestore.AggregationQuery, error
 		return nil, fmt.Errorf("%w: AggregationQuery", ErrNilArgument)
 	}
 	if w, ok := aq.(*aggregationQueryWrapper); ok {
+		if w.err != nil {
+			return nil, w.err
+		}
 		return w.aq, nil
 	}
 	return nil, fmt.Errorf("%w: AggregationQuery %T", ErrForeignImplementation, aq)
@@ -90,30 +105,43 @@ func toAggregationQuery(aq AggregationQuery) (*firestore.AggregationQuery, error
 
 // unwrapCursorArgs converts fsmock.DocumentSnapshot values to *firestore.DocumentSnapshot
 // so SDK cursor helpers (StartAt/StartAfter/EndAt/EndBefore) recognize them.
-func unwrapCursorArgs(args []any) []any {
+//
+// A DocumentSnapshot that cannot produce a non-nil Reference() returns
+// ErrForeignImplementation (or ErrNilArgument). Passing it through would make the
+// SDK treat the value as a field cursor and silently mis-paginate.
+func unwrapCursorArgs(args []any) ([]any, error) {
 	if len(args) == 0 {
-		return args
+		return args, nil
 	}
 	out := make([]any, len(args))
 	for i, a := range args {
 		switch v := a.(type) {
+		case nil:
+			out[i] = nil
+		case *documentSnapshotWrapper:
+			if v == nil {
+				return nil, fmt.Errorf("%w: DocumentSnapshot", ErrNilArgument)
+			}
+			if v.snap == nil {
+				return nil, fmt.Errorf("%w: DocumentSnapshot has nil Reference()", ErrForeignImplementation)
+			}
+			out[i] = v.snap
 		case DocumentSnapshot:
 			if v == nil {
-				out[i] = a
-				continue
+				return nil, fmt.Errorf("%w: DocumentSnapshot", ErrNilArgument)
 			}
-			if ref := v.Reference(); ref != nil {
-				out[i] = ref
-				continue
+			ref := v.Reference()
+			if ref == nil {
+				return nil, fmt.Errorf("%w: DocumentSnapshot %T has nil Reference()", ErrForeignImplementation, v)
 			}
-			out[i] = a
+			out[i] = ref
 		case *firestore.DocumentSnapshot:
 			out[i] = v
 		default:
 			out[i] = a
 		}
 	}
-	return out
+	return out, nil
 }
 
 func wrapDocumentRefs(refs []DocumentRef) ([]*firestore.DocumentRef, error) {

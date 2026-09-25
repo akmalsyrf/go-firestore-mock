@@ -37,30 +37,53 @@ type AggregationResponse struct {
 }
 
 type aggregationQueryWrapper struct {
-	aq *firestore.AggregationQuery
+	aq  *firestore.AggregationQuery
+	err error
+}
+
+func (w *aggregationQueryWrapper) withAQ(aq *firestore.AggregationQuery) AggregationQuery {
+	return &aggregationQueryWrapper{aq: aq, err: w.err}
 }
 
 func (w *aggregationQueryWrapper) WithCount(alias string) AggregationQuery {
-	return &aggregationQueryWrapper{aq: w.aq.WithCount(alias)}
+	if w.err != nil {
+		return w
+	}
+	return w.withAQ(w.aq.WithCount(alias))
 }
 
 func (w *aggregationQueryWrapper) WithSum(path string, alias string) AggregationQuery {
-	return &aggregationQueryWrapper{aq: w.aq.WithSum(path, alias)}
+	if w.err != nil {
+		return w
+	}
+	return w.withAQ(w.aq.WithSum(path, alias))
 }
 
 func (w *aggregationQueryWrapper) WithSumPath(fp firestore.FieldPath, alias string) AggregationQuery {
-	return &aggregationQueryWrapper{aq: w.aq.WithSumPath(fp, alias)}
+	if w.err != nil {
+		return w
+	}
+	return w.withAQ(w.aq.WithSumPath(fp, alias))
 }
 
 func (w *aggregationQueryWrapper) WithAvg(path string, alias string) AggregationQuery {
-	return &aggregationQueryWrapper{aq: w.aq.WithAvg(path, alias)}
+	if w.err != nil {
+		return w
+	}
+	return w.withAQ(w.aq.WithAvg(path, alias))
 }
 
 func (w *aggregationQueryWrapper) WithAvgPath(fp firestore.FieldPath, alias string) AggregationQuery {
-	return &aggregationQueryWrapper{aq: w.aq.WithAvgPath(fp, alias)}
+	if w.err != nil {
+		return w
+	}
+	return w.withAQ(w.aq.WithAvgPath(fp, alias))
 }
 
 func (w *aggregationQueryWrapper) Get(ctx context.Context) (AggregationResult, error) {
+	if w.err != nil {
+		return nil, w.err
+	}
 	result, err := w.aq.Get(ctx)
 	if err != nil {
 		return nil, err
@@ -69,6 +92,9 @@ func (w *aggregationQueryWrapper) Get(ctx context.Context) (AggregationResult, e
 }
 
 func (w *aggregationQueryWrapper) GetResponse(ctx context.Context) (*AggregationResponse, error) {
+	if w.err != nil {
+		return nil, w.err
+	}
 	resp, err := w.aq.GetResponse(ctx)
 	if err != nil {
 		return nil, err
@@ -83,14 +109,20 @@ func (w *aggregationQueryWrapper) GetResponse(ctx context.Context) (*Aggregation
 }
 
 func (w *aggregationQueryWrapper) Transaction(tx Transaction) (AggregationQuery, error) {
+	if w.err != nil {
+		return nil, w.err
+	}
 	sdkTx, err := toTransaction(tx)
 	if err != nil {
 		return nil, err
 	}
-	return &aggregationQueryWrapper{aq: w.aq.Transaction(sdkTx)}, nil
+	return w.withAQ(w.aq.Transaction(sdkTx)), nil
 }
 
 func (w *aggregationQueryWrapper) Pipeline() Pipeline {
+	if w.err != nil {
+		return &pipelineWrapper{err: w.err}
+	}
 	return newPipeline(w.aq.Pipeline())
 }
 

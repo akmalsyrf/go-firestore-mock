@@ -45,7 +45,9 @@ func EmulatorAvailable() bool {
 	return os.Getenv(EmulatorHostEnv) != ""
 }
 
-// RequireEmulator skips the test when the emulator host is not configured.
+// RequireEmulator skips when FIRESTORE_EMULATOR_HOST is unset.
+// The accuracy gate requires the host and treats fstest skips as failures, so this
+// only soft-skips local `go test -tags=integration` without an emulator.
 func RequireEmulator(t *testing.T) {
 	t.Helper()
 	if !EmulatorAvailable() {
