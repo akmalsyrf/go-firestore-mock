@@ -152,6 +152,73 @@ func TestUnwrapCursorArgs_RejectsNilSnapshot(t *testing.T) {
 	}
 }
 
+func TestToDocumentRef_TypedNil(t *testing.T) {
+	var d DocumentRef = (*documentRefWrapper)(nil)
+	_, err := toDocumentRef(d)
+	if !errors.Is(err, ErrNilArgument) {
+		t.Fatalf("expected ErrNilArgument, got %v", err)
+	}
+}
+
+func TestToCollectionRef_TypedNil(t *testing.T) {
+	var c CollectionRef = (*collectionRefWrapper)(nil)
+	_, err := toCollectionRef(c)
+	if !errors.Is(err, ErrNilArgument) {
+		t.Fatalf("expected ErrNilArgument, got %v", err)
+	}
+}
+
+func TestToFirestoreQueryer_TypedNil(t *testing.T) {
+	cases := []Query{
+		(*queryWrapper)(nil),
+		(*collectionRefWrapper)(nil),
+		(*collectionGroupRefWrapper)(nil),
+	}
+	for _, q := range cases {
+		_, err := toFirestoreQueryer(q)
+		if !errors.Is(err, ErrNilArgument) {
+			t.Fatalf("%T: expected ErrNilArgument, got %v", q, err)
+		}
+	}
+}
+
+func TestToTransaction_TypedNil(t *testing.T) {
+	var tx Transaction = (*transactionWrapper)(nil)
+	_, err := toTransaction(tx)
+	if !errors.Is(err, ErrNilArgument) {
+		t.Fatalf("expected ErrNilArgument, got %v", err)
+	}
+}
+
+func TestToPipeline_TypedNil(t *testing.T) {
+	var p Pipeline = (*pipelineWrapper)(nil)
+	_, err := toPipeline(p)
+	if !errors.Is(err, ErrNilArgument) {
+		t.Fatalf("expected ErrNilArgument, got %v", err)
+	}
+}
+
+func TestToAggregationQuery_TypedNil(t *testing.T) {
+	var aq AggregationQuery = (*aggregationQueryWrapper)(nil)
+	_, err := toAggregationQuery(aq)
+	if !errors.Is(err, ErrNilArgument) {
+		t.Fatalf("expected ErrNilArgument, got %v", err)
+	}
+}
+
+func TestVectorQuery_DeserializeHonorsDeferredErr(t *testing.T) {
+	sentinel := errors.New("deferred cursor err")
+	w := &vectorQueryWrapper{err: sentinel}
+	_, err := w.Serialize()
+	if !errors.Is(err, sentinel) {
+		t.Fatalf("Serialize: expected sentinel, got %v", err)
+	}
+	_, err = w.Deserialize(nil)
+	if !errors.Is(err, sentinel) {
+		t.Fatalf("Deserialize: expected sentinel, got %v", err)
+	}
+}
+
 func TestQuery_StartAfterForeignSnapshotDeferred(t *testing.T) {
 	q := (&queryWrapper{}).StartAfter(foreignSnapshot{})
 	_, err := q.Documents(context.Background()).GetAll()

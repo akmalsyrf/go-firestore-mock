@@ -38,3 +38,8 @@ First v2 release. Version scheme: **`v2.<firestore-minor>.<patch>`** (pairs with
 - Single `//go:generate` mockgen invocation (package mode) into `mocks/mocks.go`.
 - Aggregation `Data()` recovers SDK panics into errors.
 - Sentinel errors: `ErrNilClient`, `ErrNilArgument`, `ErrForeignImplementation`.
+
+### Fixed
+
+- Typed-nil package wrappers (`(*xxxWrapper)(nil)` in an interface) return `ErrNilArgument` from unwrap helpers instead of panicking (#6).
+- `VectorQuery.Deserialize` honors deferred `w.err` like `Documents` / `Serialize` (#7).

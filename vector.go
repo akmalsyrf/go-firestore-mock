@@ -33,6 +33,9 @@ func (w *vectorQueryWrapper) Serialize() ([]byte, error) {
 }
 
 func (w *vectorQueryWrapper) Deserialize(bytes []byte) (VectorQuery, error) {
+	if w.err != nil {
+		return nil, w.err
+	}
 	vq, err := w.vq.Deserialize(bytes)
 	if err != nil {
 		return nil, err
