@@ -40,6 +40,12 @@ mockClient.EXPECT().Collection("users").Return(mockColl)
 | `/scripts/check-accuracy.sh` | PR accuracy gate |
 | `COMPATIBILITY.md` | Version pairing table |
 
+## Accuracy vs mockability
+
+Interfaces for **Pipeline**, **VectorQuery**, and realtime **Snapshots** are mockable (generated stubs exist), but most of those paths are **not** accuracy-proven on the emulator — they are waived in `internal/apicheck/waivers.go` (see [#10](https://github.com/akmalsyrf/go-firestore-mock/issues/10)).
+
+`QuerySnapshot.Changes()` returns `[]firestore.DocumentChange` intentionally: `Doc` / `OldDoc` stay raw `*firestore.DocumentSnapshot` (see [#8](https://github.com/akmalsyrf/go-firestore-mock/issues/8)).
+
 ## PR gate (required)
 
 CI job **`gate`** fails unless all of these succeed:

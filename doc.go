@@ -10,11 +10,17 @@
 // # Scope
 //
 // Every instance method on the wrapped SDK types (Client, Query, CollectionRef,
-// DocumentRef, Transaction, WriteBatch, BulkWriter, AggregationQuery, VectorQuery,
-// Pipeline, and related iterators/snapshots) has a matching method on an fsmock
-// interface. Pipeline option/expression types (Expression, BooleanExpression,
+// DocumentRef, Transaction, WriteBatch, BulkWriter, BulkWriterJob, AggregationQuery,
+// VectorQuery, Pipeline, and related iterators/snapshots) has a matching method on
+// an fsmock interface. Pipeline option/expression types (Expression, BooleanExpression,
 // SearchOption, etc.) are pass-through SDK values — they are constructed by callers
 // and do not need to be mocked.
+//
+// QuerySnapshot.Changes returns []firestore.DocumentChange intentionally
+// (DocumentChange.Doc/OldDoc remain *firestore.DocumentSnapshot).
+//
+// Pipeline, VectorQuery, and realtime Snapshots are mockable but largely waived
+// from emulator accuracy coverage — see waivers and README.
 //
 // # Production usage
 //

@@ -25,6 +25,10 @@ type DocumentSnapshot interface {
 type QuerySnapshot interface {
 	Documents() DocumentIterator
 	Size() int
+	// Changes returns the SDK DocumentChange slice as a deliberate pass-through.
+	// DocumentChange.Doc and OldDoc are *firestore.DocumentSnapshot (not
+	// fsmock.DocumentSnapshot). Wrapping would require a parallel change type and
+	// a signature deviation; see README / MIGRATION and GitHub issue #8.
 	Changes() []firestore.DocumentChange
 	ReadTime() time.Time
 	// Reference returns the underlying SDK query snapshot.
