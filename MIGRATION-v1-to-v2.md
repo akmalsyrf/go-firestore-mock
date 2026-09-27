@@ -53,6 +53,14 @@ Pass `fsmock.DocumentRef` into batch/transaction/bulkwriter. Invalid refs on `Wr
 
 Snapshots that cannot produce a non-nil `Reference()` (e.g. a bare mock) defer `ErrForeignImplementation` onto the query; the error surfaces from `Documents` / `Snapshots` / `Serialize` (not as a silent field-value cursor).
 
+## QuerySnapshot.Changes
+
+`QuerySnapshot.Changes()` returns `[]firestore.DocumentChange` from the SDK. That is intentional: `DocumentChange.Doc` and `OldDoc` are `*firestore.DocumentSnapshot`, not `fsmock.DocumentSnapshot`. A parallel `fsmock.DocumentChange` wrapper would be a signature deviation; realtime/Snapshots paths are also largely waived for emulator accuracy. Re-wrap manually or use `Reference()` if you need the raw SDK snapshot.
+
+## BulkWriter jobs
+
+`BulkWriter` create/set/update/delete return `fsmock.BulkWriterJob` (mockable `Results()`), not `*firestore.BulkWriterJob`.
+
 ## Mocks
 
 ```diff

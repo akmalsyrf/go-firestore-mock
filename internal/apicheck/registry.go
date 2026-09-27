@@ -27,6 +27,7 @@ func registry() []pair {
 		{name: "Transaction", sdk: reflect.TypeOf((*firestore.Transaction)(nil)), iface: reflect.TypeOf((*fsmock.Transaction)(nil)).Elem()},
 		{name: "WriteBatch", sdk: reflect.TypeOf((*firestore.WriteBatch)(nil)), iface: reflect.TypeOf((*fsmock.WriteBatch)(nil)).Elem()}, //nolint:staticcheck
 		{name: "BulkWriter", sdk: reflect.TypeOf((*firestore.BulkWriter)(nil)), iface: reflect.TypeOf((*fsmock.BulkWriter)(nil)).Elem()},
+		{name: "BulkWriterJob", sdk: reflect.TypeOf((*firestore.BulkWriterJob)(nil)), iface: reflect.TypeOf((*fsmock.BulkWriterJob)(nil)).Elem()},
 		{name: "AggregationQuery", sdk: reflect.TypeOf((*firestore.AggregationQuery)(nil)), iface: reflect.TypeOf((*fsmock.AggregationQuery)(nil)).Elem()},
 		{name: "AggregationResult", sdk: reflect.TypeOf(firestore.AggregationResult(nil)), iface: reflect.TypeOf((*fsmock.AggregationResult)(nil)).Elem()},
 		{name: "VectorQuery", sdk: reflect.TypeOf(firestore.VectorQuery{}), iface: reflect.TypeOf((*fsmock.VectorQuery)(nil)).Elem()},
@@ -56,6 +57,7 @@ var substitutions = map[string]string{
 	"*firestore.Transaction":              "fsmock.Transaction",
 	"*firestore.WriteBatch":               "fsmock.WriteBatch",
 	"*firestore.BulkWriter":               "fsmock.BulkWriter",
+	"*firestore.BulkWriterJob":            "fsmock.BulkWriterJob",
 	"*firestore.AggregationQuery":         "fsmock.AggregationQuery",
 	"firestore.AggregationResult":         "fsmock.AggregationResult",
 	"firestore.VectorQuery":               "fsmock.VectorQuery",
