@@ -21,6 +21,7 @@ var (
 	_ Transaction              = (*transactionWrapper)(nil)
 	_ WriteBatch               = (*writeBatchWrapper)(nil)
 	_ BulkWriter               = (*bulkWriterWrapper)(nil)
+	_ BulkWriterJob            = (*bulkWriterJobWrapper)(nil)
 	_ AggregationQuery         = (*aggregationQueryWrapper)(nil)
 	_ AggregationResult        = (*aggregationResultWrapper)(nil)
 	_ VectorQuery              = (*vectorQueryWrapper)(nil)

@@ -5,7 +5,6 @@ package apicheck
 // Keys are SDK type names; values are required reasons.
 var ignoredTypes = map[string]string{
 	"BSONObjectID":       "value type with helper methods; pass-through SDK value",
-	"BulkWriterJob":      "returned by BulkWriter ops; opaque SDK handle, not mocked",
 	"CommitResponse":     "value type returned by Pipeline write stages",
 	"DocumentChangeKind": "enum-like value type",
 	"ExplainStats":       "value/metrics type; pass-through",
@@ -41,7 +40,7 @@ var deviations = map[string]string{
 	"DocumentSnapshot.ReadTime":   "SDK field; fsmock method",
 	"DocumentSnapshot.Ref":        "SDK field Ref; fsmock method Ref()",
 	"QuerySnapshot.Size":          "SDK field; fsmock method",
-	"QuerySnapshot.Changes":       "SDK field; fsmock method",
+	"QuerySnapshot.Changes":       "SDK field; fsmock method returning []firestore.DocumentChange (intentional pass-through — Doc/OldDoc stay *firestore.DocumentSnapshot; see #8)",
 	"QuerySnapshot.ReadTime":      "SDK field; fsmock method",
 	"QuerySnapshot.Documents":     "SDK field (iterator); fsmock method Documents()",
 
@@ -56,10 +55,10 @@ var deviations = map[string]string{
 	"AggregationResult.Data":                    "fsmock returns (map, error) and recovers SDK panics",
 	"Client.GetAll":                             "fsmock accepts []DocumentRef interfaces",
 	"Client.RunTransaction":                     "fsmock callback receives fsmock.Transaction",
-	"BulkWriter.Create":                         "fsmock accepts DocumentRef interface",
-	"BulkWriter.Set":                            "fsmock accepts DocumentRef interface",
-	"BulkWriter.Update":                         "fsmock accepts DocumentRef interface",
-	"BulkWriter.Delete":                         "fsmock accepts DocumentRef interface",
+	"BulkWriter.Create":                         "fsmock accepts DocumentRef interface; returns BulkWriterJob interface",
+	"BulkWriter.Set":                            "fsmock accepts DocumentRef interface; returns BulkWriterJob interface",
+	"BulkWriter.Update":                         "fsmock accepts DocumentRef interface; returns BulkWriterJob interface",
+	"BulkWriter.Delete":                         "fsmock accepts DocumentRef interface; returns BulkWriterJob interface",
 	"WriteBatch.Create":                         "fsmock accepts DocumentRef interface",
 	"WriteBatch.Set":                            "fsmock accepts DocumentRef interface",
 	"WriteBatch.Update":                         "fsmock accepts DocumentRef interface",

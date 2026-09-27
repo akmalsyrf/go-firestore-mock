@@ -272,31 +272,47 @@ func TestIntegration_BulkWriter(t *testing.T) {
 	}
 
 	bwSet := h.Client.BulkWriter(h.Ctx)
-	if _, err := bwSet.Set(d1, map[string]any{"a": 1}); err != nil {
+	jobSet, err := bwSet.Set(d1, map[string]any{"a": 1})
+	if err != nil {
 		t.Fatalf("Set: %v", err)
 	}
 	bwSet.Flush()
+	if _, err := jobSet.Results(); err != nil {
+		t.Fatalf("Set Results: %v", err)
+	}
 	bwSet.End()
 
 	bwCreate := h.Client.BulkWriter(h.Ctx)
-	if _, err := bwCreate.Create(coll.Doc("w0"), map[string]any{"a": 0}); err != nil {
+	jobCreate, err := bwCreate.Create(coll.Doc("w0"), map[string]any{"a": 0})
+	if err != nil {
 		t.Fatalf("Create: %v", err)
 	}
 	bwCreate.Flush()
+	if _, err := jobCreate.Results(); err != nil {
+		t.Fatalf("Create Results: %v", err)
+	}
 	bwCreate.End()
 
 	bwUpdate := h.Client.BulkWriter(h.Ctx)
-	if _, err := bwUpdate.Update(d3, []firestore.Update{{Path: "a", Value: 33}}); err != nil {
+	jobUpdate, err := bwUpdate.Update(d3, []firestore.Update{{Path: "a", Value: 33}})
+	if err != nil {
 		t.Fatalf("Update: %v", err)
 	}
 	bwUpdate.Flush()
+	if _, err := jobUpdate.Results(); err != nil {
+		t.Fatalf("Update Results: %v", err)
+	}
 	bwUpdate.End()
 
 	bwDelete := h.Client.BulkWriter(h.Ctx)
-	if _, err := bwDelete.Delete(d2); err != nil {
+	jobDelete, err := bwDelete.Delete(d2)
+	if err != nil {
 		t.Fatalf("Delete: %v", err)
 	}
 	bwDelete.Flush()
+	if _, err := jobDelete.Results(); err != nil {
+		t.Fatalf("Delete Results: %v", err)
+	}
 	bwDelete.End()
 
 	s, err := d1.Get(h.Ctx)
