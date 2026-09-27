@@ -99,14 +99,6 @@ var waivers = map[string]waiver{
 		Reason: "vector query execution; emulator support incomplete",
 		Issue:  "n/a: emulator",
 	},
-	"vectorQueryWrapper.Serialize": {
-		Reason: "vector query serialize; emulator support incomplete",
-		Issue:  "n/a: emulator",
-	},
-	"vectorQueryWrapper.Deserialize": {
-		Reason: "vector query deserialize; emulator support incomplete",
-		Issue:  "n/a: emulator",
-	},
 
 	// Aggregation extras (WithCount/WithSum/WithAvg/Get/GetResponse/Data/DataTo covered in fstest)
 	"aggregationQueryWrapper.WithSumPath": {

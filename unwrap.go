@@ -13,16 +13,26 @@ func toFirestoreQueryer(q Query) (firestore.Queryer, error) {
 	}
 	switch v := q.(type) {
 	case *queryWrapper:
+		// Typed-nil interface values (*queryWrapper)(nil) are not == nil.
+		if v == nil {
+			return nil, fmt.Errorf("%w: Query", ErrNilArgument)
+		}
 		if v.err != nil {
 			return nil, v.err
 		}
 		return v.q, nil
 	case *collectionRefWrapper:
+		if v == nil {
+			return nil, fmt.Errorf("%w: Query", ErrNilArgument)
+		}
 		if v.err != nil {
 			return nil, v.err
 		}
 		return v.ref, nil
 	case *collectionGroupRefWrapper:
+		if v == nil {
+			return nil, fmt.Errorf("%w: Query", ErrNilArgument)
+		}
 		if v.err != nil {
 			return nil, v.err
 		}
@@ -42,6 +52,9 @@ func toDocumentRef(d DocumentRef) (*firestore.DocumentRef, error) {
 		return nil, fmt.Errorf("%w: DocumentRef", ErrNilArgument)
 	}
 	if w, ok := d.(*documentRefWrapper); ok {
+		if w == nil {
+			return nil, fmt.Errorf("%w: DocumentRef", ErrNilArgument)
+		}
 		return w.ref, nil
 	}
 	if ref := d.Reference(); ref != nil {
@@ -56,6 +69,9 @@ func toCollectionRef(c CollectionRef) (*firestore.CollectionRef, error) {
 		return nil, fmt.Errorf("%w: CollectionRef", ErrNilArgument)
 	}
 	if w, ok := c.(*collectionRefWrapper); ok {
+		if w == nil {
+			return nil, fmt.Errorf("%w: CollectionRef", ErrNilArgument)
+		}
 		return w.ref, nil
 	}
 	if ref := c.Reference(); ref != nil {
@@ -70,6 +86,9 @@ func toTransaction(t Transaction) (*firestore.Transaction, error) {
 		return nil, fmt.Errorf("%w: Transaction", ErrNilArgument)
 	}
 	if w, ok := t.(*transactionWrapper); ok {
+		if w == nil {
+			return nil, fmt.Errorf("%w: Transaction", ErrNilArgument)
+		}
 		return w.tx, nil
 	}
 	return nil, fmt.Errorf("%w: Transaction %T", ErrForeignImplementation, t)
@@ -81,6 +100,9 @@ func toPipeline(p Pipeline) (*firestore.Pipeline, error) {
 		return nil, fmt.Errorf("%w: Pipeline", ErrNilArgument)
 	}
 	if w, ok := p.(*pipelineWrapper); ok {
+		if w == nil {
+			return nil, fmt.Errorf("%w: Pipeline", ErrNilArgument)
+		}
 		if w.err != nil {
 			return nil, w.err
 		}
@@ -95,6 +117,9 @@ func toAggregationQuery(aq AggregationQuery) (*firestore.AggregationQuery, error
 		return nil, fmt.Errorf("%w: AggregationQuery", ErrNilArgument)
 	}
 	if w, ok := aq.(*aggregationQueryWrapper); ok {
+		if w == nil {
+			return nil, fmt.Errorf("%w: AggregationQuery", ErrNilArgument)
+		}
 		if w.err != nil {
 			return nil, w.err
 		}
